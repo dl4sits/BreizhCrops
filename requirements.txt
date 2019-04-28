@@ -1,0 +1,5 @@
+geopandas
+numpy
+pandas
+ee
+geojson

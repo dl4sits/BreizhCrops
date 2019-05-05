@@ -53,3 +53,10 @@ python write_annotated_shp.py
 python write_classmapping.py
 python write_tileids.py
 ```
+
+## Basline Models
+
+baseline models located in `models`
+
+* `LSTM` located in `src/rnn.py`
+* `transformer-encoder` adopted `https://github.com/jadore801120/attention-is-all-you-need-pytorch`

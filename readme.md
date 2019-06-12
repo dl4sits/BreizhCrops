@@ -1,4 +1,22 @@
-# BreizhCrops
+# BreizhCrops:
+#### A Satellite Time Series Dataset for Crop Type Identification
+
+[Paper](https://arxiv.org/abs/1905.11893) presented at the [ICML 2019 Time Series workshop](http://roseyu.com/time-series-workshop/)
+```
+@conference{russwurm2019breizhcrops,
+    title={BreizhCrops: A Satellite Time Series Dataset for Crop Type Identification},
+    author={Marc Rußwurm and Sébastien Lefèvre and Marco Körner},
+    year={2019},
+    booktitle={Time Series Workshop at International Conference on Machine Learning}
+    eprint={1905.11893},
+    archivePrefix={arXiv}
+}
+```
+
+<a href=https://arxiv.org/abs/1905.11893><img height=300px src=doc/paper.png /></a>
+<a href="doc/poster.pdf"><img height=300px src=doc/poster.png /></a>
+
+## Data
 
 time series example of meadows
 

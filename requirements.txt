@@ -2,4 +2,8 @@ geopandas
 numpy
 pandas
 ee
+botocore # requirement ee
 geojson
+jupyter
+matplotlib
+seaborn

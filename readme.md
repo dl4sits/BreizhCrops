@@ -1,15 +1,17 @@
 # BreizhCrops:
 #### A Satellite Time Series Dataset for Crop Type Identification
 
-[Paper](https://arxiv.org/abs/1905.11893) presented at the [ICML 2019 Time Series workshop](http://roseyu.com/time-series-workshop/)
+[Paper](https://arxiv.org/abs/1905.11893) presented at the [ICML 2019 Time Series workshop, Long Beach, USA](http://roseyu.com/time-series-workshop/)
 ```
-@conference{russwurm2019breizhcrops,
+@InProceedings{russwurm2019breizhcrops,
     title={BreizhCrops: A Satellite Time Series Dataset for Crop Type Identification},
-    author={Marc Rußwurm and Sébastien Lefèvre and Marco Körner},
+    author={Ru{\ss}wurm, Marc and Lef{\`e}vre, S{\'e}bastien and K{\"o}rner, Marco},
     year={2019},
-    booktitle={Time Series Workshop at International Conference on Machine Learning}
-    eprint={1905.11893},
-    archivePrefix={arXiv}
+    booktitle   = {International Conference on Machine Learning (ICML)},
+    series      = {Time Series Workshop},
+    eprint      = {1905.11893},
+    eprintclass = {cs.LG, cs.CV, stat.ML},
+    eprinttype  = {arxiv},
 }
 ```
 
@@ -18,15 +20,15 @@
 
 ## Data
 
-time series example of meadows
+Time series example of meadows
 
 <img src=doc/exampletop.png>
 
-Time Series example of corn
+Time series example of corn
 
 <img src=doc/examplebottom.png>
 
-field parcels and administrative NUTS-2 regions
+Field parcels and administrative NUTS-2 regions
 
 <img width=54% src=doc/BrittanyParcels.png>
 <img width=45% src=doc/regions.png>
@@ -74,7 +76,7 @@ python write_tileids.py
 
 ## Basline Models
 
-baseline models located in `models`
+Baseline models located in `models`
 
 * `LSTM` located in `src/rnn.py`
 * `transformer-encoder` adopted `https://github.com/jadore801120/attention-is-all-you-need-pytorch`

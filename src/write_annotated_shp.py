@@ -3,7 +3,7 @@ import pandas as pd
 import os
 
 def main():
-    codescsv="/home/marc/projects/ICML19_TSW/images/codes.csv"
+    codescsv="../codes.csv"
     shpfolder = "/data/france/BreizhCrops/shp/raw/"
     annotated_shape_file_folder = "/data/france/BreizhCrops/shp/annotated"
 

@@ -5,8 +5,6 @@ import torch.utils.data
 import os
 from models.ClassificationModel import ClassificationModel
 from models.transformer.Models import Encoder
-from models.AttentionModule import Attention
-from torch.nn.modules.normalization import LayerNorm
 
 SEQUENCE_PADDINGS_VALUE=-1
 
@@ -57,15 +55,15 @@ class TransformerEncoder(ClassificationModel):
 
         logits = self.outlinear(enc_output)[:,-1,:]
 
-        return logits, None, None, None
+        return logits
 
     def forward(self, x):
 
-        logits, *_ = self._logits(x)
+        logits = self._logits(x)
 
         logprobabilities = F.log_softmax(logits, dim=-1)
 
-        return logprobabilities, None, None, None
+        return logprobabilities
 
     def save(self, path="model.pth", **kwargs):
         print("\nsaving model to "+path)

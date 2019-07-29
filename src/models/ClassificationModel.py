@@ -1,15 +1,14 @@
 from abc import ABC, abstractmethod
 import torch
-from sklearn.base import BaseEstimator
 
-class ClassificationModel(ABC,torch.nn.Module, BaseEstimator):
+class ClassificationModel(ABC,torch.nn.Module):
 
     def __init__(self):
         super().__init__()
 
     @abstractmethod
     def forward(self):
-        pass # return logprobabilities
+        pass
 
     @torch.no_grad()
     def predict(self, logprobabilities):
@@ -21,4 +20,4 @@ class ClassificationModel(ABC,torch.nn.Module, BaseEstimator):
 
     @abstractmethod
     def load(self, path):
-        pass #return snapshot
+        pass

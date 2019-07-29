@@ -18,7 +18,14 @@
 <a href=https://arxiv.org/abs/1905.11893><img height=300px src=doc/paper.png /></a>
 <a href="doc/poster.pdf"><img height=300px src=doc/poster.png /></a>
 
-## Data
+### Notebooks
+
+`TrainEvaluateModels.ipynb` for instructions of model training and inference
+
+`BreizhCrops.ipynb` for additional information on the raw data
+
+
+### Sentinel 2 Time Series of Field Crop Parcels
 
 Time series example of meadows
 
@@ -28,55 +35,62 @@ Time series example of corn
 
 <img src=doc/examplebottom.png>
 
-Field parcels and administrative NUTS-2 regions
+## Organization in NUTS Administrative Regions
 
 <img width=54% src=doc/BrittanyParcels.png>
 <img width=45% src=doc/regions.png>
 
-## Download Data
+### Download Data and Models
 
+Download the data in csv files and cached numpy arrays (~14GB)
 ```
-wget https://storage.googleapis.com/breizhcrops/data.zip
-unzip data.zip
-rm data.zip # cleanup
+cd data
+bash download.sh
 ```
 
-## Data organization
+Download pre-trained models (22mb)
+```
+cd models
+bash download.sh
+```
+
+### Data organization
 
 ```
 # mapping from ~160 categories to 13 most frequenc groups
 data/classmapping.csv
 
 # csv files
-data/csv/frh{1,2,3,4}/*.csv
+data/csv/frh0{1,2,3,4}/*.csv
 
 # polygon ids per departement
-data/ids/frh{1,2,3,4}.txt
+data/ids/frh0{1,2,3,4}.txt
 
 # cached numpy arrays for faster data loading
-data/csv/frh{1,2,3,4}/*.npy
+data/csv/frh0{1,2,3,4}/*.npy
 
 # raw shapefile geometries with labels
 data/shp/*
 ```
 
-## Install dependencies
+### Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Data Organizing Steps
+### Data organization scripts
+
+#### Query satellite data from Google Earth Engine
+
+```
+python src/query_gee.py data/shp/raw/frh01.shp --start 2017-01-01 --end 2017-12-31 --label-col CODE_CULTU --id-col ID --outfolder data/csv/frh01
+```
+
+#### Data Management
 
 ```
 python write_annotated_shp.py
 python write_classmapping.py
 python write_tileids.py
 ```
-
-## Basline Models
-
-Baseline models located in `models`
-
-* `LSTM` located in `src/rnn.py`
-* `transformer-encoder` adopted `https://github.com/jadore801120/attention-is-all-you-need-pytorch`

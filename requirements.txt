@@ -7,3 +7,5 @@ geojson
 jupyter
 matplotlib
 seaborn
+torch
+tqdm

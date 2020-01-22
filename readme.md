@@ -3,15 +3,20 @@
 
 [Paper](https://arxiv.org/abs/1905.11893) presented at the [ICML 2019 Time Series workshop, Long Beach, USA](http://roseyu.com/time-series-workshop/)
 ```
-@InProceedings{russwurm2019breizhcrops,
-    title={BreizhCrops: A Satellite Time Series Dataset for Crop Type Identification},
-    author={Ru{\ss}wurm, Marc and Lef{\`e}vre, S{\'e}bastien and K{\"o}rner, Marco},
-    year={2019},
-    booktitle   = {International Conference on Machine Learning (ICML)},
-    series      = {Time Series Workshop},
-    eprint      = {1905.11893},
-    eprintclass = {cs.LG, cs.CV, stat.ML},
-    eprinttype  = {arxiv},
+@article{russwurm2019:BreizhCrops,
+  author    = {Marc Ru{\ss}wurm and
+               S{\'{e}}bastien Lef{\`{e}}vre and
+               Marco K{\"{o}}rner},
+  title     = {BreizhCrops: A Satellite Time Series Dataset for Crop Type Identification},
+  journal   = {CoRR},
+  volume    = {abs/1905.11893},
+  year      = {2019},
+  url       = {http://arxiv.org/abs/1905.11893},
+  archivePrefix = {arXiv},
+  eprint    = {1905.11893},
+  timestamp = {Mon, 03 Jun 2019 13:42:33 +0200},
+  biburl    = {https://dblp.org/rec/bib/journals/corr/abs-1905-11893},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
 }
 ```
 

@@ -44,6 +44,14 @@ from breizhcrops import BreizhCrops
 from BreizhCrops.models import TempCNN, TransformerEncoder, TempCNN, MSResNet
 ```
 
+### Download Dataset
+
+Simply initialize the Dataset
+
+```
+BreizhCrops(region="frh01")
+```
+
 ### Notebooks
 
 `TrainEvaluateModels.ipynb` for instructions of model training and inference

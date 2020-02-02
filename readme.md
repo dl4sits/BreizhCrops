@@ -1,6 +1,9 @@
 # BreizhCrops:
 #### A Satellite Time Series Dataset for Crop Type Identification
 
+![](https://github.com/tum-lmf/breizhcrops/workflows/build-package/badge.svg)
+
+
 [Paper](https://arxiv.org/abs/1905.11893) presented at the [ICML 2019 Time Series workshop, Long Beach, USA](http://roseyu.com/time-series-workshop/)
 ```
 @article{russwurm2019:BreizhCrops,
@@ -51,7 +54,6 @@ Simply initialize the Dataset
 ```
 BreizhCrops(region="frh01")
 ```
-![](https://github.com/tum-lmf/breizhcrops/workflows/.github/workflows/build-package.yml/badge.svg)
 
 ### Notebooks
 

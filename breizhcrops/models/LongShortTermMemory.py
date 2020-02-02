@@ -3,9 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data
 import os
-from models.ClassificationModel import ClassificationModel
 
-class LSTM(ClassificationModel):
+class LSTM(torch.nn.Module):
     def __init__(self, input_dim=1, hidden_dims=3, nclasses=5, num_rnn_layers=1, dropout=0.2, bidirectional=False,
                  use_batchnorm=False, use_layernorm=True):
 

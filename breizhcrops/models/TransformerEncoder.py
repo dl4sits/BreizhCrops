@@ -3,12 +3,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data
 import os
-from models.ClassificationModel import ClassificationModel
-from models.transformer.Models import Encoder
+from .transformer.Models import Encoder
 
 SEQUENCE_PADDINGS_VALUE=-1
 
-class TransformerEncoder(ClassificationModel):
+class TransformerEncoder(torch.nn.Module):
     def __init__(self, in_channels=13, len_max_seq=100,
             d_word_vec=512, d_model=512, d_inner=2048,
             n_layers=6, n_head=8, d_k=64, d_v=64,

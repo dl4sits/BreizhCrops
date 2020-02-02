@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import torch.utils.data
 import os
-from models.ClassificationModel import ClassificationModel
 
 """
 Pytorch re-implementation of Pelletier et al. 2019
@@ -11,7 +10,7 @@ https://github.com/charlotte-pel/temporalCNN
 https://www.mdpi.com/2072-4292/11/5/523
 """
 
-class TempCNN(ClassificationModel):
+class TempCNN(torch.nn.Module):
     def __init__(self, input_dim, nclasses, sequence_length, kernel_size=5, hidden_dims=64, dropout=0.5):
 
         super(TempCNN, self).__init__()

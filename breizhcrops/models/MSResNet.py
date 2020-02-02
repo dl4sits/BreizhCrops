@@ -1,6 +1,5 @@
 import torch.nn as nn
 import torch.nn.functional as Functional
-from models.ClassificationModel import ClassificationModel
 import torch
 import os
 
@@ -127,7 +126,7 @@ class BasicBlock7x7(nn.Module):
 
 
 
-class MSResNet(ClassificationModel):
+class MSResNet(torch.nn.Module):
     def __init__(self, input_channel, layers=[1, 1, 1, 1], num_classes=10, hidden_dims=64):
 
         self.d_model = hidden_dims

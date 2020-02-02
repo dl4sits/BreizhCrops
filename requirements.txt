@@ -1,11 +1,10 @@
-geopandas
-numpy
-pandas
-ee
-botocore # requirement ee
-geojson
-jupyter
-matplotlib
-seaborn
-torch
-tqdm
+geopandas==0.5.0
+numpy==1.17.0
+pandas==0.24.2
+ee==0.2
+geojson==2.4.1
+jupyter==1.0.0
+matplotlib==3.1.0
+seaborn==0.9.0
+torch==1.1.0
+tqdm==4.32.2

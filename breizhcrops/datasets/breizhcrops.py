@@ -5,6 +5,8 @@ import os
 import sys
 import numpy as np
 from numpy import genfromtxt
+from tqdm import tqdm
+import urllib
 
 BANDS = ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
        'B8A', 'B9']
@@ -276,7 +278,6 @@ class DownloadProgressBar(tqdm):
         if tsize is not None:
             self.total = tsize
         self.update(b * bsize - self.n)
-
 
 def download_url(url, output_path):
     with DownloadProgressBar(unit='B', unit_scale=True,

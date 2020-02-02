@@ -23,6 +23,27 @@
 <a href=https://arxiv.org/abs/1905.11893><img height=300px src=doc/paper.png /></a>
 <a href="doc/poster.pdf"><img height=300px src=doc/poster.png /></a>
 
+### Installation
+
+from GitHub (dev branch)
+```
+pip install git+https://github.com/tum-lmf/breizhcrops@dev
+```
+
+from Sources
+```
+git clone https://github.com/tum-lmf/breizhcrops
+cd BreizhCrops
+pip install .
+```
+
+### Usage
+
+```
+from breizhcrops import BreizhCrops
+from BreizhCrops.models import TempCNN, TransformerEncoder, TempCNN, MSResNet
+```
+
 ### Notebooks
 
 `TrainEvaluateModels.ipynb` for instructions of model training and inference

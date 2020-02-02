@@ -1,18 +1,20 @@
+import os
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data
-import os
+
 from .transformer.Models import Encoder
 
-SEQUENCE_PADDINGS_VALUE=-1
+SEQUENCE_PADDINGS_VALUE = -1
+
 
 class TransformerEncoder(torch.nn.Module):
     def __init__(self, in_channels=13, len_max_seq=100,
-            d_word_vec=512, d_model=512, d_inner=2048,
-            n_layers=6, n_head=8, d_k=64, d_v=64,
-            dropout=0.2, nclasses=6):
-
+                 d_word_vec=512, d_model=512, d_inner=2048,
+                 n_layers=6, n_head=8, d_k=64, d_v=64,
+                 dropout=0.2, nclasses=6):
         super(TransformerEncoder, self).__init__()
 
         self.d_model = 512
@@ -33,12 +35,12 @@ class TransformerEncoder(torch.nn.Module):
 
     def _logits(self, x):
         # b,d,t - > b,t,d
-        x = x.transpose(1,2)
+        x = x.transpose(1, 2)
 
         x = self.inlayernorm(x)
 
         # b,
-        x = self.inconv(x.transpose(1,2)).transpose(1,2)
+        x = self.inconv(x.transpose(1, 2)).transpose(1, 2)
 
         x = self.convlayernorm(x)
 
@@ -52,12 +54,11 @@ class TransformerEncoder(torch.nn.Module):
 
         enc_output = self.outlayernorm(enc_output)
 
-        logits = self.outlinear(enc_output)[:,-1,:]
+        logits = self.outlinear(enc_output)[:, -1, :]
 
         return logits
 
     def forward(self, x):
-
         logits = self._logits(x)
 
         logprobabilities = F.log_softmax(logits, dim=-1)
@@ -65,15 +66,14 @@ class TransformerEncoder(torch.nn.Module):
         return logprobabilities
 
     def save(self, path="model.pth", **kwargs):
-        print("\nsaving model to "+path)
+        print("\nsaving model to " + path)
         model_state = self.state_dict()
         os.makedirs(os.path.dirname(path), exist_ok=True)
-        torch.save(dict(model_state=model_state,**kwargs),path)
+        torch.save(dict(model_state=model_state, **kwargs), path)
 
     def load(self, path):
-        print("loading model from "+path)
+        print("loading model from " + path)
         snapshot = torch.load(path, map_location="cpu")
         model_state = snapshot.pop('model_state', snapshot)
         self.load_state_dict(model_state)
         return snapshot
-

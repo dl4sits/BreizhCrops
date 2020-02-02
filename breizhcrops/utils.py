@@ -1,8 +1,10 @@
-from tqdm import tqdm
+import os
+import sys
 import urllib
 import zipfile
-import sys
-import os
+
+from tqdm import tqdm
+
 
 def update_progress(progress):
     barLength = 20  # Modify this to change the length of the progress bar

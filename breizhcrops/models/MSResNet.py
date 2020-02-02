@@ -1,26 +1,29 @@
+import os
+
+import torch
 import torch.nn as nn
 import torch.nn.functional as Functional
-import torch
-import os
 
 """
 from
 https://github.com/geekfeiw/Multi-Scale-1D-ResNet/blob/master/model/multi_scale_ori.py
 """
 
+
 def conv3x3(in_planes, out_planes, stride=1):
     """3x3 convolution with padding"""
     return nn.Conv1d(in_planes, out_planes, kernel_size=3, stride=stride,
                      padding=1, bias=False)
 
+
 def conv5x5(in_planes, out_planes, stride=1):
     return nn.Conv1d(in_planes, out_planes, kernel_size=5, stride=stride,
                      padding=1, bias=False)
 
+
 def conv7x7(in_planes, out_planes, stride=1):
     return nn.Conv1d(in_planes, out_planes, kernel_size=7, stride=stride,
                      padding=1, bias=False)
-
 
 
 class BasicBlock3x3(nn.Module):
@@ -82,12 +85,11 @@ class BasicBlock5x5(nn.Module):
             residual = self.downsample(x)
 
         d = residual.shape[2] - out.shape[2]
-        out1 = residual[:,:,0:-d] + out
+        out1 = residual[:, :, 0:-d] + out
         out1 = self.relu(out1)
         # out += residual
 
         return out1
-
 
 
 class BasicBlock7x7(nn.Module):
@@ -124,8 +126,6 @@ class BasicBlock7x7(nn.Module):
         return out1
 
 
-
-
 class MSResNet(torch.nn.Module):
     def __init__(self, input_channel, layers=[1, 1, 1, 1], num_classes=10, hidden_dims=64):
 
@@ -133,7 +133,7 @@ class MSResNet(torch.nn.Module):
         self.inplanes3 = hidden_dims
         self.inplanes5 = hidden_dims
         self.inplanes7 = hidden_dims
-        stride=2
+        stride = 2
 
         super(MSResNet, self).__init__()
 
@@ -143,29 +143,27 @@ class MSResNet(torch.nn.Module):
         self.maxpool = nn.MaxPool1d(kernel_size=3, stride=2, padding=1)
 
         self.layer3x3_1 = self._make_layer3(BasicBlock3x3, hidden_dims, layers[0], stride=stride)
-        self.layer3x3_2 = self._make_layer3(BasicBlock3x3, 2*hidden_dims, layers[1], stride=stride)
-        self.layer3x3_3 = self._make_layer3(BasicBlock3x3, 4*hidden_dims, layers[2], stride=stride)
+        self.layer3x3_2 = self._make_layer3(BasicBlock3x3, 2 * hidden_dims, layers[1], stride=stride)
+        self.layer3x3_3 = self._make_layer3(BasicBlock3x3, 4 * hidden_dims, layers[2], stride=stride)
         # self.layer3x3_4 = self._make_layer3(BasicBlock3x3, 512, layers[3], stride=2)
 
         # maxplooing kernel size: 16, 11, 6
         self.maxpool3 = nn.AvgPool1d(kernel_size=16, stride=1, padding=0)
 
-
         self.layer5x5_1 = self._make_layer5(BasicBlock5x5, hidden_dims, layers[0], stride=stride)
-        self.layer5x5_2 = self._make_layer5(BasicBlock5x5, 2*hidden_dims, layers[1], stride=stride)
-        self.layer5x5_3 = self._make_layer5(BasicBlock5x5, 4*hidden_dims, layers[2], stride=stride)
+        self.layer5x5_2 = self._make_layer5(BasicBlock5x5, 2 * hidden_dims, layers[1], stride=stride)
+        self.layer5x5_3 = self._make_layer5(BasicBlock5x5, 4 * hidden_dims, layers[2], stride=stride)
         # self.layer5x5_4 = self._make_layer5(BasicBlock5x5, 512, layers[3], stride=2)
         self.maxpool5 = nn.AvgPool1d(kernel_size=11, stride=1, padding=0)
 
-
         self.layer7x7_1 = self._make_layer7(BasicBlock7x7, hidden_dims, layers[0], stride=2)
-        self.layer7x7_2 = self._make_layer7(BasicBlock7x7, 2*hidden_dims, layers[1], stride=2)
-        self.layer7x7_3 = self._make_layer7(BasicBlock7x7, 4*hidden_dims, layers[2], stride=2)
+        self.layer7x7_2 = self._make_layer7(BasicBlock7x7, 2 * hidden_dims, layers[1], stride=2)
+        self.layer7x7_3 = self._make_layer7(BasicBlock7x7, 4 * hidden_dims, layers[2], stride=2)
         # self.layer7x7_4 = self._make_layer7(BasicBlock7x7, 512, layers[3], stride=2)
         self.maxpool7 = nn.AvgPool1d(kernel_size=6, stride=1, padding=0)
 
         # self.drop = nn.Dropout(p=0.2)
-        self.fc = nn.Linear(4*hidden_dims*3, num_classes)
+        self.fc = nn.Linear(4 * hidden_dims * 3, num_classes)
 
         # todo: modify the initialization
         # for m in self.modules():
@@ -209,7 +207,6 @@ class MSResNet(torch.nn.Module):
             layers.append(block(self.inplanes5, planes))
 
         return nn.Sequential(*layers)
-
 
     def _make_layer7(self, block, planes, blocks, stride=2):
         downsample = None
@@ -270,21 +267,14 @@ class MSResNet(torch.nn.Module):
         return logprobabilities
 
     def save(self, path="model.pth", **kwargs):
-        print("\nsaving model to "+path)
+        print("\nsaving model to " + path)
         model_state = self.state_dict()
         os.makedirs(os.path.dirname(path), exist_ok=True)
-        torch.save(dict(model_state=model_state,**kwargs),path)
+        torch.save(dict(model_state=model_state, **kwargs), path)
 
     def load(self, path):
-        print("loading model from "+path)
+        print("loading model from " + path)
         snapshot = torch.load(path, map_location="cpu")
         model_state = snapshot.pop('model_state', snapshot)
         self.load_state_dict(model_state)
         return snapshot
-
-
-
-
-
-
-

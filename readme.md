@@ -51,6 +51,7 @@ Simply initialize the Dataset
 ```
 BreizhCrops(region="frh01")
 ```
+![](https://github.com/tum-lmf/breizhcrops/workflows/.github/workflows/build-package.yml/badge.svg)
 
 ### Notebooks
 

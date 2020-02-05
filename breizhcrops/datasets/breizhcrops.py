@@ -18,7 +18,7 @@ PADDING_VALUE = -1
 FRH01URL = "https://syncandshare.lrz.de/dl/fiA33ywfHQdzbxXwYQ5zLVpp/frh01.zip"
 FRH02URL = "https://syncandshare.lrz.de/dl/fi2pg7sXMjTQRSzrWxRdGLux/frh02.zip"
 FRH03URL = "https://syncandshare.lrz.de/dl/fiFbj4sqWYzd4kmcEThTJzYC/frh03.zip"
-FRH04URL = None  # TODO fix
+FRH04URL = "https://syncandshare.lrz.de/dl/fi6rE9rgVyPqS5T5yN6Fccv5/frh04.zip"
 
 FRH01_IDS_URL = "https://syncandshare.lrz.de/dl/fiHbqfHQpyf2UnsoJw1HRYpD/frh01.txt",
 FRH02_IDS_URL = "https://syncandshare.lrz.de/dl/fiTeaWJTvL62dQbLxrjH9kmM/frh02.txt",

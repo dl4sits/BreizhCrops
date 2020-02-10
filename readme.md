@@ -30,7 +30,7 @@
 
 from GitHub (dev branch)
 ```
-pip install git+https://github.com/tum-lmf/breizhcrops@dev
+pip install git+https://github.com/tum-lmf/breizhcrops
 ```
 
 from Sources
@@ -44,7 +44,7 @@ pip install .
 
 ```
 from breizhcrops import BreizhCrops
-from BreizhCrops.models import TempCNN, TransformerEncoder, TempCNN, MSResNet
+from breizhcrops.models import TempCNN, TransformerEncoder, TempCNN, MSResNet
 ```
 
 ### Download Dataset

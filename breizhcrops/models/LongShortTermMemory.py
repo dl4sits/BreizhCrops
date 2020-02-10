@@ -6,45 +6,37 @@ import os
 
 
 class LSTM(torch.nn.Module):
-    def __init__(self, input_dim=1, hidden_dims=3, nclasses=5, num_rnn_layers=1, dropout=0.2, bidirectional=False,
-                 use_batchnorm=False, use_layernorm=True):
+    def __init__(self, input_dim=1, hidden_dims=3, num_classes=5, num_layers=1, dropout=0.2, bidirectional=False,use_layernorm=True):
+        self.modelname = f"LSTM_input-dim={input_dim}_num-classes={num_classes}_hidden-dims={hidden_dims}_" \
+                         f"num-layers={num_layers}_bidirectional={bidirectional}_use-layernorm={use_layernorm}" \
+                         f"_dropout={dropout}"
 
         super(LSTM, self).__init__()
 
-        self.nclasses = nclasses
-        self.use_batchnorm = use_batchnorm
+        self.num_classes = num_classes
         self.use_layernorm = use_layernorm
 
-        self.d_model = num_rnn_layers * hidden_dims
+        self.d_model = num_layers * hidden_dims
 
         if use_layernorm:
             self.inlayernorm = nn.LayerNorm(input_dim)
-            self.clayernorm = nn.LayerNorm((hidden_dims + hidden_dims * bidirectional) * num_rnn_layers)
+            self.clayernorm = nn.LayerNorm((hidden_dims + hidden_dims * bidirectional) * num_layers)
 
-        self.lstm = nn.LSTM(input_size=input_dim, hidden_size=hidden_dims, num_layers=num_rnn_layers,
+        self.lstm = nn.LSTM(input_size=input_dim, hidden_size=hidden_dims, num_layers=num_layers,
                             bias=False, batch_first=True, dropout=dropout, bidirectional=bidirectional)
 
         if bidirectional:
             hidden_dims = hidden_dims * 2
 
-        self.linear_class = nn.Linear(hidden_dims * num_rnn_layers, nclasses, bias=True)
+        self.linear_class = nn.Linear(hidden_dims * num_layers, num_classes, bias=True)
 
-        if use_batchnorm:
-            self.bn = nn.BatchNorm1d(hidden_dims)
 
-    def _logits(self, x):
-
-        x = x.transpose(1, 2)
+    def logits(self, x):
 
         if self.use_layernorm:
             x = self.inlayernorm(x)
 
         outputs, last_state_list = self.lstm.forward(x)
-
-        if self.use_batchnorm:
-            b, t, d = outputs.shape
-            o_ = outputs.view(b, -1, d).permute(0, 2, 1)
-            outputs = self.bn(o_).permute(0, 2, 1).view(b, t, d)
 
         h, c = last_state_list
 
@@ -55,10 +47,7 @@ class LSTM(torch.nn.Module):
         return logits
 
     def forward(self, x):
-        logits = self._logits(x)
-
-        logprobabilities = F.log_softmax(logits, dim=-1)
-        # stack the lists to new tensor (b,d,t,h,w)
+        logprobabilities = F.log_softmax(self.logits(x), dim=-1)
         return logprobabilities
 
     def save(self, path="model.pth", **kwargs):

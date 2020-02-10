@@ -127,7 +127,8 @@ class BasicBlock7x7(nn.Module):
 
 
 class MSResNet(torch.nn.Module):
-    def __init__(self, input_channel, layers=[1, 1, 1, 1], num_classes=10, hidden_dims=64):
+    def __init__(self, input_dim, layers=[1, 1, 1, 1], num_classes=10, hidden_dims=64):
+        self.modelname = f"MSResNet_input-dim={input_dim}_num-classes={num_classes}_hidden-dims={hidden_dims}"
 
         self.d_model = hidden_dims
         self.inplanes3 = hidden_dims
@@ -137,7 +138,7 @@ class MSResNet(torch.nn.Module):
 
         super(MSResNet, self).__init__()
 
-        self.conv1 = nn.Conv1d(input_channel, hidden_dims, kernel_size=7, stride=2, padding=3, bias=False)
+        self.conv1 = nn.Conv1d(input_dim, hidden_dims, kernel_size=7, stride=2, padding=3, bias=False)
         self.bn1 = nn.BatchNorm1d(hidden_dims)
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool1d(kernel_size=3, stride=2, padding=1)
@@ -226,6 +227,8 @@ class MSResNet(torch.nn.Module):
         return nn.Sequential(*layers)
 
     def _logits(self, x0):
+        # require NxTxD format
+        x0 = x0.transpose(1,2)
         x0 = torch.nn.functional.interpolate(x0, size=512)
 
         x0 = self.conv1(x0)

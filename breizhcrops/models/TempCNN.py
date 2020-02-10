@@ -13,11 +13,12 @@ https://www.mdpi.com/2072-4292/11/5/523
 
 
 class TempCNN(torch.nn.Module):
-    def __init__(self, input_dim, nclasses, sequence_length, kernel_size=5, hidden_dims=64, dropout=0.5):
+    def __init__(self, input_dim, num_classes, sequencelength, kernel_size=5, hidden_dims=64, dropout=0.5):
         super(TempCNN, self).__init__()
+        self.modelname = f"TempCNN_input-dim={input_dim}_num-classes={num_classes}_sequencelenght={sequencelength}_" \
+                         f"kernelsize={kernel_size}_hidden-dims={hidden_dims}_dropout={dropout}"
 
         self.hidden_dims = hidden_dims
-        self.sequence_length = sequence_length
 
         self.conv_bn_relu1 = Conv1D_BatchNorm_Relu_Dropout(input_dim, hidden_dims, kernel_size=kernel_size,
                                                            drop_probability=dropout)
@@ -26,10 +27,12 @@ class TempCNN(torch.nn.Module):
         self.conv_bn_relu3 = Conv1D_BatchNorm_Relu_Dropout(hidden_dims, hidden_dims, kernel_size=kernel_size,
                                                            drop_probability=dropout)
         self.flatten = Flatten()
-        self.dense = FC_BatchNorm_Relu_Dropout(hidden_dims * sequence_length, 4 * hidden_dims, drop_probability=dropout)
-        self.logsoftmax = nn.Sequential(nn.Linear(4 * hidden_dims, nclasses), nn.LogSoftmax(dim=-1))
+        self.dense = FC_BatchNorm_Relu_Dropout(hidden_dims * sequencelength, 4 * hidden_dims, drop_probability=dropout)
+        self.logsoftmax = nn.Sequential(nn.Linear(4 * hidden_dims, num_classes), nn.LogSoftmax(dim=-1))
 
     def forward(self, x):
+        # require NxTxD
+        x = x.transpose(1,2)
         x = self.conv_bn_relu1(x)
         x = self.conv_bn_relu2(x)
         x = self.conv_bn_relu3(x)

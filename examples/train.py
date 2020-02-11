@@ -51,9 +51,6 @@ def train(args):
 
     frh04 = breizhcrops.BreizhCrops(region="frh04", root=datapath, transform=transform,
                                     target_transform=target_transform, padding_value=padded_value)
-
-    gdf = frh04.geodataframe()
-
     frh01 = breizhcrops.BreizhCrops(region="frh01", root=datapath, transform=transform,
                                     target_transform=target_transform, padding_value=padded_value)
     frh02 = breizhcrops.BreizhCrops(region="frh02", root=datapath, transform=transform,

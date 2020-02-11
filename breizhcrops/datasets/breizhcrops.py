@@ -18,7 +18,6 @@ FRH02_IDS_URL = "https://syncandshare.lrz.de/dl/fiTeaWJTvL62dQbLxrjH9kmM/frh02.t
 FRH03_IDS_URL = "https://syncandshare.lrz.de/dl/fiUE2J3DW6MR6NNRijaswMuS/frh03.txt"
 FRH04_IDS_URL = "https://syncandshare.lrz.de/dl/fiBUWMD2TTRsHcLzmKYnkFPi/frh04.txt"
 
-
 FRH01_IDX_URL = "https://syncandshare.lrz.de/dl/fiE7ExSPEF5j1LHADGZ1GcAV/frh01.csv"
 FRH02_IDX_URL = "https://syncandshare.lrz.de/dl/fiEutoBWs3JFjCfJpoLWq5HF/frh02.csv"
 FRH03_IDX_URL = "https://syncandshare.lrz.de/dl/fiJL3LMrzYwmULbvzFiyVZuY/frh03.csv"
@@ -29,12 +28,13 @@ FRH02_SHP_URL = "https://syncandshare.lrz.de/dl/fi8L5iwpJXs2b9hKEFjQoML5/frh02.t
 FRH03_SHP_URL = "https://syncandshare.lrz.de/dl/fiTdWAa8b9K4XVmrBbZ6413i/frh03.tar.gz"
 FRH04_SHP_URL = "https://syncandshare.lrz.de/dl/fiKfoL1VW9jiDXPgnVXu7ZFK/frh04.tar.gz"
 
-FRH01_NPZ_URL = ""
-FRH02_NPZ_URL = ""
-FRH03_NPZ_URL = ""
-FRH04_NPZ_URL = ""
+FRH01_NPZ_URL = "https://syncandshare.lrz.de/dl/fiAMZX6kN6SfwEJKmznqtgAd/frh01.npz"
+FRH02_NPZ_URL = "https://syncandshare.lrz.de/dl/fi8LqK94Kew7fzBkG5SPQ3Cx/frh02.npz"
+FRH03_NPZ_URL = "https://syncandshare.lrz.de/dl/fiTMHJAKvU8b5PazC1HJSuF9/frh03.npz"
+FRH04_NPZ_URL = "https://syncandshare.lrz.de/dl/fi337Bzz6xbUGRM9AwT7q1up/frh04.npz"
 
 CLASSMAPPINGURL = "https://syncandshare.lrz.de/dl/fiWcv23b3PxswYZFh2htEpSs/classmapping.csv"
+CODESURL = "https://syncandshare.lrz.de/dl/fiFVnHYsEsix7HTGYRh6Zh3/codes.csv"
 
 class BreizhCrops(Dataset):
 
@@ -74,8 +74,14 @@ class BreizhCrops(Dataset):
         if load_timeseries:
             self.load_timeseries()
 
+        self.get_codes()
+
     def load_timeseries(self):
         cachefile = os.path.join(self.root,f"{self.region}.npz")
+
+        if not os.path.exists(cachefile):
+            download_file(get_npz_url(self.region),cachefile)
+
         if self.verbose:
             print(f"loading data from {cachefile}")
         self.X, self.y, self.id = self.load_cache(cachefile)
@@ -86,8 +92,22 @@ class BreizhCrops(Dataset):
     def get_fid(self,idx):
         return self.index[self.index["idx"] == idx].index[0]
 
-    def geodataframe(self, download=False):
+    def get_codes(self):
+        codesfile = os.path.join(self.root,"codes.csv")
+        if not os.path.exists(codesfile):
+            download_file(CODESURL, codesfile)
+        return pd.read_csv(codesfile,delimiter=";",index_col=0)
+
+    def geodataframe(self):
         shapefile = os.path.join(self.root,"shp",f"{self.region}.shp")
+
+        if not os.path.exists(shapefile):
+            targzfile = os.path.join(os.path.dirname(shapefile),self.region+".tar,gz")
+            download_file(get_shp_url(self.region), targzfile)
+            import tarfile
+            with tarfile.open(targzfile) as tar:
+                tar.extractall()
+
         geom = gpd.read_file(shapefile).set_index("ID")
         geom.index.name = "id"
 
@@ -220,6 +240,32 @@ def get_idx_url(region):
         url = FRH03_IDX_URL
     elif region == "frh04":
         url = FRH04_IDX_URL
+    else:
+        raise ValueError(f"region {region} not in ['frh01','frh02','frh03','frh03']")
+    return url
+
+def get_shp_url(region):
+    if region == "frh01":
+        url = FRH01_SHP_URL
+    elif region == "frh02":
+        url = FRH02_SHP_URL
+    elif region == "frh03":
+        url = FRH03_SHP_URL
+    elif region == "frh04":
+        url = FRH04_SHP_URL
+    else:
+        raise ValueError(f"region {region} not in ['frh01','frh02','frh03','frh03']")
+    return url
+
+def get_npz_url(region):
+    if region == "frh01":
+        url = FRH01_NPZ_URL
+    elif region == "frh02":
+        url = FRH02_NPZ_URL
+    elif region == "frh03":
+        url = FRH03_NPZ_URL
+    elif region == "frh04":
+        url = FRH04_NPZ_URL
     else:
         raise ValueError(f"region {region} not in ['frh01','frh02','frh03','frh03']")
     return url

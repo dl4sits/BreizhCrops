@@ -28,12 +28,19 @@
 
 ### Installation
 
-from GitHub (dev branch)
+#### Anaconda Environment Setup
+
+```
+conda create -n breizhcrops python=3.8 pip
+conda activate breizhcrops 
+```
+
+intall from GitHub
 ```
 pip install git+https://github.com/tum-lmf/breizhcrops
 ```
 
-from Sources
+install from sources
 ```
 git clone https://github.com/tum-lmf/breizhcrops
 cd BreizhCrops
@@ -44,7 +51,7 @@ pip install .
 
 ```
 from breizhcrops import BreizhCrops
-from breizhcrops.models import TempCNN, TransformerEncoder, TempCNN, MSResNet
+from breizhcrops.models import LSTM, TransformerEncoder, TempCNN, MSResNet
 ```
 
 ### Download Dataset
@@ -52,44 +59,14 @@ from breizhcrops.models import TempCNN, TransformerEncoder, TempCNN, MSResNet
 Simply initialize the Dataset
 
 ```
-BreizhCrops(region="frh01")
+BreizhCrops(root="data",region="frh01")
 ```
-
-### Notebooks
-
-`TrainEvaluateModels.ipynb` for instructions of model training and inference
-
-`BreizhCrops.ipynb` for additional information on the raw data
-
-
-### Sentinel 2 Time Series of Field Crop Parcels
-
-Time series example of meadows
-
-<img src=doc/exampletop.png>
-
-Time series example of corn
-
-<img src=doc/examplebottom.png>
 
 ## Organization in NUTS Administrative Regions
 
 <img width=54% src=doc/BrittanyParcels.png>
 <img width=45% src=doc/regions.png>
 
-### Download Data and Models
-
-Download the data in csv files and cached numpy arrays (~14GB)
-```
-cd data
-bash download.sh
-```
-
-Download pre-trained models (22mb)
-```
-cd models
-bash download.sh
-```
 
 ### Data organization
 
@@ -104,7 +81,7 @@ data/csv/frh0{1,2,3,4}/*.csv
 data/ids/frh0{1,2,3,4}.txt
 
 # cached numpy arrays for faster data loading
-data/csv/frh0{1,2,3,4}/*.npy
+data/frh0{1,2,3,4}/*.npz
 
 # raw shapefile geometries with labels
 data/shp/*
@@ -122,12 +99,4 @@ pip install -r requirements.txt
 
 ```
 python src/query_gee.py data/shp/raw/frh01.shp --start 2017-01-01 --end 2017-12-31 --label-col CODE_CULTU --id-col ID --outfolder data/csv/frh01
-```
-
-#### Data Management
-
-```
-python write_annotated_shp.py
-python write_classmapping.py
-python write_tileids.py
 ```

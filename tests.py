@@ -1,4 +1,5 @@
 from breizhcrops.models import TempCNN, LSTM, TransformerEncoder, MSResNet
+from breizhcrops import BreizhCrops
 
 def test_initTempCNN():
     assert isinstance(TempCNN(input_dim=13, num_classes=10, sequencelength=50), TempCNN)
@@ -15,3 +16,19 @@ def test_initTransformerEncoder():
 
 def test_initMSResNet():
     assert isinstance(MSResNet(input_dim=13), MSResNet)
+
+def test_init_breizhcrops():
+    datapath = "/tmp"
+    transform = None
+    target_transform = None
+
+    BreizhCrops(region="frh04", root=datapath, load_timeseries=False)
+    BreizhCrops(region="frh01", root=datapath, load_timeseries=False)
+    BreizhCrops(region="frh02", root=datapath, load_timeseries=False)
+    BreizhCrops(region="frh03", root=datapath, load_timeseries=False)
+    
+def test_load_classmapping_breizhcrops():
+    BreizhCrops(region="frh04", root="/tmp", load_timeseries=False).load_classmapping(None)
+
+def test_load_classmapping_breizhcrops():
+    BreizhCrops(region="frh04", root="/tmp", load_timeseries=False).get_codes()

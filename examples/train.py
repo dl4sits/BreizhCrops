@@ -47,59 +47,66 @@ def train(args):
         y = frh01.mapping.loc[y].id
         return torch.tensor(y, dtype=torch.long, device=device)
 
-    datapath = "../data" # "/data2/Breizhcrops"
+    print(f"Setting up datasets in {args.datapath}")
+    datapath = args.datapath
 
-    frh04 = breizhcrops.BreizhCrops(region="frh04", root=datapath, transform=transform,
-                                    target_transform=target_transform, padding_value=padded_value)
     frh01 = breizhcrops.BreizhCrops(region="frh01", root=datapath, transform=transform,
                                     target_transform=target_transform, padding_value=padded_value)
     frh02 = breizhcrops.BreizhCrops(region="frh02", root=datapath, transform=transform,
                                     target_transform=target_transform, padding_value=padded_value)
     frh03 = breizhcrops.BreizhCrops(region="frh03", root=datapath, transform=transform,
                                     target_transform=target_transform, padding_value=padded_value)
+    if args.mode == "evaluation":
+        frh04 = breizhcrops.BreizhCrops(region="frh04", root=datapath, transform=transform,
+                                        target_transform=target_transform, padding_value=padded_value)
+        traindatasets = torch.utils.data.ConcatDataset([frh01, frh02, frh03])
+        testdataset = frh04
+    elif args.mode == "validation":
+        traindatasets = torch.utils.data.ConcatDataset([frh01, frh02])
+        testdataset = frh03
+    else:
+        raise ValueError("only --mode 'validation' or 'evaluation' allowed")
 
-
-    frh01frh02 = torch.utils.data.ConcatDataset([frh01,frh02])
-    traindataloader = DataLoader(frh01frh02, batch_size=args.batchsize, shuffle=False, num_workers=args.workers)
-    valdataloader = DataLoader(frh03, batch_size=args.batchsize, shuffle=False, num_workers=args.workers)
-    testdataloader = DataLoader(frh04, batch_size=args.batchsize, shuffle=False, num_workers=args.workers)
+    traindataloader = DataLoader(traindatasets, batch_size=args.batchsize, shuffle=True, num_workers=args.workers)
+    testdataloader = DataLoader(testdataset, batch_size=args.batchsize, shuffle=False, num_workers=args.workers)
 
     num_classes = len(frh01.classes)
     ndims = len(selected_bands)
 
+    print(f"Logging results to {args.logdir}")
     logdir=args.logdir
 
     device = torch.device(args.device)
 
     if args.model == "LSTM":
-        model = LSTM(input_dim=ndims, num_classes=num_classes).to(device)
+        model = LSTM(input_dim=ndims, num_classes=num_classes, **args.hyperparameter).to(device)
     elif args.model == "MSResNet":
-        model = MSResNet(input_dim=ndims, num_classes=num_classes).to(device)
+        model = MSResNet(input_dim=ndims, num_classes=num_classes, **args.hyperparameter).to(device)
     elif args.model == "TransformerEncoder":
-        model = TransformerEncoder(input_dim=ndims, num_classes=num_classes, len_max_seq=sequencelength).to(device)
+        model = TransformerEncoder(input_dim=ndims, num_classes=num_classes, len_max_seq=sequencelength, **args.hyperparameter).to(device)
     elif args.model == "TempCNN":
-        model = TempCNN(input_dim=ndims, num_classes=num_classes, sequencelength=sequencelength).to(device)
+        model = TempCNN(input_dim=ndims, num_classes=num_classes, sequencelength=sequencelength, **args.hyperparameter).to(device)
     else:
         raise ValueError("invalid model argument. choose from 'LSTM','MSResNet','TransformerEncoder', or 'TempCNN'")
     print(f"Initialized {model.modelname}")
 
-    optimizer = Adam(model.parameters(),lr=1e-2, weight_decay=1e-6)
+    optimizer = Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
 
     criterion = torch.nn.CrossEntropyLoss(reduction="mean")
 
     log = list()
     for epoch in range(args.epochs):
         train_loss = train_epoch(model, optimizer, criterion, traindataloader)
-        val_loss, y_true, y_pred = test_epoch(model, criterion, valdataloader)
+        test_loss, y_true, y_pred = test_epoch(model, criterion, testdataloader)
         scores = metrics(y_true.cpu(), y_pred.cpu())
         scores_msg = ", ".join([f"{k}={v:.2f}" for (k,v) in scores.items()])
-        val_loss = val_loss.cpu().detach().numpy()[0]
+        test_loss = test_loss.cpu().detach().numpy()[0]
         train_loss = train_loss.cpu().detach().numpy()[0]
-        print(f"epoch {epoch}: trainloss {train_loss:.2f}, valloss {val_loss:.2f} " + scores_msg)
+        print(f"epoch {epoch}: trainloss {train_loss:.2f}, testloss {test_loss:.2f} " + scores_msg)
 
         scores["epoch"] = epoch
         scores["trainloss"] = train_loss
-        scores["valloss"] = val_loss
+        scores["testloss"] = test_loss
         log.append(scores)
 
     log = pd.DataFrame(scores).set_index("epoch")
@@ -168,29 +175,53 @@ def test_epoch(model, criterion, dataloader):
         return torch.stack(losses), torch.cat(y_true_list), torch.cat(y_pred_list)
 
 def parse_args():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description='Train an evaluate time series deep learning models on the'
+                                                 'BreizhCrops dataset. This script trains a model on training dataset'
+                                                 'partition, evaluates performance on a validation or evaluation partition'
+                                                 'and stores progress and model paths in --logdir')
     parser.add_argument(
-        'model', type=str, default="LSTM", help='select model "LSTM"')
+        'model', type=str, default="LSTM", help='select model architecture. Available models are '
+                                                '"LSTM","TempCNN","MSRestNet","TransformerEncoder"')
     parser.add_argument(
-        '-b', '--batchsize', type=int, default=256, help='batch size')
+        '-b', '--batchsize', type=int, default=256, help='batch size (number of time series processed simultaneously)')
     parser.add_argument(
-        '-e', '--epochs', type=int, default=150, help='number of training epochs')
+        '-e', '--epochs', type=int, default=150, help='number of training epochs (training on entire dataset)')
+    parser.add_argument(
+        '-m', '--mode', type=str, default="validation", help='training mode. Either "validation" '
+                                                               '(train on FRH01+FRH02 test on FRH03) or '
+                                                               '"evaluation" (train on FRH01+FRH02+FRH03 test on FRH04)')
+    parser.add_argument(
+        '-D', '--datapath', type=str, default="../data", help='directory to download and store the dataset')
     parser.add_argument(
         '-w', '--workers', type=int, default=0, help='number of CPU workers to load the next batch')
+    parser.add_argument(
+        '-H', '--hyperparameter', type=str, default=None, help='model specific hyperparameter as single string, '
+                                                               'separated by comma of format param1=value1,param2=value2')
+    parser.add_argument(
+        '--weight-decay', type=float, default=1e-6, help='optimizer weight_decay (default 1e-6)')
+    parser.add_argument(
+        '--learning-rate', type=float, default=1e-2, help='optimizer learning rate (default 1e-2)')
     parser.add_argument(
         '-d', '--device', type=str, default=None, help='torch.Device. either "cpu" or "cuda". '
                                                        'default will check by torch.cuda.is_available() ')
     parser.add_argument(
-        '-l', '--logdir', type=str, default="/tmp", help='logdir for progress and models')
+        '-l', '--logdir', type=str, default="/tmp", help='logdir to store progress and models (defaults to /tmp)')
     args, _ = parser.parse_known_args()
+
+    hyperparameter_dict = dict()
+    if args.hyperparameter is not None:
+        for hyperparameter_string in args.hyperparameter.split(","):
+            param, value = hyperparameter_string.split("=")
+            hyperparameter_dict[param] = float(value) if '.' in value else int(value)
+    args.hyperparameter = hyperparameter_dict
+
+    if args.device is None:
+        args.device = "cuda" if torch.cuda.is_available() else "cpu"
 
     return args
 
 if __name__=="__main__":
 
     args = parse_args()
-
-    if args.device is None:
-        args.device = "cuda" if torch.cuda.is_available() else "cpu"
 
     train(args)

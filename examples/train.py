@@ -47,8 +47,8 @@ def train(args):
         y = frh01.mapping.loc[y].id
         return torch.tensor(y, dtype=torch.long, device=device)
 
-    print(f"Setting up datasets in {args.datapath}")
-    datapath = args.datapath
+    print(f"Setting up datasets in {os.path.abspath(args.datapath)}")
+    datapath = os.path.abspath(args.datapath)
 
     frh01 = breizhcrops.BreizhCrops(region="frh01", root=datapath, transform=transform,
                                     target_transform=target_transform, padding_value=padded_value)
@@ -88,9 +88,10 @@ def train(args):
         model = TempCNN(input_dim=ndims, num_classes=num_classes, sequencelength=sequencelength, **args.hyperparameter).to(device)
     else:
         raise ValueError("invalid model argument. choose from 'LSTM','MSResNet','TransformerEncoder', or 'TempCNN'")
-    print(f"Initialized {model.modelname}")
 
     optimizer = Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
+    model.modelname += f"_learning-rate={args.learning_rate}_weight-decay={args.weight_decay}"
+    print(f"Initialized {model.modelname}")
 
     criterion = torch.nn.CrossEntropyLoss(reduction="mean")
 

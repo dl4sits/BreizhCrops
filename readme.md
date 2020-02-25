@@ -3,7 +3,6 @@
 
 ![](https://github.com/tum-lmf/breizhcrops/workflows/build-package/badge.svg)
 
-
 [Paper](https://arxiv.org/abs/1905.11893) presented at the [ICML 2019 Time Series workshop, Long Beach, USA](http://roseyu.com/time-series-workshop/)
 ```
 @article{russwurm2019:BreizhCrops,
@@ -26,13 +25,22 @@
 <a href=https://arxiv.org/abs/1905.11893><img height=300px src=doc/paper.png /></a>
 <a href="doc/poster.pdf"><img height=300px src=doc/poster.png /></a>
 
+### Model implementations and Acknowledgements
+
+The model implementations from this repository are based on the following papers and github repositories.
+
+* TempCNN (reimplementation from [keras source code](https://github.com/charlotte-pel/igarss2019-dl4sits) ) [Pelletier et al., 2019](https://www.mdpi.com/2072-4292/11/5/523)
+* RNN [Rußwurm & Körner, 2017](http://openaccess.thecvf.com/content_cvpr_2017_workshops/w18/html/Russwurm_Temporal_Vegetation_Modelling_CVPR_2017_paper.html)
+* MS-ResNet implementation from [Fei Wang](https://github.com/geekfeiw/Multi-Scale-1D-ResNet)
+* TransformerEncoder implementation from Yu-Hsiang Huang [GitHub](https://github.com/jadore801120/attention-is-all-you-need-pytorch)
+
 ### Installation
 
 #### Anaconda Environment Setup
 
 ```
 conda create -n breizhcrops python=3.8 pip
-conda activate breizhcrops 
+conda activate breizhcrops
 ```
 
 intall from GitHub

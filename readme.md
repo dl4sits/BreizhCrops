@@ -62,6 +62,13 @@ from breizhcrops import BreizhCrops
 from breizhcrops.models import LSTM, TransformerEncoder, TempCNN, MSResNet
 ```
 
+### Train models
+
+```
+cd examples
+python train.py TempCNN --epochs 1 --logdir /tmp --hyperparameter "kernel_size=5,hidden_dims=64,dropout=0.5"
+```
+
 ### Download Dataset
 
 Simply initialize the Dataset

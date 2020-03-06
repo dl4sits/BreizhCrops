@@ -110,7 +110,7 @@ def train(args):
         scores["testloss"] = test_loss
         log.append(scores)
 
-    log = pd.DataFrame(scores).set_index("epoch")
+    log = pd.DataFrame(log).set_index("epoch")
     log.to_csv(os.path.join(logdir,"trainlog.csv"))
 
     test_loss, y_true, y_pred = test_epoch(model, criterion, testdataloader)
@@ -146,7 +146,7 @@ def metrics(y_true, y_pred):
 def train_epoch(model, optimizer, criterion, dataloader):
     model.train()
     losses = list()
-    with tqdm(enumerate(dataloader), total=len(dataloader)) as iterator:
+    with tqdm(enumerate(dataloader), total=len(dataloader), leave=True) as iterator:
         for idx, batch in iterator:
             optimizer.zero_grad()
             x, y_true = batch
@@ -163,7 +163,7 @@ def test_epoch(model, criterion, dataloader):
         losses = list()
         y_true_list = list()
         y_pred_list = list()
-        with tqdm(enumerate(dataloader), total=len(dataloader)) as iterator:
+        with tqdm(enumerate(dataloader), total=len(dataloader), leave=True) as iterator:
             for idx, batch in iterator:
                 x, y_true = batch
                 logprobabilities = model.forward(x)

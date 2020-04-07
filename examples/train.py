@@ -113,7 +113,7 @@ def train(args):
     log = pd.DataFrame(log).set_index("epoch")
     log.to_csv(os.path.join(logdir,"trainlog.csv"))
 
-    test_loss, y_true, y_pred = test_epoch(model, criterion, testdataloader)
+    test_loss, y_true, y_pred = test_epoch(model, criterion, testdataloader, device)
     print(sklearn.metrics.classification_report(y_true.cpu(), y_pred.cpu()))
 
 def metrics(y_true, y_pred):

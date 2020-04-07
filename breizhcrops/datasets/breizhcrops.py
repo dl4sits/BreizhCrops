@@ -85,7 +85,8 @@ class BreizhCrops(Dataset):
         self.index = self.index.loc[self.index.sequencelength > filter_length].set_index("idx")
 
         self.h5path = os.path.join(self.root, f"{self.region}.h5")
-        if (not os.path.exists(self.h5path)) or (not os.path.getsize(self.h5path) == FILESIZES[region]):
+        if load_timeseries and ((not os.path.exists(self.h5path))
+                or (not os.path.getsize(self.h5path) == FILESIZES[region])):
             self.download_h5_database()
             #self.write_h5_database_from_csv()
 

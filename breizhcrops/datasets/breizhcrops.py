@@ -10,30 +10,27 @@ import tarfile
 
 from ..utils import download_file
 
-FRH01URL = "https://syncandshare.lrz.de/dl/fiA33ywfHQdzbxXwYQ5zLVpp/frh01.zip"
-FRH02URL = "https://syncandshare.lrz.de/dl/fi2pg7sXMjTQRSzrWxRdGLux/frh02.zip"
-FRH03URL = "https://syncandshare.lrz.de/dl/fiFbj4sqWYzd4kmcEThTJzYC/frh03.zip"
-FRH04URL = "https://syncandshare.lrz.de/dl/fi6rE9rgVyPqS5T5yN6Fccv5/frh04.zip"
+RAW_CSV_URL = dict(
+    frh01="https://syncandshare.lrz.de/dl/fiA33ywfHQdzbxXwYQ5zLVpp/frh01.zip",
+    frh02="https://syncandshare.lrz.de/dl/fi2pg7sXMjTQRSzrWxRdGLux/frh02.zip",
+    frh03="https://syncandshare.lrz.de/dl/fiFbj4sqWYzd4kmcEThTJzYC/frh03.zip",
+    frh04="https://syncandshare.lrz.de/dl/fi6rE9rgVyPqS5T5yN6Fccv5/frh04.zip",
+)
 
-FRH01_IDS_URL = "https://syncandshare.lrz.de/dl/fiHbqfHQpyf2UnsoJw1HRYpD/frh01.txt"
-FRH02_IDS_URL = "https://syncandshare.lrz.de/dl/fiTeaWJTvL62dQbLxrjH9kmM/frh02.txt"
-FRH03_IDS_URL = "https://syncandshare.lrz.de/dl/fiUE2J3DW6MR6NNRijaswMuS/frh03.txt"
-FRH04_IDS_URL = "https://syncandshare.lrz.de/dl/fiBUWMD2TTRsHcLzmKYnkFPi/frh04.txt"
+INDEX_FILE_URLs = dict(
+    frh01="https://syncandshare.lrz.de/dl/fiE7ExSPEF5j1LHADGZ1GcAV/frh01.csv",
+    frh02="https://syncandshare.lrz.de/dl/fiEutoBWs3JFjCfJpoLWq5HF/frh02.csv",
+    frh03="https://syncandshare.lrz.de/dl/fiJL3LMrzYwmULbvzFiyVZuY/frh03.csv",
+    frh04="https://syncandshare.lrz.de/dl/fiCntufUMakKdjWZNq8eS5vw/frh04.csv",
+)
 
-FRH01_IDX_URL = "https://syncandshare.lrz.de/dl/fiE7ExSPEF5j1LHADGZ1GcAV/frh01.csv"
-FRH02_IDX_URL = "https://syncandshare.lrz.de/dl/fiEutoBWs3JFjCfJpoLWq5HF/frh02.csv"
-FRH03_IDX_URL = "https://syncandshare.lrz.de/dl/fiJL3LMrzYwmULbvzFiyVZuY/frh03.csv"
-FRH04_IDX_URL = "https://syncandshare.lrz.de/dl/fiCntufUMakKdjWZNq8eS5vw/frh04.csv"
 
-FRH01_SHP_URL = "https://syncandshare.lrz.de/dl/fiAHe7ZYMerBi2yJ5hKJmTXS/frh01.tar.gz"
-FRH02_SHP_URL = "https://syncandshare.lrz.de/dl/fi8L5iwpJXs2b9hKEFjQoML5/frh02.tar.gz"
-FRH03_SHP_URL = "https://syncandshare.lrz.de/dl/fiTdWAa8b9K4XVmrBbZ6413i/frh03.tar.gz"
-FRH04_SHP_URL = "https://syncandshare.lrz.de/dl/fiKfoL1VW9jiDXPgnVXu7ZFK/frh04.tar.gz"
-
-FRH01_NPZ_URL = "https://syncandshare.lrz.de/dl/fiAMZX6kN6SfwEJKmznqtgAd/frh01.npz"
-FRH02_NPZ_URL = "https://syncandshare.lrz.de/dl/fi8LqK94Kew7fzBkG5SPQ3Cx/frh02.npz"
-FRH03_NPZ_URL = "https://syncandshare.lrz.de/dl/fiTMHJAKvU8b5PazC1HJSuF9/frh03.npz"
-FRH04_NPZ_URL = "https://syncandshare.lrz.de/dl/fi337Bzz6xbUGRM9AwT7q1up/frh04.npz"
+SHP_URLs = dict(
+    frh01="https://syncandshare.lrz.de/dl/fiAHe7ZYMerBi2yJ5hKJmTXS/frh01.tar.gz",
+    frh02="https://syncandshare.lrz.de/dl/fi8L5iwpJXs2b9hKEFjQoML5/frh02.tar.gz",
+    frh03="https://syncandshare.lrz.de/dl/fiTdWAa8b9K4XVmrBbZ6413i/frh03.tar.gz",
+    frh04="https://syncandshare.lrz.de/dl/fiKfoL1VW9jiDXPgnVXu7ZFK/frh04.tar.gz",
+)
 
 FILESIZES = dict(
     frh01=2549848768,
@@ -74,7 +71,7 @@ class BreizhCrops(Dataset):
 
         indexfile = os.path.join(self.root, region + ".csv")
         if not os.path.exists(indexfile):
-            download_file(get_idx_url(region),indexfile)
+            download_file(INDEX_FILE_URLs[region],indexfile)
 
         index = pd.read_csv(indexfile, index_col=0)
         if verbose:
@@ -93,6 +90,11 @@ class BreizhCrops(Dataset):
             #self.write_h5_database_from_csv()
 
         self.maxseqlength = self.index["sequencelength"].max()
+
+        codesfile = os.path.join(self.root,"codes.csv")
+        if not os.path.exists(codesfile):
+            download_file(CODESURL, codesfile)
+        self.codes = pd.read_csv(codesfile,delimiter=";",index_col=0)
 
         self.get_codes()
 
@@ -117,17 +119,14 @@ class BreizhCrops(Dataset):
                 dataset.create_dataset(row.path, data=X)
 
     def get_codes(self):
-        codesfile = os.path.join(self.root,"codes.csv")
-        if not os.path.exists(codesfile):
-            download_file(CODESURL, codesfile)
-        return pd.read_csv(codesfile,delimiter=";",index_col=0)
+        return self.codes
 
     def geodataframe(self):
         shapefile = os.path.join(self.root,"shp",f"{self.region}.shp")
 
         if not os.path.exists(shapefile):
             targzfile = os.path.join(os.path.dirname(shapefile),self.region+".tar,gz")
-            download_file(get_shp_url(self.region), targzfile)
+            download_file(SHP_URLs[self.region], targzfile)
             import tarfile
             with tarfile.open(targzfile) as tar:
                 tar.extractall()
@@ -163,59 +162,6 @@ class BreizhCrops(Dataset):
         if self.verbose:
             print(f"read {self.nclasses} classes from {classmapping}")
 
-    def load_cache(self, cachefile):
-        with np.load(cachefile,allow_pickle=True) as f:
-            X = f["X"]
-            y = f["y"]
-            id = f["id"]
-        return X, y, id
-
-    def cache(self):
-        import geopandas as gpd
-        if self.verbose:
-            print("loading shapefile {}")
-        shapefile = os.path.join(self.root,"shp",self.region.upper()+".shp")
-        index = gpd.read_file(shapefile)[["ID", "CODE_CULTU"]].set_index("ID")
-
-        #index = pd.read_csv(os.path.join(root,region+".csv"), index_col=0)
-        index.index.name = "id"
-        csvfiles = [(int(os.path.splitext(csv)[0]), os.path.join("csv", self.region, csv)) for csv in
-                    os.listdir(self.data_folder) if csv.endswith(".csv")]
-        csvfiles = pd.DataFrame(csvfiles, columns=["id", "path"]).set_index("id")
-        index = pd.concat([index, csvfiles], axis=1, join="inner")
-
-        X_list = list()
-        stats = list()
-        sample_index=0
-        with tqdm(index.iterrows(), total=len(index)) as iterator:
-            for idx, row in iterator:
-                try:
-                    X = self.load(os.path.join(self.root, row.path))
-                    X_list.append(X)
-                    stats.append(
-                        dict(
-                            id=idx,
-                            sequencelength=X.shape[0],
-                            meanQA60=X[:,self.bands.index("QA60")].mean(),
-                            idx=sample_index
-                        )
-                    )
-                    sample_index += 1
-                except:
-                    print(f"Could not load {row.path}. skipping...")
-
-        stats = pd.DataFrame(stats).set_index("id")
-
-        index = pd.concat([index, stats], axis=1, join="inner")
-
-        fn = os.path.join(self.root,self.region+"_complete.csv")
-        print(f"saving {fn}")
-        index.to_csv(fn)
-
-        fn = os.path.join(self.root,f"{self.region}.npz")
-        print(f"saving {fn}")
-        np.savez_compressed(fn, X=np.array(X_list), y=index["CODE_CULTU"].values, id=index.index.values)
-
     def load(self, csv_file):
         """['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
        'B8A', 'B9', 'QA10', 'QA20', 'QA60', 'doa', 'label', 'id']"""
@@ -232,10 +178,6 @@ class BreizhCrops(Dataset):
 
         return X
 
-    def applyclassmapping(self, nutzcodes):
-        """uses a mapping table to replace nutzcodes (e.g. 451, 411) with class ids"""
-        return np.array([self.mapping.loc[nutzcode]["id"] for nutzcode in nutzcodes])
-
     def __len__(self):
         return len(self.index)
 
@@ -245,10 +187,6 @@ class BreizhCrops(Dataset):
         with h5py.File(self.h5path, "r") as dataset:
             X = np.array(dataset[(row.path)])
         y = row["CODE_CULTU"]
-        #id = row.name
-
-        #X = self.X[id]
-        #y = self.y[id]
 
         npad = self.maxseqlength - X.shape[0]
         X = np.pad(X, [(0, npad), (0, 0)], 'constant', constant_values=self.padding_value)
@@ -260,85 +198,7 @@ class BreizhCrops(Dataset):
 
         return X, y
 
-def get_idx_url(region):
-    if region == "frh01":
-        url = FRH01_IDX_URL
-    elif region == "frh02":
-        url = FRH02_IDX_URL
-    elif region == "frh03":
-        url = FRH03_IDX_URL
-    elif region == "frh04":
-        url = FRH04_IDX_URL
-    else:
-        raise ValueError(f"region {region} not in ['frh01','frh02','frh03','frh03']")
-    return url
-
-def get_shp_url(region):
-    if region == "frh01":
-        url = FRH01_SHP_URL
-    elif region == "frh02":
-        url = FRH02_SHP_URL
-    elif region == "frh03":
-        url = FRH03_SHP_URL
-    elif region == "frh04":
-        url = FRH04_SHP_URL
-    else:
-        raise ValueError(f"region {region} not in ['frh01','frh02','frh03','frh03']")
-    return url
-
-def get_npz_url(region):
-    if region == "frh01":
-        url = FRH01_NPZ_URL
-    elif region == "frh02":
-        url = FRH02_NPZ_URL
-    elif region == "frh03":
-        url = FRH03_NPZ_URL
-    elif region == "frh04":
-        url = FRH04_NPZ_URL
-    else:
-        raise ValueError(f"region {region} not in ['frh01','frh02','frh03','frh03']")
-    return url
-
-def generate_file_md5(filepath, blocksize=2**20):
-    m = hashlib.md5()
-    with open(filepath, "rb" ) as f:
-        while True:
-            buf = f.read(blocksize)
-            if not buf:
-                break
-            m.update( buf )
-    return m.hexdigest()
-
 def untar(filepath):
     dirname = os.path.dirname(filepath)
     with tarfile.open(filepath, 'r:gz') as tar:
         tar.extractall(path=dirname)
-
-
-def get_url(region):
-    if region == "frh01":
-        url = FRH01URL
-    elif region == "frh02":
-        url = FRH02URL
-    elif region == "frh03":
-        url = FRH03URL
-    elif region == "frh04":
-        url = FRH04URL
-    else:
-        raise ValueError(f"region {region} not in ['frh01','frh02','frh03','frh03']")
-    return url
-
-if __name__ == '__main__':
-    datapath = "/home/marc/remote/BreizhCrops/data"
-    transform = None
-    target_transform = None
-    padded_value = -1
-
-    frh01 = BreizhCrops(region="frh01", root=datapath, transform=transform,
-                                    target_transform=target_transform, padding_value=padded_value)
-    frh02 = BreizhCrops(region="frh02", root=datapath, transform=transform,
-                                    target_transform=target_transform, padding_value=padded_value)
-    frh03 = BreizhCrops(region="frh03", root=datapath, transform=transform,
-                                    target_transform=target_transform, padding_value=padded_value)
-    frh03 = BreizhCrops(region="frh04", root=datapath, transform=transform,
-                                    target_transform=target_transform, padding_value=padded_value)

@@ -5,6 +5,8 @@ import pandas as pd
 from torch.utils.data import Dataset
 from tqdm import tqdm
 import geopandas as gpd
+import h5py
+import tarfile
 
 from ..utils import download_file
 
@@ -32,6 +34,20 @@ FRH01_NPZ_URL = "https://syncandshare.lrz.de/dl/fiAMZX6kN6SfwEJKmznqtgAd/frh01.n
 FRH02_NPZ_URL = "https://syncandshare.lrz.de/dl/fi8LqK94Kew7fzBkG5SPQ3Cx/frh02.npz"
 FRH03_NPZ_URL = "https://syncandshare.lrz.de/dl/fiTMHJAKvU8b5PazC1HJSuF9/frh03.npz"
 FRH04_NPZ_URL = "https://syncandshare.lrz.de/dl/fi337Bzz6xbUGRM9AwT7q1up/frh04.npz"
+
+FILESIZES = dict(
+    frh01=2549848768,
+    frh02=2226525480,
+    frh03=2487580400,
+    frh04=1547194232
+)
+
+H5_URLs = dict(
+    frh01="https://syncandshare.lrz.de/dl/fiFe2C3qDW5MWnVtWdaAT7xC/frh01.h5.tar.gz",
+    frh02="https://syncandshare.lrz.de/dl/fi3dyXpipntJyiCZZJdLNcTi/frh02.h5.tar.gz",
+    frh03="https://syncandshare.lrz.de/dl/fi8ahoBEbekCKh61PxDAvjQ/frh03.h5.tar.gz",
+    frh04="https://syncandshare.lrz.de/dl/fi77rzsEJMWXumq3jpi1VPYF/frh04.h5.tar.gz"
+)
 
 CLASSMAPPINGURL = "https://syncandshare.lrz.de/dl/fiWcv23b3PxswYZFh2htEpSs/classmapping.csv"
 CODESURL = "https://syncandshare.lrz.de/dl/fiFVnHYsEsix7HTGYRh6Zh3/codes.csv"
@@ -69,28 +85,36 @@ class BreizhCrops(Dataset):
             print(f"kept {len(self.index)} time series references from applying class mapping")
 
         # filter zero-length time series
-        self.index = self.index.loc[self.index.sequencelength > filter_length]
+        self.index = self.index.loc[self.index.sequencelength > filter_length].set_index("idx")
 
-        if load_timeseries:
-            self.load_timeseries()
+        self.h5path = os.path.join(self.root, f"{self.region}.h5")
+        if (not os.path.exists(self.h5path)) or (not os.path.getsize(self.h5path) == FILESIZES[region]):
+            self.download_h5_database()
+            #self.write_h5_database_from_csv()
+
+        self.maxseqlength = self.index["sequencelength"].max()
 
         self.get_codes()
 
-    def load_timeseries(self):
-        cachefile = os.path.join(self.root,f"{self.region}.npz")
-
-        if not os.path.exists(cachefile):
-            download_file(get_npz_url(self.region),cachefile)
-
-        if self.verbose:
-            print(f"loading data from {cachefile}")
-        self.X, self.y, self.id = self.load_cache(cachefile)
-
-        self.maxseqlength = self.index["sequencelength"].max()
-        self.ids = self.index.idx.values
-
     def get_fid(self,idx):
         return self.index[self.index["idx"] == idx].index[0]
+
+    def download_h5_database(self):
+        print(f"downloading {self.h5path}.tar.gz")
+        download_file(H5_URLs[self.region], self.h5path+".tar.gz", overwrite=True)
+        print(f"uncomplressing {self.h5path}.tar.gz to {self.h5path}")
+        untar(self.h5path + ".tar.gz")
+        print(f"removing {self.h5path}.tar.gz")
+        os.remove(self.h5path+".tar.gz")
+        print(f"checking integrity by file size...")
+        assert os.path.getsize(self.h5path) == FILESIZES[self.region]
+        print("ok!")
+
+    def write_h5_database_from_csv(self):
+        with h5py.File(self.h5path, "w") as dataset:
+            for idx, row in tqdm(self.index.iterrows(), total=len(self.index), desc=f"writing {self.h5path}"):
+                X = self.load(os.path.join(self.root, row.path))
+                dataset.create_dataset(row.path, data=X)
 
     def get_codes(self):
         codesfile = os.path.join(self.root,"codes.csv")
@@ -213,13 +237,18 @@ class BreizhCrops(Dataset):
         return np.array([self.mapping.loc[nutzcode]["id"] for nutzcode in nutzcodes])
 
     def __len__(self):
-        return len(self.ids)
+        return len(self.index)
 
     def __getitem__(self, index):
-        id = self.ids[index]
+        row = self.index.iloc[index]
 
-        X = self.X[id]
-        y = self.y[id]
+        with h5py.File(self.h5path, "r") as dataset:
+            X = np.array(dataset[(row.path)])
+        y = row["CODE_CULTU"]
+        #id = row.name
+
+        #X = self.X[id]
+        #y = self.y[id]
 
         npad = self.maxseqlength - X.shape[0]
         X = np.pad(X, [(0, npad), (0, 0)], 'constant', constant_values=self.padding_value)
@@ -270,6 +299,22 @@ def get_npz_url(region):
         raise ValueError(f"region {region} not in ['frh01','frh02','frh03','frh03']")
     return url
 
+def generate_file_md5(filepath, blocksize=2**20):
+    m = hashlib.md5()
+    with open(filepath, "rb" ) as f:
+        while True:
+            buf = f.read(blocksize)
+            if not buf:
+                break
+            m.update( buf )
+    return m.hexdigest()
+
+def untar(filepath):
+    dirname = os.path.dirname(filepath)
+    with tarfile.open(filepath, 'r:gz') as tar:
+        tar.extractall(path=dirname)
+
+
 def get_url(region):
     if region == "frh01":
         url = FRH01URL
@@ -282,3 +327,18 @@ def get_url(region):
     else:
         raise ValueError(f"region {region} not in ['frh01','frh02','frh03','frh03']")
     return url
+
+if __name__ == '__main__':
+    datapath = "/home/marc/remote/BreizhCrops/data"
+    transform = None
+    target_transform = None
+    padded_value = -1
+
+    frh01 = BreizhCrops(region="frh01", root=datapath, transform=transform,
+                                    target_transform=target_transform, padding_value=padded_value)
+    frh02 = BreizhCrops(region="frh02", root=datapath, transform=transform,
+                                    target_transform=target_transform, padding_value=padded_value)
+    frh03 = BreizhCrops(region="frh03", root=datapath, transform=transform,
+                                    target_transform=target_transform, padding_value=padded_value)
+    frh03 = BreizhCrops(region="frh04", root=datapath, transform=transform,
+                                    target_transform=target_transform, padding_value=padded_value)

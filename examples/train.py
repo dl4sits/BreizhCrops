@@ -41,11 +41,11 @@ def train(args):
 
         x = x[idxs]
 
-        return torch.from_numpy(x).type(torch.FloatTensor).to(device)
+        return torch.from_numpy(x).type(torch.FloatTensor)
 
     def target_transform(y):
         y = frh01.mapping.loc[y].id
-        return torch.tensor(y, dtype=torch.long, device=device)
+        return torch.tensor(y, dtype=torch.long)
 
     print(f"Setting up datasets in {os.path.abspath(args.datapath)}")
     datapath = os.path.abspath(args.datapath)
@@ -97,8 +97,8 @@ def train(args):
 
     log = list()
     for epoch in range(args.epochs):
-        train_loss = train_epoch(model, optimizer, criterion, traindataloader)
-        test_loss, y_true, y_pred = test_epoch(model, criterion, testdataloader)
+        train_loss = train_epoch(model, optimizer, criterion, traindataloader, device)
+        test_loss, y_true, y_pred = test_epoch(model, criterion, testdataloader, device)
         scores = metrics(y_true.cpu(), y_pred.cpu())
         scores_msg = ", ".join([f"{k}={v:.2f}" for (k,v) in scores.items()])
         test_loss = test_loss.cpu().detach().numpy()[0]
@@ -113,7 +113,7 @@ def train(args):
     log = pd.DataFrame(log).set_index("epoch")
     log.to_csv(os.path.join(logdir,"trainlog.csv"))
 
-    test_loss, y_true, y_pred = test_epoch(model, criterion, testdataloader)
+    test_loss, y_true, y_pred = test_epoch(model, criterion, testdataloader, device)
     print(sklearn.metrics.classification_report(y_true.cpu(), y_pred.cpu()))
 
 def metrics(y_true, y_pred):
@@ -143,21 +143,21 @@ def metrics(y_true, y_pred):
         precision_weighted=precision_weighted,
     )
 
-def train_epoch(model, optimizer, criterion, dataloader):
+def train_epoch(model, optimizer, criterion, dataloader, device):
     model.train()
     losses = list()
     with tqdm(enumerate(dataloader), total=len(dataloader), leave=True) as iterator:
         for idx, batch in iterator:
             optimizer.zero_grad()
             x, y_true = batch
-            loss = criterion(model.forward(x), y_true)
+            loss = criterion(model.forward(x.to(device)), y_true.to(device))
             loss.backward()
             optimizer.step()
             iterator.set_description(f"train loss={loss:.2f}")
             losses.append(loss)
     return torch.stack(losses)
 
-def test_epoch(model, criterion, dataloader):
+def test_epoch(model, criterion, dataloader, device):
     model.eval()
     with torch.no_grad():
         losses = list()
@@ -166,9 +166,9 @@ def test_epoch(model, criterion, dataloader):
         with tqdm(enumerate(dataloader), total=len(dataloader), leave=True) as iterator:
             for idx, batch in iterator:
                 x, y_true = batch
-                logprobabilities = model.forward(x)
+                logprobabilities = model.forward(x.to(device))
                 y_pred = logprobabilities.argmax(-1)
-                loss = criterion(logprobabilities, y_true)
+                loss = criterion(logprobabilities, y_true.to(device))
                 iterator.set_description(f"test loss={loss:.2f}")
                 losses.append(loss)
                 y_true_list.append(y_true)

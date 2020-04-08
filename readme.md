@@ -25,6 +25,10 @@
 <a href=https://arxiv.org/abs/1905.11893><img height=300px src=doc/paper.png /></a>
 <a href="doc/poster.pdf"><img height=300px src=doc/poster.png /></a>
 
+### Raw Field Geometry Datasets in France
+
+The raw label data originates from [Registre parcellaire graphique (RPG)](https://www.data.gouv.fr/fr/datasets/registre-parcellaire-graphique-rpg-contours-des-parcelles-et-ilots-culturaux-et-leur-groupe-de-cultures-majoritaire/) of the Institut National de l'Information Géographique et Forestière (IGM)
+
 ### Model implementations and Acknowledgements
 
 The model implementations from this repository are based on the following papers and github repositories.

@@ -1,4 +1,5 @@
 from .TempCNN import TempCNN
 from .MSResNet import MSResNet
-from .TransformerEncoder import TransformerEncoder
+from .Transformer import TranformerModel as Transformer
 from .LongShortTermMemory import LSTM
+from .InceptionTime import InceptionTime

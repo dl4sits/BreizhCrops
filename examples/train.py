@@ -5,7 +5,7 @@ sys.path.append("..")
 import argparse
 
 import breizhcrops
-from breizhcrops.models import LSTM, TransformerEncoder, TempCNN, MSResNet
+from breizhcrops.models import LSTM, Transformer, TempCNN, MSResNet, InceptionTime
 import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
@@ -80,10 +80,21 @@ def train(args):
 
     if args.model == "LSTM":
         model = LSTM(input_dim=ndims, num_classes=num_classes, **args.hyperparameter).to(device)
+    elif args.model == "InceptionTime":
+        model = InceptionTime(input_dim=ndims, num_classes=num_classes,
+                              num_layers=args.hyperparameter["num_layers"],
+                              hidden_dims=args.hyperparameter["hidden_dims"], device=device).to(device)
     elif args.model == "MSResNet":
         model = MSResNet(input_dim=ndims, num_classes=num_classes, **args.hyperparameter).to(device)
     elif args.model == "TransformerEncoder":
-        model = TransformerEncoder(input_dim=ndims, num_classes=num_classes, len_max_seq=sequencelength, **args.hyperparameter).to(device)
+        model = Transformer(input_dim=ndims, num_classes=num_classes, sequencelength=sequencelength,
+                            d_model=args.hyperparameter["hidden_dims"],
+                            n_head=args.hyperparameter["n_head"],
+                            n_layers=args.hyperparameter["num_layers"],
+                            d_inner=args.hyperparameter["d_inner"],
+                            activation="relu",
+                            dropout=args.hyperparameter["dropout"]
+                            ).to(device)
     elif args.model == "TempCNN":
         model = TempCNN(input_dim=ndims, num_classes=num_classes, sequencelength=sequencelength, **args.hyperparameter).to(device)
     else:

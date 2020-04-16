@@ -5,7 +5,7 @@ sys.path.append("..")
 import argparse
 
 import breizhcrops
-from breizhcrops.models import LSTM, Transformer, TempCNN, MSResNet, InceptionTime
+from breizhcrops.models import LSTM, Transformer, TempCNN, MSResNet, InceptionTime, StarRNN
 import torch
 from torch.utils.data import DataLoader
 from tqdm import tqdm
@@ -80,6 +80,16 @@ def train(args):
 
     if args.model == "LSTM":
         model = LSTM(input_dim=ndims, num_classes=num_classes, **args.hyperparameter).to(device)
+    elif args.model == "StarRNN":
+        model = StarRNN(input_dim=ndims,
+                        num_classes=num_classes,
+                        hidden_dims=args.hyperparameter["hidden_dims"],
+                        num_layers=args.hyperparameter["num_layers"],
+                        dropout=args.hyperparameter["dropout"],
+                        bidirectional=False,
+                        use_batchnorm=False,
+                        use_layernorm=True,
+                        device=device).to(device)
     elif args.model == "InceptionTime":
         model = InceptionTime(input_dim=ndims, num_classes=num_classes,
                               num_layers=args.hyperparameter["num_layers"],

@@ -1,4 +1,4 @@
-from breizhcrops.models import TempCNN, LSTM, Transformer, MSResNet, InceptionTime
+from breizhcrops.models import TempCNN, LSTM, Transformer, MSResNet, InceptionTime, StarRNN
 from breizhcrops import BreizhCrops
 
 def test_initTempCNN():
@@ -16,6 +16,10 @@ def test_initInceptionTime():
 
 def test_initMSResNet():
     assert isinstance(MSResNet(input_dim=13), MSResNet)
+
+def test_initStarRNN():
+    assert isinstance(StarRNN(input_dim=13, hidden_dims=128, nclasses=13, num_rnn_layers=4, dropout=0.2,
+                              bidirectional=False,use_batchnorm=False, use_layernorm=True), StarRNN)
 
 def test_init_breizhcrops():
     datapath = "/tmp"

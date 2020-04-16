@@ -91,7 +91,7 @@ def train(args):
                             d_model=args.hyperparameter["hidden_dims"],
                             n_head=args.hyperparameter["n_head"],
                             n_layers=args.hyperparameter["num_layers"],
-                            d_inner=args.hyperparameter["d_inner"],
+                            d_inner=4*args.hyperparameter["hidden_dims"],
                             activation="relu",
                             dropout=args.hyperparameter["dropout"]
                             ).to(device)

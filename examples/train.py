@@ -1,12 +1,12 @@
 import sys
 
-sys.path.append("./models")
+#sys.path.append("./models")
 sys.path.append("..")
 
 import argparse
 
 import breizhcrops
-from breizhcrops.models import LSTM, Transformer, TempCNN, MSResNet, InceptionTime, StarRNN
+from breizhcrops.models import LSTM, TransformerModel, TempCNN, MSResNet, InceptionTime, StarRNN
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from torch.optim import Adam
@@ -134,7 +134,7 @@ def get_model(model, ndims, num_classes, sequencelength, device, **hyperparamete
     elif model == "MSResNet":
         model = MSResNet(input_dim=ndims, num_classes=num_classes, **hyperparameter).to(device)
     elif model == "TransformerEncoder":
-        model = Transformer(input_dim=ndims, num_classes=num_classes, sequencelength=sequencelength,
+        model = TransformerModel(input_dim=ndims, num_classes=num_classes, sequencelength=sequencelength,
                             activation="relu",
                             **hyperparameter).to(device)
     elif model == "TempCNN":

@@ -13,8 +13,8 @@ __author__ = Türkoglu Mehmet Özgür <ozgur.turkoglu@geod.baug.ethz.ch>
 """
 
 class StarRNN(torch.nn.Module):
-    def __init__(self, input_dim=1, hidden_dims=3, num_classes=13, num_layers=4, dropout=0.2, bidirectional=False,
-                 use_batchnorm=True, use_layernorm=False, device=torch.device("cpu")):
+    def __init__(self, input_dim, num_classes, hidden_dims=128, num_layers=4, dropout=0.2, bidirectional=False,
+                 use_batchnorm=False, use_layernorm=True, device=torch.device("cpu")):
 
         super(StarRNN, self).__init__()
         self.modelname = f"StarRNN_input-dim={input_dim}_num-classes={num_classes}_" \

@@ -56,7 +56,8 @@ class BreizhCrops(Dataset):
                  transform = None, target_transform = None, padding_value=-1,
                  filter_length=0, verbose=False, load_timeseries=True):
         self.region = region.lower()
-        print("Initializing BreizhCrops region {}".format(self.region))
+        if verbose:
+            print("Initializing BreizhCrops region {}".format(self.region))
 
         self.bands = ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
        'B8A', 'B9', 'QA10', 'QA20', 'QA60', 'doa']

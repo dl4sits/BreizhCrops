@@ -6,7 +6,7 @@ import os
 
 
 class LSTM(torch.nn.Module):
-    def __init__(self, input_dim=1, hidden_dims=3, num_classes=5, num_layers=1, dropout=0.2, bidirectional=False,use_layernorm=True):
+    def __init__(self, input_dim=1, hidden_dims=3, num_classes=5, num_layers=2, dropout=0.2, bidirectional=False,use_layernorm=True):
         self.modelname = f"LSTM_input-dim={input_dim}_num-classes={num_classes}_hidden-dims={hidden_dims}_" \
                          f"num-layers={num_layers}_bidirectional={bidirectional}_use-layernorm={use_layernorm}" \
                          f"_dropout={dropout}"

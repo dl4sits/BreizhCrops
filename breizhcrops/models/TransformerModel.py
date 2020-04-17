@@ -1,9 +1,11 @@
+import torch
 from torch.nn.modules.transformer import TransformerEncoder, TransformerEncoderLayer
 from torch.nn.modules import LayerNorm, Linear, Sequential, ReLU
 
 import torch.nn as nn
 import torch.nn.functional as F
-import torch
+
+__all__ = ['TransformerModel']
 
 class TransformerModel(nn.Module):
     def __init__(self, input_dim, num_classes, sequencelength=13, d_model=512, n_head=8, n_layers=1,

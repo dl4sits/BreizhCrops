@@ -1,12 +1,12 @@
 import sys
 
-#sys.path.append("./models")
+sys.path.append("./models")
 sys.path.append("..")
 
 import argparse
 
 import breizhcrops
-from breizhcrops.models import LSTM, TransformerModel, TempCNN, MSResNet, InceptionTime, StarRNN
+from breizhcrops.models import LSTM, TempCNN, MSResNet, TransformerModel, InceptionTime, StarRNN
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from torch.optim import Adam

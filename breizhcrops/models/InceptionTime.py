@@ -3,6 +3,8 @@ import torch.nn.functional as F
 import torch.utils.data
 import torch
 
+__all__ = ['InceptionTime']
+
 class InceptionTime(nn.Module):
 
     def __init__(self, input_dim=8, num_classes=2, num_layers=6, hidden_dims=32, use_bias=False, device=torch.device("cpu")):

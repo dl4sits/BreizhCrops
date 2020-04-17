@@ -1,4 +1,4 @@
-from examples.train import get_model, get_dataloader, train_epoch, test_epoch
+from train import get_model, get_dataloader, train_epoch, test_epoch
 import torch
 import argparse
 import sklearn.metrics
@@ -14,6 +14,7 @@ def main(args):
 
     print(f"Logging results to {args.logdir}")
     logdir = args.logdir
+    os.makedirs(logdir, exist_ok=True)
 
     epochs, learning_rate, weight_decay = select_hyperparameter(args.model)
 

@@ -119,3 +119,9 @@ pip install -r requirements.txt
 ```
 python src/query_gee.py data/shp/raw/frh01.shp --start 2017-01-01 --end 2017-12-31 --label-col CODE_CULTU --id-col ID --outfolder data/csv/frh01
 ```
+
+#### Evaluation
+
+```
+python evaluate.py LSTM --workers 4 --batchsize 256 --logdir /data2/breizhcrops/evaluation/lstm
+```

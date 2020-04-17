@@ -12,6 +12,8 @@ import math
 __author__ = Türkoglu Mehmet Özgür <ozgur.turkoglu@geod.baug.ethz.ch>
 """
 
+__all__ = ['StarRNN']
+
 class StarRNN(torch.nn.Module):
     def __init__(self, input_dim, num_classes, hidden_dims=128, num_layers=4, dropout=0.2, bidirectional=False,
                  use_batchnorm=False, use_layernorm=True, device=torch.device("cpu")):

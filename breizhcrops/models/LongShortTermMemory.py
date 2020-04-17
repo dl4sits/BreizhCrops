@@ -4,6 +4,7 @@ import torch.nn.functional as F
 import torch.utils.data
 import os
 
+__all__ = ['LSTM']
 
 class LSTM(torch.nn.Module):
     def __init__(self, input_dim, num_classes, hidden_dims=128, num_layers=2, dropout=0.2, bidirectional=False, use_layernorm=True):

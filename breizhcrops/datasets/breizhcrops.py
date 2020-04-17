@@ -66,7 +66,7 @@ class BreizhCrops(Dataset):
         self.transform = transform
         self.target_transform = target_transform
         self.padding_value = padding_value
-        self.verbose=verbose
+        self.verbose = verbose
 
         self.load_classmapping(classmapping)
 
@@ -198,7 +198,7 @@ class BreizhCrops(Dataset):
         if self.target_transform is not None:
             y = self.target_transform(y)
 
-        return X, y
+        return X, y, int(os.path.splitext(os.path.basename(row.path))[0])
 
 def untar(filepath):
     dirname = os.path.dirname(filepath)

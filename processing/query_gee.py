@@ -6,6 +6,7 @@ import geopandas as gpd
 import os
 import argparse
 import time
+from tqdm import tqdm
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Query Google Earth Engine for reflectance data from'
@@ -35,36 +36,37 @@ def main(start, end, shapefile, outfolder, scale, collection, label_col, id_col)
     df = gpd.read_file(shapefile).to_crs({'init': 'epsg:4326'})
     print("read {} geometries from {}".format(len(df), shapefile))
 
-    for iter, row in df.T.iteritems():
+    with tqdm(df.T.iteritems(), total=len(df)) as pbar:
+        for iter, row in pbar:
 
-        try:
-            outfile = os.path.join(outfolder, "{}.csv".format(row[id_col]))
+            try:
+                outfile = os.path.join(outfolder, "{}.csv".format(row[id_col]))
 
-            if os.path.exists(outfile):
-                print("file {} exists. skipping...".format(outfile))
-                continue
+                if os.path.exists(outfile):
+                    print("file {} exists. skipping...".format(outfile))
+                    continue
 
-            region = shapely2ee(row["geometry"])
+                region = shapely2ee(row["geometry"])
 
-            getinfo_dict = query(region, start, end, scale, collection)
-            dataframe = parse(getinfo_dict)
+                getinfo_dict = query(region, start, end, scale, collection)
+                dataframe = parse(getinfo_dict)
 
-            dataframe["label"] = row[label_col]
-            dataframe["id"] = row[id_col]
+                dataframe["label"] = row[label_col]
+                dataframe["id"] = row[id_col]
 
-            now=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                now=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-            print(str(now) +": writing " + outfile)
-            os.makedirs(os.path.dirname(outfile), exist_ok=True)
-            dataframe.to_csv(outfile)
-        except ee.ee_exception.EEException as e:
-            print(e)
-            print("Skipping in 2 seconds")
-            time.sleep(2)
-        except AttributeError as e:
-            print(e)
-            print("geometry id {} invalid. Skipping in 2 seconds".format(row[id_col]))
-            time.sleep(2)
+                pbar.set_description_str(str(now) +": writing " + outfile)
+                os.makedirs(os.path.dirname(outfile), exist_ok=True)
+                dataframe.to_csv(outfile)
+            except ee.ee_exception.EEException as e:
+                print(e)
+                print("Skipping in 2 seconds")
+                time.sleep(2)
+            except AttributeError as e:
+                print(e)
+                print("geometry id {} invalid. Skipping in 2 seconds".format(row[id_col]))
+                time.sleep(2)
 
 def shapely2ee(geometry):
     pt_list = list(zip(*geometry.exterior.coords.xy))

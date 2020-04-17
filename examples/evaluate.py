@@ -24,7 +24,6 @@ def main(args):
     print(f"Initialized {model.modelname}")
     criterion = torch.nn.CrossEntropyLoss(reduction="mean")
 
-    epochs = 0
     for epoch in range(epochs):
         print(f"train epoch {epoch}")
         train_epoch(model, optimizer, criterion, traindataloader, device)

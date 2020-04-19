@@ -36,9 +36,3 @@ class TransformerModel(nn.Module):
 class Flatten(nn.Module):
     def forward(self, input):
         return input.view(input.size(0), -1)
-
-if __name__=="__main__":
-    model = TranformerModel(input_dim=8, num_classes=2).to(torch.device("cpu"))
-    src = torch.rand(10, 32, 8)
-    model(src)
-    print()

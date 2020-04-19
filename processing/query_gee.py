@@ -7,6 +7,7 @@ import os
 import argparse
 import time
 from tqdm import tqdm
+import urllib3
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Query Google Earth Engine for reflectance data from'
@@ -67,6 +68,11 @@ def main(start, end, shapefile, outfolder, scale, collection, label_col, id_col)
                 print(e)
                 print("geometry id {} invalid. Skipping in 2 seconds".format(row[id_col]))
                 time.sleep(2)
+            except urllib3.exceptions.ProtocolError as e:
+                print(e)
+                print("Connection aborted. geometry id {}. Skipping in 2 seconds".format(row[id_col]))
+                time.sleep(2)
+
 
 def shapely2ee(geometry):
     pt_list = list(zip(*geometry.exterior.coords.xy))

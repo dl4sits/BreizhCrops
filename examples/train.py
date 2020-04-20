@@ -145,33 +145,6 @@ def get_model(model, ndims, num_classes, sequencelength, device, **hyperparamete
 
     return model
 
-<<<<<<< HEAD
-    criterion = torch.nn.CrossEntropyLoss(reduction="mean")
-
-    log = list()
-    for epoch in range(args.epochs):
-        train_loss = train_epoch(model, optimizer, criterion, traindataloader, device)
-        test_loss, y_true, y_pred = test_epoch(model, criterion, testdataloader, device)
-        scores = metrics(y_true.cpu(), y_pred.cpu())
-        scores_msg = ", ".join([f"{k}={v:.2f}" for (k,v) in scores.items()])
-        test_loss = test_loss.cpu().detach().numpy()[0]
-        train_loss = train_loss.cpu().detach().numpy()[0]
-        print(f"epoch {epoch}: trainloss {train_loss:.2f}, testloss {test_loss:.2f} " + scores_msg)
-
-        scores["epoch"] = epoch
-        scores["trainloss"] = train_loss
-        scores["testloss"] = test_loss
-        log.append(scores)
-
-    log = pd.DataFrame(log).set_index("epoch")
-    os.makedirs(logdir, exist_ok=True)
-    log.to_csv(os.path.join(logdir,"trainlog.csv"))
-
-    test_loss, y_true, y_pred = test_epoch(model, criterion, testdataloader, device)
-    print(sklearn.metrics.classification_report(y_true.cpu(), y_pred.cpu()))
-=======
->>>>>>> upstream/master
-
 def metrics(y_true, y_pred):
     accuracy = sklearn.metrics.accuracy_score(y_true, y_pred)
     kappa = sklearn.metrics.cohen_kappa_score(y_true, y_pred)

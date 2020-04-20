@@ -73,11 +73,11 @@ def tune(modelpara):
             args.weight_decay = 10 ** (-r2)
 
             d_model = int(np.random.choice([32, 64, 128, 256, 512], 1))
-            n_head = 8  # np.random.choice([1, 2, 3, 4, 5, 6, 7, 8], 1),
+            n_head = int(np.random.choice([1, 2, 3, 4, 5, 6, 7, 8], 1))
 
             hyperparameter_dict = dict(
                 n_head=n_head, # np.random.choice([1, 2, 3, 4, 5, 6, 7, 8], 1),
-                n_layers=8, # np.random.choice([1, 2, 3, 4, 5, 6, 7, 8], 1),
+                n_layers=int(np.random.choice([1, 2, 3, 4, 5, 6, 7, 8], 1)),
                 dropout=np.random.uniform(0, 0.8),
                 d_model=d_model,
                 d_k=d_model//n_head,
@@ -122,7 +122,7 @@ def tune(modelpara):
 
         elif args.model == "TransformerEncoder":
             args.store = f"/tmp/TransformerEncoder-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
-            args.logdir = f"/home/ga63cuh/Documents/Logs/TransformerEncoder-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
+            args.logdir = f"/home/ga63cuh/nas/ga63cuh/ga63cuh/Hiwi/Logs/TransformerEncoder-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
 
         elif args.model == "TempCNN":
             args.store = f"/tmp/TempCNN-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"

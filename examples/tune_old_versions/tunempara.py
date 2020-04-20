@@ -19,7 +19,7 @@ def dict2str(hyperparameter_dict):
     return ",".join([f"{k}={v}" for k,v in hyperparameter_dict.items()])
 
 
-def tune(modelpara):
+def tunePARA(modelpara):
     # default parameters
     args = Namespace(
         mode="validation",
@@ -28,18 +28,14 @@ def tune(modelpara):
         datapath="../data",
         batchsize=256,
         workers=16,
-        device="cuda",
+        device="cpu",
         logdir="/home/ga63cuh/nas/ga63cuh/ga63cuh/Hiwi/Logs" # /home/ga63cuh/Documents/Logs
     )
 
     while True:
         if args.model == "LSTM":
-            # args.learning_rate = np.random.uniform(1e-2, 1e-4) # 1e-(np.random.uniform())
-            # args.weight_decay = np.random.uniform(1e-2, 1e-8)
-            r1 = np.random.uniform(2, 4)
-            r2 = np.random.uniform(2, 8)
-            args.learning_rate = 10 ** (-r1)
-            args.weight_decay = 10 ** (-r2)
+            args.learning_rate = np.random.uniform(1e-2, 1e-4)
+            args.weight_decay = np.random.uniform(1e-2, 1e-8)
 
             hyperparameter_dict = dict(
                 # kernel_size = np.random.choice([3,5,7]),
@@ -50,12 +46,8 @@ def tune(modelpara):
             )
 
         elif args.model == "MSResNet":
-            # args.learning_rate = np.random.uniform(1e-2, 1e-4) # 1e-(np.random.uniform())
-            # args.weight_decay = np.random.uniform(1e-2, 1e-8)
-            r1 = np.random.uniform(2, 4)
-            r2 = np.random.uniform(2, 8)
-            args.learning_rate = 10 ** (-r1)
-            args.weight_decay = 10 ** (-r2)
+            args.learning_rate = np.random.uniform(1e-2, 1e-4)
+            args.weight_decay = np.random.uniform(1e-2, 1e-8)
 
             hyperparameter_dict = dict(
                 # input_dim=,
@@ -65,37 +57,26 @@ def tune(modelpara):
             )
 
         elif args.model == "TransformerEncoder":
-            # args.learning_rate = np.random.uniform(1e-2, 1e-4) # 1e-(np.random.uniform())
-            # args.weight_decay = np.random.uniform(1e-2, 1e-8)
-            r1 = np.random.uniform(2, 4)
-            r2 = np.random.uniform(2, 8)
-            args.learning_rate = 10 ** (-r1)
-            args.weight_decay = 10 ** (-r2)
-
-            d_model = int(np.random.choice([32, 64, 128, 256, 512], 1))
-            n_head = 8  # np.random.choice([1, 2, 3, 4, 5, 6, 7, 8], 1),
+            args.learning_rate = np.random.uniform(1e-2, 1e-4)
+            args.weight_decay = np.random.uniform(1e-2, 1e-8)
 
             hyperparameter_dict = dict(
-                n_head=n_head, # np.random.choice([1, 2, 3, 4, 5, 6, 7, 8], 1),
-                n_layers=8, # np.random.choice([1, 2, 3, 4, 5, 6, 7, 8], 1),
-                dropout=np.random.uniform(0, 0.8),
-                d_model=d_model,
-                d_k=d_model//n_head,
+                # n_head=8,
+                # n_layers=6,
+                dropout=np.random.uniform(0, 0.8)
                 # input_dim=10,
                 # len_max_seq=100,
-                d_word_vec=d_model,
-                d_inner=d_model*4,
-                d_v=d_model//n_head # 64
+                # d_word_vec=512,
+                # d_model=512,
+                # d_inner=2048,
+                # d_k=64,
+                # d_v=64,
                 # num_classes=6
             )
 
         elif args.model == "TempCNN":
-            # args.learning_rate = np.random.uniform(1e-2, 1e-4) # 1e-(np.random.uniform())
-            # args.weight_decay = np.random.uniform(1e-2, 1e-8)
-            r1 = np.random.uniform(2, 4)
-            r2 = np.random.uniform(2, 8)
-            args.learning_rate = 10 ** (-r1)
-            args.weight_decay = 10 ** (-r2)
+            args.learning_rate = np.random.uniform(1e-2, 1e-4)
+            args.weight_decay = np.random.uniform(1e-2, 1e-8)
 
             hyperparameter_dict = dict(
                 kernel_size=np.random.choice([3, 5, 7]),
@@ -110,19 +91,18 @@ def tune(modelpara):
         args.hyperparameter = hyperparameter_dict
         hyperparameter_string = dict2str(hyperparameter_dict)
 
-        # define a descriptive model name that contains all the hyperparameters
-        # change to /home/ga63cuh/Documents/Logs - trainlog namechange?
+        # define a descriptive model name that contains all the hyperparameters - change to /home/ga63cuh/Documents/Logs - trainlog namechange?
         if args.model == "LSTM":
             args.store = f"/tmp/LSTM-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
             args.logdir = f"/home/ga63cuh/nas/ga63cuh/ga63cuh/Hiwi/Logs/LSTM-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
 
         elif args.model == "MSResNet":
             args.store = f"/tmp/MSResNet-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
-            args.logdir = f"/home/ga63cuh/Documents/Logs/MSResNet-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
+            args.logdir = f"/home/ga63cuh/nas/ga63cuh/ga63cuh/Hiwi/Logs/MSResNet-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
 
         elif args.model == "TransformerEncoder":
             args.store = f"/tmp/TransformerEncoder-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
-            args.logdir = f"/home/ga63cuh/Documents/Logs/TransformerEncoder-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
+            args.logdir = f"/home/ga63cuh/nas/ga63cuh/ga63cuh/Hiwi/Logs/TransformerEncoder-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
 
         elif args.model == "TempCNN":
             args.store = f"/tmp/TempCNN-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
@@ -139,4 +119,4 @@ def parse_args():
 
 
 modelpara = parse_args()
-tune(modelpara)
+tunePARA(modelpara)

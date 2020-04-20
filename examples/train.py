@@ -111,6 +111,7 @@ def train(args):
         log.append(scores)
 
     log = pd.DataFrame(log).set_index("epoch")
+    os.makedirs(logdir, exist_ok=True)
     log.to_csv(os.path.join(logdir,"trainlog.csv"))
 
     test_loss, y_true, y_pred = test_epoch(model, criterion, testdataloader, device)
@@ -184,7 +185,7 @@ def parse_args():
         'model', type=str, default="LSTM", help='select model architecture. Available models are '
                                                 '"LSTM","TempCNN","MSRestNet","TransformerEncoder"')
     parser.add_argument(
-        '-b', '--batchsize', type=int, default=256, help='batch size (number of time series processed simultaneously)')
+        '-b', '--batchsize', type=int, default=1024, help='batch size (number of time series processed simultaneously)')
     parser.add_argument(
         '-e', '--epochs', type=int, default=150, help='number of training epochs (training on entire dataset)')
     parser.add_argument(

@@ -56,7 +56,8 @@ class BreizhCrops(Dataset):
                  transform = None, target_transform = None, padding_value=-1,
                  filter_length=0, verbose=False, load_timeseries=True):
         self.region = region.lower()
-        print("Initializing BreizhCrops region {}".format(self.region))
+        if verbose:
+            print("Initializing BreizhCrops region {}".format(self.region))
 
         self.bands = ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
        'B8A', 'B9', 'QA10', 'QA20', 'QA60', 'doa']
@@ -65,7 +66,7 @@ class BreizhCrops(Dataset):
         self.transform = transform
         self.target_transform = target_transform
         self.padding_value = padding_value
-        self.verbose=verbose
+        self.verbose = verbose
 
         self.load_classmapping(classmapping)
 
@@ -197,7 +198,7 @@ class BreizhCrops(Dataset):
         if self.target_transform is not None:
             y = self.target_transform(y)
 
-        return X, y
+        return X, y, int(os.path.splitext(os.path.basename(row.path))[0])
 
 def untar(filepath):
     dirname = os.path.dirname(filepath)

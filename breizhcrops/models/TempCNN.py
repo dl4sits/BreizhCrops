@@ -11,6 +11,7 @@ https://github.com/charlotte-pel/temporalCNN
 https://www.mdpi.com/2072-4292/11/5/523
 """
 
+__all__ = ['TempCNN']
 
 class TempCNN(torch.nn.Module):
     def __init__(self, input_dim, num_classes, sequencelength, kernel_size=5, hidden_dims=64, dropout=0.5):

@@ -9,6 +9,7 @@ from
 https://github.com/geekfeiw/Multi-Scale-1D-ResNet/blob/master/model/multi_scale_ori.py
 """
 
+__all__ = ['MSResNet']
 
 def conv3x3(in_planes, out_planes, stride=1):
     """3x3 convolution with padding"""

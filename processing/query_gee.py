@@ -66,8 +66,8 @@ def main(start, end, shapefile, outfolder, scale, collection, label_col, id_col)
                 time.sleep(2)
             except AttributeError as e:
                 print(e)
-                print("geometry id {} invalid. Skipping in 2 seconds".format(row[id_col]))
-                time.sleep(2)
+                print("geometry id {} invalid. ".format(row[id_col]))
+                #time.sleep(2)
             except urllib3.exceptions.ProtocolError as e:
                 print(e)
                 print("Connection aborted. geometry id {}. Skipping in 2 seconds".format(row[id_col]))

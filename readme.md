@@ -77,7 +77,7 @@ python train.py TempCNN --epochs 1 --logdir /tmp --hyperparameter "kernel_size=5
 
 ### Hyperparameter Search
 
-Initialize a model with randomly selected hyperparameters. Possible arguments for the models are: "LSTM", "TransformerEncoder", "TempCNN", "MSResnet", "StarRNN" and "InceptionTime".
+Initialize a model with randomly selected hyperparameters. Possible arguments for the models are: "LSTM", "TransformerEncoder", "TempCNN", "MSResNet", "StarRNN" and "InceptionTime".
 ```
 cd examples
 python tune.py TempCNN

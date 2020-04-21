@@ -37,6 +37,8 @@ The model implementations from this repository are based on the following papers
 * RNN [Rußwurm & Körner, 2017](http://openaccess.thecvf.com/content_cvpr_2017_workshops/w18/html/Russwurm_Temporal_Vegetation_Modelling_CVPR_2017_paper.html)
 * MS-ResNet implementation from [Fei Wang](https://github.com/geekfeiw/Multi-Scale-1D-ResNet)
 * TransformerEncoder implementation from Yu-Hsiang Huang [GitHub](https://github.com/jadore801120/attention-is-all-you-need-pytorch)
+* Inception time
+* StarRNN
 
 ### Installation
 

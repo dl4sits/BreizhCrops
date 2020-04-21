@@ -68,16 +68,16 @@ from breizhcrops import BreizhCrops
 from breizhcrops.models import LSTM, TransformerEncoder, TempCNN, MSResNet
 ```
 
-### Train models
+### Train Models
 
 ```
 cd examples
 python train.py TempCNN --epochs 1 --logdir /tmp --hyperparameter "kernel_size=5,hidden_dims=64,dropout=0.5"
 ```
 
-### Tune models
+### Hyperparameter Search
 
-Initialize a model with randomly selected hyperparameters
+Initialize a model with randomly selected hyperparameters. Possible arguments for the models are: "LSTM", "TransformerEncoder", "TempCNN", "MSResnet", "StarRNN" and "InceptionTime".
 ```
 cd examples
 python tune.py TempCNN

@@ -1,15 +1,9 @@
 import sys
-
 sys.path.append("./models")
 sys.path.append("..")
-
 import argparse
-
 from argparse import Namespace
 import numpy as np
-
-import torch
-
 from train import train
 
 
@@ -18,7 +12,6 @@ def dict2str(hyperparameter_dict):
 
 
 def tune(modelpara):
-    # default parameters
     args = Namespace(
         mode="validation",
         model=modelpara.model,
@@ -102,7 +95,6 @@ def tune(modelpara):
         args.hyperparameter = hyperparameter_dict
         hyperparameter_string = dict2str(hyperparameter_dict)
 
-        # define a descriptive model name that contains all the hyperparameters
         if args.model == "LSTM":
             args.store = f"/tmp/LSTM-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
             args.logdir = f"/home/ga63cuh/nas/ga63cuh/ga63cuh/Hiwi/Logs/LSTM-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
@@ -137,5 +129,4 @@ def parse_args():
     return args
 
 
-modelpara = parse_args()
-tune(modelpara)
+tune(parse_args())

@@ -31,6 +31,7 @@ def train(args):
     print(f"Initialized {model.modelname}")
 
     logdir = os.path.join(args.logdir, model.modelname)
+    os.makedirs(logdir, exist_ok=True)
     print(f"Logging results to {logdir}")
 
     criterion = torch.nn.CrossEntropyLoss(reduction="mean")

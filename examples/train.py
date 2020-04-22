@@ -24,14 +24,14 @@ def train(args):
     ndims = meta["ndims"]
     sequencelength = meta["sequencelength"]
 
-    print(f"Logging results to {args.logdir}")
-    logdir = args.logdir
-
     device = torch.device(args.device)
     model = get_model(args.model, ndims, num_classes, sequencelength, device, **args.hyperparameter)
     optimizer = Adam(model.parameters(), lr=args.learning_rate, weight_decay=args.weight_decay)
     model.modelname += f"_learning-rate={args.learning_rate}_weight-decay={args.weight_decay}"
     print(f"Initialized {model.modelname}")
+
+    logdir = os.path.join(args.logdir, model.modelname)
+    print(f"Logging results to {logdir}")
 
     criterion = torch.nn.CrossEntropyLoss(reduction="mean")
 
@@ -109,8 +109,8 @@ def get_dataloader(datapath, mode, batchsize, workers):
     testdataloader = DataLoader(testdataset, batch_size=batchsize, shuffle=False, num_workers=workers)
 
     meta = dict(
-        num_classes=len(selected_bands),
-        ndims=len(frh01.classes),
+        ndims=len(selected_bands),
+        num_classes=len(frh01.classes),
         sequencelength=sequencelength
     )
 

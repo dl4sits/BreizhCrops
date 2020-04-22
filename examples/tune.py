@@ -86,30 +86,6 @@ def tune(args):
         args.hyperparameter = hyperparameter_dict
         hyperparameter_string = dict2str(hyperparameter_dict)
 
-        if args.model == "LSTM":
-            args.store = f"/tmp/LSTM-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
-            args.logdir = f"{args.logdir}/LSTM-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
-
-        elif args.model == "MSResNet":
-            args.store = f"/tmp/MSResNet-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
-            args.logdir = f"{args.logdir}/MSResNet-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
-
-        elif args.model == "TransformerEncoder":
-            args.store = f"/tmp/TransformerEncoder-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
-            args.logdir = f"{args.logdir}/TransformerEncoder-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
-
-        elif args.model == "TempCNN":
-            args.store = f"/tmp/TempCNN-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
-            args.logdir = f"{args.logdir}/TempCNN-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
-
-        elif args.model == "StarRNN":
-            args.store = f"/tmp/StarRNN-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
-            args.logdir = f"{args.logdir}/StarRNN-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
-
-        elif args.model == "InceptionTime":
-            args.store = f"/tmp/InceptionTime-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
-            args.logdir = f"{args.logdir}/InceptionTime-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
-
         train(args)
 
 

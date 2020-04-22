@@ -2,26 +2,16 @@ import sys
 sys.path.append("./models")
 sys.path.append("..")
 import argparse
-from argparse import Namespace
 import numpy as np
 from train import train
-
+import torch
 
 def dict2str(hyperparameter_dict):
     return ",".join([f"{k}={v}" for k,v in hyperparameter_dict.items()])
 
 
-def tune(modelpara):
-    args = Namespace(
-        mode="validation",
-        model=modelpara.model,
-        epochs=10,
-        datapath="../data",
-        batchsize=256,
-        workers=16,
-        device="cuda",
-        logdir="/home/ga63cuh/nas/ga63cuh/ga63cuh/Hiwi/Logs"
-    )
+def tune(args):
+    args.mode = "validation"
 
     while True:
         if args.model == "LSTM":
@@ -90,34 +80,35 @@ def tune(modelpara):
             )
 
         else:
-            raise ValueError("invalid model argument. choose from 'LSTM','MSResNet','TransformerEncoder','TempCNN','StarRNN' or 'InceptionTime'")
+            raise ValueError("invalid model argument. choose from 'LSTM','MSResNet','TransformerEncoder',"
+                             "'TempCNN','StarRNN' or 'InceptionTime'")
 
         args.hyperparameter = hyperparameter_dict
         hyperparameter_string = dict2str(hyperparameter_dict)
 
         if args.model == "LSTM":
             args.store = f"/tmp/LSTM-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
-            args.logdir = f"/home/ga63cuh/nas/ga63cuh/ga63cuh/Hiwi/Logs/LSTM-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
+            args.logdir = f"{args.logdir}/LSTM-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
 
         elif args.model == "MSResNet":
             args.store = f"/tmp/MSResNet-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
-            args.logdir = f"/home/ga63cuh/nas/ga63cuh/ga63cuh/Hiwi/Logs/MSResNet-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
+            args.logdir = f"{args.logdir}/MSResNet-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
 
         elif args.model == "TransformerEncoder":
             args.store = f"/tmp/TransformerEncoder-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
-            args.logdir = f"/home/ga63cuh/nas/ga63cuh/ga63cuh/Hiwi/Logs/TransformerEncoder-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
+            args.logdir = f"{args.logdir}/TransformerEncoder-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
 
         elif args.model == "TempCNN":
             args.store = f"/tmp/TempCNN-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
-            args.logdir = f"/home/ga63cuh/nas/ga63cuh/ga63cuh/Hiwi/Logs/TempCNN-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
+            args.logdir = f"{args.logdir}/TempCNN-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
 
         elif args.model == "StarRNN":
             args.store = f"/tmp/StarRNN-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
-            args.logdir = f"/home/ga63cuh/nas/ga63cuh/ga63cuh/Hiwi/Logs/StarRNN-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
+            args.logdir = f"{args.logdir}/StarRNN-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
 
         elif args.model == "InceptionTime":
             args.store = f"/tmp/InceptionTime-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
-            args.logdir = f"/home/ga63cuh/nas/ga63cuh/ga63cuh/Hiwi/Logs/InceptionTime-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
+            args.logdir = f"{args.logdir}/InceptionTime-{args.learning_rate}-{args.weight_decay}-{hyperparameter_string}"
 
         train(args)
 
@@ -125,8 +116,25 @@ def tune(modelpara):
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('model', type=str, help='select model architecture')
+    parser.add_argument('-D', '--datapath', type=str, default="../data", help='path to dataset')
+    parser.add_argument('-l', '--logdir', type=str, default="/tmp", help='logdir')
+    parser.add_argument(
+        '-b', '--batchsize', type=int, default=256, help='batch size (number of time series processed simultaneously)')
+    parser.add_argument(
+        '-e', '--epochs', type=int, default=10, help='number of training epochs (training on entire dataset)')
+    parser.add_argument(
+        '-w', '--workers', type=int, default=0, help='number of CPU workers to load the next batch')
+    parser.add_argument(
+        '-d', '--device', type=str, default=None, help='torch.Device. either "cpu" or "cuda". '
+                                                       'default will check by torch.cuda.is_available() ')
+
     args = parser.parse_args()
+
+    if args.device is None:
+        args.device = "cuda" if torch.cuda.is_available() else "cpu"
+
     return args
 
-
-tune(parse_args())
+if __name__ == '__main__':
+    args = parse_args()
+    tune(args)

@@ -21,7 +21,7 @@ def tune(args):
             hyperparameter_dict = dict(
                 hidden_dims=int(np.random.choice([32, 64, 128])),
                 num_layers=int(np.random.choice([1, 2, 3, 4])),
-                bidirectional=int(np.random.choice([True, False])),
+                bidirectional=bool(np.random.choice([True, False])),
                 dropout=np.random.uniform(0, 0.8)
             )
 

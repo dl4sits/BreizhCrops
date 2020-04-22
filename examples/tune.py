@@ -14,7 +14,16 @@ def tune(args):
     args.mode = "validation"
 
     while True:
-        if args.model == "LSTM":
+
+        if args.model == "OmniScaleCNN":
+            args.learning_rate = 10 ** (-(np.random.uniform(2, 4)))
+            args.weight_decay = 10 ** (-(np.random.uniform(2, 8)))
+
+            # unclear of paramenter_number_of_layer_list should be tuned.
+            # waiting for https://github.com/Wensi-Tang/OS-CNN/issues/1 response
+            hyperparameter_dict = dict()
+
+        elif args.model == "LSTM":
             args.learning_rate = 10 ** (-(np.random.uniform(2, 4)))
             args.weight_decay = 10 ** (-(np.random.uniform(2, 8)))
 

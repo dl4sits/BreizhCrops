@@ -6,7 +6,7 @@ sys.path.append("..")
 import argparse
 
 import breizhcrops
-from breizhcrops.models import LSTM, TempCNN, MSResNet, TransformerModel, InceptionTime, StarRNN
+from breizhcrops.models import LSTM, TempCNN, MSResNet, TransformerModel, InceptionTime, StarRNN, OmniScaleCNN
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from torch.optim import Adam
@@ -115,7 +115,9 @@ def get_dataloader(datapath, mode, batchsize, workers, preload_ram=False):
 
 
 def get_model(model, ndims, num_classes, sequencelength, device, **hyperparameter):
-    if model == "LSTM":
+    if model == "OmniScaleCNN":
+        model = OmniScaleCNN(input_dim=ndims, num_classes=num_classes, sequencelength=sequencelength, **hyperparameter).to(device)
+    elif model == "LSTM":
         model = LSTM(input_dim=ndims, num_classes=num_classes, **hyperparameter).to(device)
     elif model == "StarRNN":
         model = StarRNN(input_dim=ndims,

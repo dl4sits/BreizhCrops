@@ -20,7 +20,7 @@ RAW_CSV_URL = dict(
 INDEX_FILE_URLs = dict(
     frh01="https://syncandshare.lrz.de/dl/fiE7ExSPEF5j1LHADGZ1GcAV/frh01.csv",
     frh02="https://syncandshare.lrz.de/dl/fiEutoBWs3JFjCfJpoLWq5HF/frh02.csv",
-    frh03="https://syncandshare.lr/home/marcz.de/dl/fiJL3LMrzYwmULbvzFiyVZuY/frh03.csv",
+    frh03="https://syncandshare.lrz.de/dl/fiJL3LMrzYwmULbvzFiyVZuY/frh03.csv",
     frh04="https://syncandshare.lrz.de/dl/fiCntufUMakKdjWZNq8eS5vw/frh04.csv",
 )
 
@@ -113,7 +113,7 @@ class BreizhCrops(Dataset):
     def download_h5_database(self):
         print(f"downloading {self.h5path}.tar.gz")
         download_file(H5_URLs[self.region], self.h5path+".tar.gz", overwrite=True)
-        print(f"uncomplressing {self.h5path}.tar.gz to {self.h5path}")
+        print(f"extracting {self.h5path}.tar.gz to {self.h5path}")
         untar(self.h5path + ".tar.gz")
         print(f"removing {self.h5path}.tar.gz")
         os.remove(self.h5path+".tar.gz")

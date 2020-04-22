@@ -83,7 +83,11 @@ def tune(args):
         args.hyperparameter = hyperparameter_dict
         hyperparameter_string = dict2str(hyperparameter_dict)
 
-        train(args)
+        try:
+            train(args)
+        except Exception as e:
+            print("received error "+str(e))
+            continue
 
 
 def parse_args():

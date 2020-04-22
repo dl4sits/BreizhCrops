@@ -6,28 +6,25 @@ import numpy as np
 from train import train
 import torch
 
-def dict2str(hyperparameter_dict):
-    return ",".join([f"{k}={v}" for k,v in hyperparameter_dict.items()])
-
-
 def tune(args):
     args.mode = "validation"
 
     while True:
 
+        # common hyperparameter
+        args.learning_rate = 10 ** (-(np.random.uniform(2, 4)))
+        args.weight_decay = 10 ** (-(np.random.uniform(2, 8)))
+
+        # model-specific hyperparameter
         if args.model == "OmniScaleCNN":
-            args.learning_rate = 10 ** (-(np.random.uniform(2, 4)))
-            args.weight_decay = 10 ** (-(np.random.uniform(2, 8)))
 
             # unclear of paramenter_number_of_layer_list should be tuned.
             # waiting for https://github.com/Wensi-Tang/OS-CNN/issues/1 response
-            hyperparameter_dict = dict()
+            args.hyperparameter = dict()
 
         elif args.model == "LSTM":
-            args.learning_rate = 10 ** (-(np.random.uniform(2, 4)))
-            args.weight_decay = 10 ** (-(np.random.uniform(2, 8)))
 
-            hyperparameter_dict = dict(
+            args.hyperparameter = dict(
                 hidden_dims=int(np.random.choice([32, 64, 128])),
                 num_layers=int(np.random.choice([1, 2, 3, 4])),
                 bidirectional=bool(np.random.choice([True, False])),
@@ -35,53 +32,41 @@ def tune(args):
             )
 
         elif args.model == "MSResNet":
-            args.learning_rate = 10 ** (-(np.random.uniform(2, 4)))
-            args.weight_decay = 10 ** (-(np.random.uniform(2, 8)))
 
-            hyperparameter_dict = dict(
+            args.hyperparameter = dict(
                 hidden_dims=np.random.choice([32, 64, 128])
             )
 
         elif args.model == "TransformerEncoder":
-            args.learning_rate = 10 ** (-(np.random.uniform(2, 4)))
-            args.weight_decay = 10 ** (-(np.random.uniform(2, 8)))
 
             d_model = int(np.random.choice([32, 64, 128, 256, 512], 1))
-            n_head = int(np.random.choice([1, 2, 3, 4, 5, 6, 7, 8], 1))
 
-            hyperparameter_dict = dict(
+            args.hyperparameter = dict(
                 d_model=d_model,
-                n_head=n_head,
+                n_head=int(np.random.choice([1, 2, 3, 4, 5, 6, 7, 8], 1)),
                 n_layers=int(np.random.choice([1, 2, 3, 4, 5, 6, 7, 8], 1)),
                 d_inner=d_model * 4,
                 dropout=np.random.uniform(0, 0.8),
             )
 
         elif args.model == "TempCNN":
-            args.learning_rate = 10 ** (-(np.random.uniform(2, 4)))
-            args.weight_decay = 10 ** (-(np.random.uniform(2, 8)))
 
-            hyperparameter_dict = dict(
+            args.hyperparameter = dict(
                 kernel_size=np.random.choice([3, 5, 7]),
                 hidden_dims=np.random.choice([32, 64, 128]),
                 dropout=np.random.uniform(0, 0.8)
             )
 
         elif args.model == "StarRNN":
-            args.learning_rate = 10 ** (-(np.random.uniform(2, 4)))
-            args.weight_decay = 10 ** (-(np.random.uniform(2, 8)))
 
-            hyperparameter_dict = dict(
+            args.hyperparameter = dict(
                 hidden_dims=np.random.choice([32, 64, 128]),
                 num_layers=np.random.choice([1, 2, 3, 4]),
                 dropout=np.random.uniform(0, 0.8)
             )
 
         elif args.model == "InceptionTime":
-            args.learning_rate = 10 ** (-(np.random.uniform(2, 4)))
-            args.weight_decay = 10 ** (-(np.random.uniform(2, 8)))
-
-            hyperparameter_dict = dict(
+            args.hyperparameter = dict(
                 num_layers=np.random.choice([1, 2, 3, 4]),
                 hidden_dims=np.random.choice([32, 64, 128])
             )
@@ -90,15 +75,11 @@ def tune(args):
             raise ValueError("invalid model argument. choose from 'LSTM','MSResNet','TransformerEncoder',"
                              "'TempCNN','StarRNN' or 'InceptionTime'")
 
-        args.hyperparameter = hyperparameter_dict
-        hyperparameter_string = dict2str(hyperparameter_dict)
-
         try:
             train(args)
         except Exception as e:
             print("received error "+str(e))
             continue
-
 
 def parse_args():
     parser = argparse.ArgumentParser()

@@ -35,7 +35,7 @@ SHP_URLs = dict(
 FILESIZES = dict(
     frh01=2559635960,
     frh02=2253658856,
-    frh03=2253658856,
+    frh03=2493572704,
     frh04=1555075632
 )
 
@@ -81,7 +81,7 @@ class BreizhCrops(Dataset):
 
         self.index = pd.read_csv(indexfile, index_col=0)
         if verbose:
-            print(f"loaded {len(index)} time series references from {indexfile}")
+            print(f"loaded {len(self.index)} time series references from {indexfile}")
 
         self.h5path = os.path.join(self.root, f"{self.region}.h5")
         if load_timeseries and ((not os.path.exists(self.h5path))

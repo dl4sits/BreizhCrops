@@ -45,9 +45,6 @@ def tune(args):
                 n_layers=int(np.random.choice([1, 2, 3, 4, 5, 6, 7, 8], 1)),
                 d_inner=d_model * 4,
                 dropout=np.random.uniform(0, 0.8),
-                d_k=d_model//n_head,
-                d_word_vec=d_model,
-                d_v=d_model//n_head
             )
 
         elif args.model == "TempCNN":

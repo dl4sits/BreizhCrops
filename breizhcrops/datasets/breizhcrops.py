@@ -20,7 +20,7 @@ RAW_CSV_URL = dict(
 INDEX_FILE_URLs = dict(
     frh01="https://syncandshare.lrz.de/dl/fiE7ExSPEF5j1LHADGZ1GcAV/frh01.csv",
     frh02="https://syncandshare.lrz.de/dl/fiEutoBWs3JFjCfJpoLWq5HF/frh02.csv",
-    frh03="https://syncandshare.lrz.de/dl/fiJL3LMrzYwmULbvzFiyVZuY/frh03.csv",
+    frh03="https://syncandshare.lr/home/marcz.de/dl/fiJL3LMrzYwmULbvzFiyVZuY/frh03.csv",
     frh04="https://syncandshare.lrz.de/dl/fiCntufUMakKdjWZNq8eS5vw/frh04.csv",
 )
 
@@ -46,7 +46,12 @@ H5_URLs = dict(
     frh04="https://syncandshare.lrz.de/dl/fi77rzsEJMWXumq3jpi1VPYF/frh04.h5.tar.gz"
 )
 
+# 9-classes used in ISPRS submission
 CLASSMAPPINGURL = "https://syncandshare.lrz.de/dl/fiWcv23b3PxswYZFh2htEpSs/classmapping.csv"
+
+# 13-classes used in ICML workshop
+CLASSMAPPINGURL_ICML = "https://syncandshare.lrz.de/dl/fiAXzNVSgAz7sKBdonhsCpkG/classmapping_icml.csv"
+
 CODESURL = "https://syncandshare.lrz.de/dl/fiFVnHYsEsix7HTGYRh6Zh3/codes.csv"
 
 class BreizhCrops(Dataset):
@@ -54,7 +59,7 @@ class BreizhCrops(Dataset):
     def __init__(self, region, root="data",
                  classmapping=None,
                  transform = None, target_transform = None, padding_value=-1,
-                 filter_length=0, verbose=False, load_timeseries=True):
+                 filter_length=0, verbose=False, load_timeseries=True, recompile_h5_from_csv=False):
         self.region = region.lower()
         if verbose:
             print("Initializing BreizhCrops region {}".format(self.region))
@@ -74,22 +79,24 @@ class BreizhCrops(Dataset):
         if not os.path.exists(indexfile):
             download_file(INDEX_FILE_URLs[region],indexfile)
 
-        index = pd.read_csv(indexfile, index_col=0)
+        self.index = pd.read_csv(indexfile, index_col=0)
         if verbose:
             print(f"loaded {len(index)} time series references from {indexfile}")
 
-        self.index = index.loc[index["CODE_CULTU"].isin(self.mapping.index)]
+        self.h5path = os.path.join(self.root, f"{self.region}.h5")
+        if load_timeseries and ((not os.path.exists(self.h5path))
+                or (not os.path.getsize(self.h5path) == FILESIZES[region])):
+            if recompile_h5_from_csv:
+                self.write_h5_database_from_csv()
+            else:
+                self.download_h5_database()
+
+        self.index = self.index.loc[self.index["CODE_CULTU"].isin(self.mapping.index)]
         if verbose:
             print(f"kept {len(self.index)} time series references from applying class mapping")
 
         # filter zero-length time series
         self.index = self.index.loc[self.index.sequencelength > filter_length].set_index("idx")
-
-        self.h5path = os.path.join(self.root, f"{self.region}.h5")
-        if load_timeseries and ((not os.path.exists(self.h5path))
-                or (not os.path.getsize(self.h5path) == FILESIZES[region])):
-            self.download_h5_database()
-            #self.write_h5_database_from_csv()
 
         self.maxseqlength = self.index["sequencelength"].max()
 

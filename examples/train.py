@@ -18,7 +18,7 @@ import sklearn.metrics
 
 
 def train(args):
-    traindataloader, testdataloader, meta = get_dataloader(args.datapath, args.mode, args.batchsize, args.workers)
+    traindataloader, testdataloader, meta = get_dataloader(args.datapath, args.mode, args.batchsize, args.workers, args.preload_ram)
 
     num_classes = meta["num_classes"]
     ndims = meta["ndims"]
@@ -39,7 +39,7 @@ def train(args):
     log = list()
     for epoch in range(args.epochs):
         train_loss = train_epoch(model, optimizer, criterion, traindataloader, device)
-        test_loss, y_true, y_pred, _ = test_epoch(model, criterion, testdataloader, device)
+        test_loss, y_true, y_pred, *_ = test_epoch(model, criterion, testdataloader, device)
         scores = metrics(y_true.cpu(), y_pred.cpu())
         scores_msg = ", ".join([f"{k}={v:.2f}" for (k, v) in scores.items()])
         test_loss = test_loss.cpu().detach().numpy()[0]
@@ -54,11 +54,7 @@ def train(args):
         log_df = pd.DataFrame(log).set_index("epoch")
         log_df.to_csv(os.path.join(logdir, "trainlog.csv"))
 
-    test_loss, y_true, y_pred = test_epoch(model, criterion, testdataloader, device)
-    print(sklearn.metrics.classification_report(y_true.cpu(), y_pred.cpu()))
-
-
-def get_dataloader(datapath, mode, batchsize, workers):
+def get_dataloader(datapath, mode, batchsize, workers, preload_ram=False):
     print(f"Setting up datasets in {os.path.abspath(datapath)}")
     datapath = os.path.abspath(datapath)
 
@@ -90,14 +86,14 @@ def get_dataloader(datapath, mode, batchsize, workers):
         return torch.tensor(y, dtype=torch.long)
 
     frh01 = breizhcrops.BreizhCrops(region="frh01", root=datapath, transform=transform,
-                                    target_transform=target_transform, padding_value=padded_value)
+                                    target_transform=target_transform, padding_value=padded_value, preload_ram=preload_ram)
     frh02 = breizhcrops.BreizhCrops(region="frh02", root=datapath, transform=transform,
-                                    target_transform=target_transform, padding_value=padded_value)
+                                    target_transform=target_transform, padding_value=padded_value, preload_ram=preload_ram)
     frh03 = breizhcrops.BreizhCrops(region="frh03", root=datapath, transform=transform,
-                                    target_transform=target_transform, padding_value=padded_value)
+                                    target_transform=target_transform, padding_value=padded_value, preload_ram=preload_ram)
     if mode == "evaluation":
         frh04 = breizhcrops.BreizhCrops(region="frh04", root=datapath, transform=transform,
-                                        target_transform=target_transform, padding_value=padded_value)
+                                        target_transform=target_transform, padding_value=padded_value, preload_ram=preload_ram)
         traindatasets = torch.utils.data.ConcatDataset([frh01, frh02, frh03])
         testdataset = frh04
     elif mode == "validation":
@@ -238,6 +234,8 @@ def parse_args():
         '--weight-decay', type=float, default=1e-6, help='optimizer weight_decay (default 1e-6)')
     parser.add_argument(
         '--learning-rate', type=float, default=1e-2, help='optimizer learning rate (default 1e-2)')
+    parser.add_argument(
+        '--preload-ram', action='store_true', help='load dataset into RAM upon initialization')
     parser.add_argument(
         '-d', '--device', type=str, default=None, help='torch.Device. either "cpu" or "cuda". '
                                                        'default will check by torch.cuda.is_available() ')

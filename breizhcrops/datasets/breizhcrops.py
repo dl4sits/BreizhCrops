@@ -59,7 +59,7 @@ class BreizhCrops(Dataset):
     def __init__(self, region, root="data",
                  classmapping=None,
                  transform = None, target_transform = None, padding_value=-1,
-                 filter_length=0, verbose=False, load_timeseries=True, recompile_h5_from_csv=False):
+                 filter_length=0, verbose=False, load_timeseries=True, recompile_h5_from_csv=False, preload_ram=False):
         self.region = region.lower()
         if verbose:
             print("Initializing BreizhCrops region {}".format(self.region))
@@ -104,6 +104,14 @@ class BreizhCrops(Dataset):
         if not os.path.exists(codesfile):
             download_file(CODESURL, codesfile)
         self.codes = pd.read_csv(codesfile,delimiter=";",index_col=0)
+
+        if preload_ram:
+            self.X_list = list()
+            with h5py.File(self.h5path, "r") as dataset:
+                for idx, row in tqdm(self.index.iterrows(), desc="loading data into RAM", total=len(self.index)):
+                        self.X_list.append(np.array(dataset[(row.path)]))
+        else:
+            self.X_list = None
 
         self.get_codes()
 
@@ -193,8 +201,11 @@ class BreizhCrops(Dataset):
     def __getitem__(self, index):
         row = self.index.iloc[index]
 
-        with h5py.File(self.h5path, "r") as dataset:
-            X = np.array(dataset[(row.path)])
+        if self.X_list is None:
+            with h5py.File(self.h5path, "r") as dataset:
+                X = np.array(dataset[(row.path)])
+        else:
+            X = self.X_list[index]
         y = row["CODE_CULTU"]
 
         npad = self.maxseqlength - X.shape[0]

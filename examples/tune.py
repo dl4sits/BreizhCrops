@@ -104,7 +104,8 @@ def parse_args():
     parser.add_argument(
         '-d', '--device', type=str, default=None, help='torch.Device. either "cpu" or "cuda". '
                                                        'default will check by torch.cuda.is_available() ')
-
+    parser.add_argument(
+        '--preload-ram', action='store_true', help='load dataset into RAM upon initialization')
     args = parser.parse_args()
 
     if args.device is None:

@@ -23,6 +23,12 @@ def test_init_breizhcrops():
     BreizhCrops(region="frh02", root=datapath, load_timeseries=False)
     BreizhCrops(region="frh03", root=datapath, load_timeseries=False)
 
+    BreizhCrops(region="frh04", root=datapath, load_timeseries=False, level="L2A")
+    BreizhCrops(region="frh01", root=datapath, load_timeseries=False, level="L2A")
+    BreizhCrops(region="frh02", root=datapath, load_timeseries=False, level="L2A")
+    BreizhCrops(region="frh03", root=datapath, load_timeseries=False, level="L2A")
+
+
 def test_urls():
     import requests
     from breizhcrops.datasets.urls import CODESURL, CLASSMAPPINGURL, INDEX_FILE_URLs, SHP_URLs, H5_URLs
@@ -52,10 +58,6 @@ def test_urls():
     check(INDEX_FILE_URLs)
     check(SHP_URLs)
     check(H5_URLs)
-
-
-
-
 
 def test_get_codes_breizhcrops():
     BreizhCrops(region="frh04", root="/tmp", load_timeseries=False).get_codes()

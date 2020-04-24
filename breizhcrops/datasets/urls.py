@@ -24,10 +24,10 @@ INDEX_FILE_URLs = {
             "frh04": "https://syncandshare.lrz.de/dl/fiCntufUMakKdjWZNq8eS5vw/frh04.csv",
         },
         "L2A": {
-            "frh01": None,
-            "frh02": None,
-            "frh03": None,
-            "frh04": None,
+            "frh01": "https://syncandshare.lrz.de/dl/fiPZ7vpN4zVQAR9gqmqv12Ej/frh01.csv",
+            "frh02": "https://syncandshare.lrz.de/dl/fi1749MFuYgWc4qKwrVWu2hR/frh02.csv",
+            "frh03": "https://syncandshare.lrz.de/dl/fiTKuWmkwnxRoP84V3gWMpqs/frh03.csv",
+            "frh04": "https://syncandshare.lrz.de/dl/fiDmi5qobgbfJHJLNEPf99xT/frh04.csv",
         }
     }
 }

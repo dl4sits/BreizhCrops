@@ -8,7 +8,7 @@ import pandas as pd
 from torch.utils.data import Dataset
 from tqdm import tqdm
 
-from .urls import CODESURL, CLASSMAPPINGURL, INDEX_FILE_URLs, FILESIZES, BANDS, SHP_URLs
+from .urls import CODESURL, CLASSMAPPINGURL, INDEX_FILE_URLs, FILESIZES, BANDS, SHP_URLs, H5_URLs
 
 from ..utils import download_file
 

@@ -22,9 +22,6 @@ def test_init_breizhcrops():
     BreizhCrops(region="frh01", root=datapath, load_timeseries=False)
     BreizhCrops(region="frh02", root=datapath, load_timeseries=False)
     BreizhCrops(region="frh03", root=datapath, load_timeseries=False)
-    
-def test_load_classmapping_breizhcrops():
-    BreizhCrops(region="frh04", root="/tmp", load_timeseries=False).load_classmapping(None)
 
 def test_get_codes_breizhcrops():
     BreizhCrops(region="frh04", root="/tmp", load_timeseries=False).get_codes()

@@ -25,8 +25,7 @@ def test_init_breizhcrops():
 
 def test_urls():
     import requests
-    from breizhcrops.datasets.urls import CODESURL, CLASSMAPPINGURL, INDEX_FILE_URLs, \
-        FILESIZES, BANDS, SHP_URLs, H5_URLs
+    from breizhcrops.datasets.urls import CODESURL, CLASSMAPPINGURL, INDEX_FILE_URLs, SHP_URLs, H5_URLs
 
     def check(url_or_dict):
         """

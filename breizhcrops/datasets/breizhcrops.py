@@ -9,13 +9,19 @@ from torch.utils.data import Dataset
 from tqdm import tqdm
 
 from .urls import CODESURL, CLASSMAPPINGURL, INDEX_FILE_URLs, FILESIZES, BANDS, SHP_URLs, H5_URLs
-
 from ..utils import download_file
+
+BANDS = {
+    "L1C": ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
+            'B8A', 'B9', 'QA10', 'QA20', 'QA60', 'doa'],
+    "L2A": None
+}
+
 
 class BreizhCrops(Dataset):
 
     def __init__(self, region, root="data", year=2017, level="L1C",
-                 transform = None, target_transform = None, padding_value=-1,
+                 transform=None, target_transform=None, padding_value=-1,
                  filter_length=0, verbose=False, load_timeseries=True, recompile_h5_from_csv=False, preload_ram=False):
 
         assert year in [2017]
@@ -41,14 +47,14 @@ class BreizhCrops(Dataset):
         self.load_classmapping(self.classmapping)
 
         if not os.path.exists(self.indexfile):
-            download_file(INDEX_FILE_URLs[year][level][region],self.indexfile)
+            download_file(INDEX_FILE_URLs[year][level][region], self.indexfile)
 
         self.index = pd.read_csv(self.indexfile, index_col=0)
         if verbose:
             print(f"loaded {len(self.index)} time series references from {self.indexfile}")
 
         if load_timeseries and ((not os.path.exists(self.h5path))
-                or (not os.path.getsize(self.h5path) == FILESIZES[year][level][region])):
+                                or (not os.path.getsize(self.h5path) == FILESIZES[year][level][region])):
             if recompile_h5_from_csv:
                 self.write_h5_database_from_csv()
             else:
@@ -65,13 +71,13 @@ class BreizhCrops(Dataset):
 
         if not os.path.exists(self.codesfile):
             download_file(CODESURL, self.codesfile)
-        self.codes = pd.read_csv(self.codesfile,delimiter=";",index_col=0)
+        self.codes = pd.read_csv(self.codesfile, delimiter=";", index_col=0)
 
         if preload_ram:
             self.X_list = list()
             with h5py.File(self.h5path, "r") as dataset:
                 for idx, row in tqdm(self.index.iterrows(), desc="loading data into RAM", total=len(self.index)):
-                        self.X_list.append(np.array(dataset[(row.path)]))
+                    self.X_list.append(np.array(dataset[(row.path)]))
         else:
             self.X_list = None
 
@@ -102,16 +108,16 @@ class BreizhCrops(Dataset):
 
         return h5path, indexfile, codesfile, shapefile, classmapping
 
-    def get_fid(self,idx):
+    def get_fid(self, idx):
         return self.index[self.index["idx"] == idx].index[0]
 
     def download_h5_database(self):
         print(f"downloading {self.h5path}.tar.gz")
-        download_file(H5_URLs[self.year][self.level][self.region], self.h5path+".tar.gz", overwrite=True)
+        download_file(H5_URLs[self.year][self.level][self.region], self.h5path + ".tar.gz", overwrite=True)
         print(f"extracting {self.h5path}.tar.gz to {self.h5path}")
         untar(self.h5path + ".tar.gz")
         print(f"removing {self.h5path}.tar.gz")
-        os.remove(self.h5path+".tar.gz")
+        os.remove(self.h5path + ".tar.gz")
         print(f"checking integrity by file size...")
         assert os.path.getsize(self.h5path) == FILESIZES[self.year][self.level][self.region]
         print("ok!")
@@ -129,7 +135,7 @@ class BreizhCrops(Dataset):
         import tarfile
 
         if not os.path.exists(self.shapefile):
-            targzfile = os.path.join(os.path.dirname(self.shapefile), self.region+".tar.gz")
+            targzfile = os.path.join(os.path.dirname(self.shapefile), self.region + ".tar.gz")
             download_file(SHP_URLs[self.region], targzfile)
             with tarfile.open(targzfile) as tar:
                 tar.extractall()
@@ -144,7 +150,7 @@ class BreizhCrops(Dataset):
 
         return geom
 
-    def load_classmapping(self,classmapping):
+    def load_classmapping(self, classmapping):
         if not os.path.exists(classmapping):
             if self.verbose:
                 print(f"no classmapping found at {classmapping}, downloading from {CLASSMAPPINGURL}")
@@ -200,6 +206,7 @@ class BreizhCrops(Dataset):
             y = self.target_transform(y)
 
         return X, y, int(os.path.splitext(os.path.basename(row.path))[0])
+
 
 def untar(filepath):
     dirname = os.path.dirname(filepath)

@@ -7,7 +7,6 @@ import numpy as np
 import pandas as pd
 from torch.utils.data import Dataset
 from tqdm import tqdm
-import tarfile
 
 from .urls import CODESURL, CLASSMAPPINGURL, INDEX_FILE_URLs, FILESIZES, BANDS, SHP_URLs, H5_URLs
 
@@ -127,6 +126,7 @@ class BreizhCrops(Dataset):
         return self.codes
 
     def geodataframe(self):
+        import tarfile
 
         if not os.path.exists(self.shapefile):
             targzfile = os.path.join(os.path.dirname(self.shapefile), self.region+".tar.gz")

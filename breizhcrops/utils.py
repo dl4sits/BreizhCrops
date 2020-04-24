@@ -27,6 +27,7 @@ def update_progress(progress):
 
 
 def untar(filepath):
+    import tarfile
     dirname = os.path.dirname(filepath)
     with tarfile.open(filepath, 'r:gz') as tar:
         tar.extractall(path=dirname)

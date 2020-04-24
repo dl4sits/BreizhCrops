@@ -10,6 +10,7 @@ import tarfile
 
 from ..utils import download_file
 
+# L1C data information
 RAW_CSV_URL = dict(
     frh01="https://syncandshare.lrz.de/dl/fiA33ywfHQdzbxXwYQ5zLVpp/frh01.zip",
     frh02="https://syncandshare.lrz.de/dl/fi2pg7sXMjTQRSzrWxRdGLux/frh02.zip",
@@ -24,14 +25,6 @@ INDEX_FILE_URLs = dict(
     frh04="https://syncandshare.lrz.de/dl/fiCntufUMakKdjWZNq8eS5vw/frh04.csv",
 )
 
-
-SHP_URLs = dict(
-    frh01="https://syncandshare.lrz.de/dl/fiAHe7ZYMerBi2yJ5hKJmTXS/frh01.tar.gz",
-    frh02="https://syncandshare.lrz.de/dl/fi8L5iwpJXs2b9hKEFjQoML5/frh02.tar.gz",
-    frh03="https://syncandshare.lrz.de/dl/fiTdWAa8b9K4XVmrBbZ6413i/frh03.tar.gz",
-    frh04="https://syncandshare.lrz.de/dl/fiKfoL1VW9jiDXPgnVXu7ZFK/frh04.tar.gz",
-)
-
 FILESIZES = dict(
     frh01=2559635960,
     frh02=2253658856,
@@ -44,6 +37,45 @@ H5_URLs = dict(
     frh02="https://syncandshare.lrz.de/dl/fi3dyXpipntJyiCZZJdLNcTi/frh02.h5.tar.gz",
     frh03="https://syncandshare.lrz.de/dl/fi8ahoBEbekCKh61PxDAvjQ/frh03.h5.tar.gz",
     frh04="https://syncandshare.lrz.de/dl/fi77rzsEJMWXumq3jpi1VPYF/frh04.h5.tar.gz"
+)
+
+# L2A data information
+#TODO: set the urls
+
+RAW_CSV_URL_L2A = dict(
+    frh01="https://syncandshare.lrz.de/dl/0/frh01.zip",
+    frh02="https://syncandshare.lrz.de/dl/0/frh02.zip",
+    frh03="https://syncandshare.lrz.de/dl/0/frh03.zip",
+    frh04="https://syncandshare.lrz.de/dl/0/frh04.zip",
+)
+
+INDEX_FILE_URLs_L2A = dict(
+    frh01="https://syncandshare.lrz.de/dl/0/frh01.csv",
+    frh02="https://syncandshare.lrz.de/dl/0/frh02.csv",
+    frh03="https://syncandshare.lrz.de/dl/0/frh03.csv",
+    frh04="https://syncandshare.lrz.de/dl/0/frh04.csv",
+)
+
+FILESIZES_L2A = dict(
+    frh01=0,
+    frh02=0,
+    frh03=0,
+    frh04=0
+)
+
+H5_URLs_L2A = dict(
+    frh01="https://syncandshare.lrz.de/dl/0/frh01.h5.tar.gz",
+    frh02="https://syncandshare.lrz.de/dl/0/frh02.h5.tar.gz",
+    frh03="https://syncandshare.lrz.de/dl/0/frh03.h5.tar.gz",
+    frh04="https://syncandshare.lrz.de/dl/0/frh04.h5.tar.gz"
+)
+
+# Common URLS
+SHP_URLs = dict(
+    frh01="https://syncandshare.lrz.de/dl/fiAHe7ZYMerBi2yJ5hKJmTXS/frh01.tar.gz",
+    frh02="https://syncandshare.lrz.de/dl/fi8L5iwpJXs2b9hKEFjQoML5/frh02.tar.gz",
+    frh03="https://syncandshare.lrz.de/dl/fiTdWAa8b9K4XVmrBbZ6413i/frh03.tar.gz",
+    frh04="https://syncandshare.lrz.de/dl/fiKfoL1VW9jiDXPgnVXu7ZFK/frh04.tar.gz",
 )
 
 # 9-classes used in ISPRS submission
@@ -64,41 +96,13 @@ class BreizhCrops(Dataset):
         if verbose:
             print("Initializing BreizhCrops region {}".format(self.region))
 
-        self.bands = ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
-       'B8A', 'B9', 'QA10', 'QA20', 'QA60', 'doa']
-
         self.root = root
         self.transform = transform
         self.target_transform = target_transform
         self.padding_value = padding_value
         self.verbose = verbose
 
-        self.load_classmapping(classmapping)
-
-        indexfile = os.path.join(self.root, region + ".csv")
-        if not os.path.exists(indexfile):
-            download_file(INDEX_FILE_URLs[region],indexfile)
-
-        self.index = pd.read_csv(indexfile, index_col=0)
-        if verbose:
-            print(f"loaded {len(self.index)} time series references from {indexfile}")
-
-        self.h5path = os.path.join(self.root, f"{self.region}.h5")
-        if load_timeseries and ((not os.path.exists(self.h5path))
-                or (not os.path.getsize(self.h5path) == FILESIZES[region])):
-            if recompile_h5_from_csv:
-                self.write_h5_database_from_csv()
-            else:
-                self.download_h5_database()
-
-        self.index = self.index.loc[self.index["CODE_CULTU"].isin(self.mapping.index)]
-        if verbose:
-            print(f"kept {len(self.index)} time series references from applying class mapping")
-
-        # filter zero-length time series
-        self.index = self.index.loc[self.index.sequencelength > filter_length].set_index("idx")
-
-        self.maxseqlength = self.index["sequencelength"].max()
+        self.load_classmapping(classmapping) 
 
         codesfile = os.path.join(self.root,"codes.csv")
         if not os.path.exists(codesfile):
@@ -118,17 +122,6 @@ class BreizhCrops(Dataset):
     def get_fid(self,idx):
         return self.index[self.index["idx"] == idx].index[0]
 
-    def download_h5_database(self):
-        print(f"downloading {self.h5path}.tar.gz")
-        download_file(H5_URLs[self.region], self.h5path+".tar.gz", overwrite=True)
-        print(f"extracting {self.h5path}.tar.gz to {self.h5path}")
-        untar(self.h5path + ".tar.gz")
-        print(f"removing {self.h5path}.tar.gz")
-        os.remove(self.h5path+".tar.gz")
-        print(f"checking integrity by file size...")
-        assert os.path.getsize(self.h5path) == FILESIZES[self.region]
-        print("ok!")
-
     def write_h5_database_from_csv(self):
         with h5py.File(self.h5path, "w") as dataset:
             for idx, row in tqdm(self.index.iterrows(), total=len(self.index), desc=f"writing {self.h5path}"):
@@ -137,26 +130,6 @@ class BreizhCrops(Dataset):
 
     def get_codes(self):
         return self.codes
-
-    def geodataframe(self):
-        shapefile = os.path.join(self.root,"shp",f"{self.region}.shp")
-
-        if not os.path.exists(shapefile):
-            targzfile = os.path.join(os.path.dirname(shapefile),self.region+".tar,gz")
-            download_file(SHP_URLs[self.region], targzfile)
-            import tarfile
-            with tarfile.open(targzfile) as tar:
-                tar.extractall()
-
-        geom = gpd.read_file(shapefile).set_index("ID")
-        geom.index.name = "id"
-
-        geom["sequencelength"] = self.index["sequencelength"]
-        geom["meanQA60"] = self.index["meanQA60"]
-        geom["cloudCoverage"] = geom["meanQA60"] / 1024  # 1024 indicates complete cloud coverage
-        geom["region"] = self.region
-
-        return geom
 
     def load_classmapping(self,classmapping):
         if classmapping is None:
@@ -180,8 +153,12 @@ class BreizhCrops(Dataset):
             print(f"read {self.nclasses} classes from {classmapping}")
 
     def load(self, csv_file):
-        """['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
-       'B8A', 'B9', 'QA10', 'QA20', 'QA60', 'doa', 'label', 'id']"""
+        """
+			L1C = ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
+					'B8A', 'B9', 'QA10', 'QA20', 'QA60', 'doa', 'label', 'id']
+			L2A =['doa','B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B11', 'B12',
+					'CLD', 'EDG', 'SAT']
+       """
 
         sample = pd.read_csv(csv_file, index_col=0).dropna()
         # convert datetime to int
@@ -217,6 +194,144 @@ class BreizhCrops(Dataset):
             y = self.target_transform(y)
 
         return X, y, int(os.path.splitext(os.path.basename(row.path))[0])
+
+
+class BreizhCropsL1C(BreizhCrops):
+	
+	 def __init__(self, region, root="data",
+                 classmapping=None,
+                 transform = None, target_transform = None, padding_value=-1,
+                 filter_length=0, verbose=False, load_timeseries=True, recompile_h5_from_csv=False, preload_ram=False):
+        super.__init__()
+        
+        self.bands = ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
+       'B8A', 'B9', 'QA10', 'QA20', 'QA60', 'doa']
+
+        indexfile = os.path.join(self.root, region + ".csv")
+        if not os.path.exists(indexfile):
+            download_file(INDEX_FILE_URLs[region],indexfile)
+
+        self.index = pd.read_csv(indexfile, index_col=0)
+        if verbose:
+            print(f"loaded {len(self.index)} time series references from {indexfile}")
+
+        self.h5path = os.path.join(self.root, f"{self.region}.h5")
+        if load_timeseries and ((not os.path.exists(self.h5path))
+                or (not os.path.getsize(self.h5path) == FILESIZES[region])):
+            if recompile_h5_from_csv:
+                self.write_h5_database_from_csv()
+            else:
+                self.download_h5_database()
+
+        self.index = self.index.loc[self.index["CODE_CULTU"].isin(self.mapping.index)]
+        if verbose:
+            print(f"kept {len(self.index)} time series references from applying class mapping")
+
+        # filter zero-length time series
+        self.index = self.index.loc[self.index.sequencelength > filter_length].set_index("idx")
+        self.maxseqlength = self.index["sequencelength"].max()
+	
+	    
+	def download_h5_database(self):
+        print(f"downloading {self.h5path}.tar.gz")
+        download_file(H5_URLs[self.region], self.h5path+".tar.gz", overwrite=True)
+        print(f"extracting {self.h5path}.tar.gz to {self.h5path}")
+        untar(self.h5path + ".tar.gz")
+        print(f"removing {self.h5path}.tar.gz")
+        os.remove(self.h5path+".tar.gz")
+        print(f"checking integrity by file size...")
+        assert os.path.getsize(self.h5path) == FILESIZES[self.region]
+        print("ok!")
+        
+	def geodataframe(self):
+        shapefile = os.path.join(self.root,"shp",f"{self.region}.shp")
+
+        if not os.path.exists(shapefile):
+            targzfile = os.path.join(os.path.dirname(shapefile),self.region+".tar,gz")
+            download_file(SHP_URLs[self.region], targzfile)
+            import tarfile
+            with tarfile.open(targzfile) as tar:
+                tar.extractall()
+
+        geom = gpd.read_file(shapefile).set_index("ID")
+        geom.index.name = "id"
+
+        geom["sequencelength"] = self.index["sequencelength"]
+        geom["meanQA60"] = self.index["meanQA60"]
+        geom["cloudCoverage"] = geom["meanQA60"] / 1024  # 1024 indicates complete cloud coverage
+        geom["region"] = self.region
+
+        return geom
+	
+
+
+class BreizhCropsL2A(BreizhCrops):
+	
+	 def __init__(self, region, root="data",
+                 classmapping=None,
+                 transform = None, target_transform = None, padding_value=-1,
+                 filter_length=0, verbose=False, load_timeseries=True, recompile_h5_from_csv=False, preload_ram=False):
+        super.__init__()
+        
+       self.bands = ['doa','B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B11', 'B12',
+       'CLD', 'EDG', 'SAT']
+
+        indexfile = os.path.join(self.root, region + ".csv")
+        if not os.path.exists(indexfile):
+            download_file(INDEX_FILE_URLs_L2A[region],indexfile)
+
+        self.index = pd.read_csv(indexfile, index_col=0)
+        if verbose:
+            print(f"loaded {len(self.index)} time series references from {indexfile}")
+
+        self.h5path = os.path.join(self.root, f"{self.region}.h5")
+        if load_timeseries and ((not os.path.exists(self.h5path))
+                or (not os.path.getsize(self.h5path) == FILESIZES_L2A[region])):
+            if recompile_h5_from_csv:
+                self.write_h5_database_from_csv()
+            else:
+                self.download_h5_database()
+
+        self.index = self.index.loc[self.index["CODE_CULTU"].isin(self.mapping.index)]
+        if verbose:
+            print(f"kept {len(self.index)} time series references from applying class mapping")
+
+        # filter zero-length time series
+        self.index = self.index.loc[self.index.sequencelength > filter_length].set_index("idx")
+        self.maxseqlength = self.index["sequencelength"].max()
+	
+	    
+	def download_h5_database(self):
+        print(f"downloading {self.h5path}.tar.gz")
+        download_file(H5_URLs_L2A[self.region], self.h5path+".tar.gz", overwrite=True)
+        print(f"extracting {self.h5path}.tar.gz to {self.h5path}")
+        untar(self.h5path + ".tar.gz")
+        print(f"removing {self.h5path}.tar.gz")
+        os.remove(self.h5path+".tar.gz")
+        print(f"checking integrity by file size...")
+        assert os.path.getsize(self.h5path) == FILESIZES_L2A[self.region]
+        print("ok!")
+        
+	def geodataframe(self):
+        shapefile = os.path.join(self.root,"shp",f"{self.region}.shp")
+
+        if not os.path.exists(shapefile):
+            targzfile = os.path.join(os.path.dirname(shapefile),self.region+".tar,gz")
+            download_file(SHP_URLs[self.region], targzfile)
+            import tarfile
+            with tarfile.open(targzfile) as tar:
+                tar.extractall()
+
+        geom = gpd.read_file(shapefile).set_index("ID")
+        geom.index.name = "id"
+
+        geom["sequencelength"] = self.index["sequencelength"]
+        geom["meanQA60"] = self.index["meanCLD"]
+        geom["cloudCoverage"] = geom["meanCLD"]  # 1 indicates complete cloud coverage
+        geom["region"] = self.region
+
+        return geom
+
 
 def untar(filepath):
     dirname = os.path.dirname(filepath)

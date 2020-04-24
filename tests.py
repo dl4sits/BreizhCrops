@@ -28,6 +28,8 @@ def test_init_breizhcrops():
     BreizhCrops(region="frh02", root=datapath, load_timeseries=False, level="L2A")
     BreizhCrops(region="frh03", root=datapath, load_timeseries=False, level="L2A")
 
+#def test_raw_processing():
+#    BreizhCrops(region="frh03", root="/tmp, load_timeseries=True, level="L2A", recompile_h5_from_csv=True)
 
 def test_urls():
     import requests

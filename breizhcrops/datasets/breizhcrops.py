@@ -8,13 +8,14 @@ import pandas as pd
 from torch.utils.data import Dataset
 from tqdm import tqdm
 
-from .urls import CODESURL, CLASSMAPPINGURL, INDEX_FILE_URLs, FILESIZES, SHP_URLs, H5_URLs
-from ..utils import download_file
+from .urls import CODESURL, CLASSMAPPINGURL, INDEX_FILE_URLs, FILESIZES, SHP_URLs, H5_URLs, RAW_CSV_URL
+from ..utils import download_file, unzip
 
 BANDS = {
     "L1C": ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
             'B8A', 'B9', 'QA10', 'QA20', 'QA60', 'doa'],
-    "L2A": None
+    "L2A": ['B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
+       'B8A', 'B11', 'B12', 'CLD', 'EDG', 'SAT']
 }
 
 
@@ -41,7 +42,7 @@ class BreizhCrops(Dataset):
             print(f"Initializing BreizhCrops region {region}, year {year}, level {level}")
 
         self.root = root
-        self.h5path, self.indexfile, self.codesfile, self.shapefile, self.classmapping = \
+        self.h5path, self.indexfile, self.codesfile, self.shapefile, self.classmapping, self.csvfolder = \
             self.build_folder_structure(self.root, self.year, self.level, self.region)
 
         self.load_classmapping(self.classmapping)
@@ -56,6 +57,7 @@ class BreizhCrops(Dataset):
         if load_timeseries and ((not os.path.exists(self.h5path))
                                 or (not os.path.getsize(self.h5path) == FILESIZES[year][level][region])):
             if recompile_h5_from_csv:
+                self.download_csv_files()
                 self.write_h5_database_from_csv()
             else:
                 self.download_h5_database()
@@ -83,6 +85,12 @@ class BreizhCrops(Dataset):
 
         self.get_codes()
 
+    def download_csv_files(self):
+        zipped_file = os.path.join(self.root, str(self.year), self.level, f"{self.region}.zip")
+        download_file(RAW_CSV_URL[self.year][self.level][self.region], zipped_file)
+        unzip(zipped_file, self.csvfolder)
+        os.remove(zipped_file)
+
     def build_folder_structure(self, root, year, level, region):
         """
         folder structure
@@ -95,6 +103,10 @@ class BreizhCrops(Dataset):
               <level>
                  <region>.csv
                  <region>.h5
+                 <csv>
+                     123123.csv
+                     123125.csv
+                     ...
         """
         year = str(year)
 
@@ -105,8 +117,9 @@ class BreizhCrops(Dataset):
         codesfile = os.path.join(root, "codes.csv")
         shapefile = os.path.join(root, year, f"{region}.shp")
         classmapping = os.path.join(root, "classmapping.csv")
+        csvfolder = os.path.join(root, year, level, region, "csv")
 
-        return h5path, indexfile, codesfile, shapefile, classmapping
+        return h5path, indexfile, codesfile, shapefile, classmapping, csvfolder
 
     def get_fid(self, idx):
         return self.index[self.index["idx"] == idx].index[0]
@@ -172,7 +185,7 @@ class BreizhCrops(Dataset):
         """['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
        'B8A', 'B9', 'QA10', 'QA20', 'QA60', 'doa', 'label', 'id']"""
 
-        sample = pd.read_csv(csv_file, index_col=0).dropna()
+        sample = pd.read_csv(os.path.join(self.csvfolder, os.path.basename(csv_file)), index_col=0).dropna()
         # convert datetime to int
         sample["doa"] = pd.to_datetime(sample["doa"]).astype(int)
         sample = sample.groupby(by="doa").first().reset_index()
@@ -212,3 +225,6 @@ def untar(filepath):
     dirname = os.path.dirname(filepath)
     with tarfile.open(filepath, 'r:gz') as tar:
         tar.extractall(path=dirname)
+
+if __name__ == '__main__':
+    BreizhCrops(region="frh03", root="/tmp", load_timeseries=False, level="L2A",recompile_h5_from_csv=True)

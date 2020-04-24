@@ -2,7 +2,7 @@ import os
 import sys
 import urllib
 import zipfile
-
+import tarfile
 from tqdm import tqdm
 
 
@@ -27,7 +27,6 @@ def update_progress(progress):
 
 
 def untar(filepath):
-    import tarfile
     dirname = os.path.dirname(filepath)
     with tarfile.open(filepath, 'r:gz') as tar:
         tar.extractall(path=dirname)
@@ -53,5 +52,12 @@ def download_file(url, output_path, overwrite=False):
 
 
 def unzip(zipfile_path, target_dir):
-    with zipfile.ZipFile(zipfile_path, 'r') as zip_ref:
-        zip_ref.extractall(target_dir)
+    with zipfile.ZipFile(zipfile_path) as zip:
+        for zip_info in zip.infolist():
+            if zip_info.filename[-1] == '/':
+                continue
+            zip_info.filename = os.path.basename(zip_info.filename)
+            zip.extract(zip_info, target_dir)
+
+    #with zipfile.ZipFile(zipfile_path, 'r') as zip_ref:
+    #    zip_ref.extractall(target_dir)

@@ -8,9 +8,9 @@ RAW_CSV_URL = {
         },
         "L2A": {
             "frh01": None,
-            "frh02": None,
-            "frh03": None,
-            "frh04": None,
+            "frh02": "https://syncandshare.lrz.de/dl/fiSz3L41G8CkTJ2si9grVtcB/frh02.zip",
+            "frh03": "https://syncandshare.lrz.de/dl/fiMygybgQtqUJ7x4EQexy4ZU/frh03.zip",
+            "frh04": "https://syncandshare.lrz.de/dl/fiSB111Gsx4v1c4HT4Gh4jY/frh04.zip",
         }
     }
 }
@@ -51,9 +51,9 @@ FILESIZES = {
         },
         "L2A": {
             "frh01": None,
-            "frh02": None,
-            "frh03": None,
-            "frh04": None
+            "frh02": 750780792,
+            "frh03": 832018736,
+            "frh04": 597699400
         }
     }
 }
@@ -68,9 +68,9 @@ H5_URLs = {
         },
         "L2A": {
             "frh01": None,
-            "frh02": None,
-            "frh03": None,
-            "frh04": None,
+            "frh02": "https://syncandshare.lrz.de/dl/fi3dyXpipntJyiCZZJdLNcTi/frh02.h5.tar.gz",
+            "frh03": "https://syncandshare.lrz.de/dl/fi8ahoBEbekCKh61PxDAvjQ/frh03.h5.tar.gz",
+            "frh04": "https://syncandshare.lrz.de/dl/fi77rzsEJMWXumq3jpi1VPYF/frh04.h5.tar.gz",
         }
     }
 }

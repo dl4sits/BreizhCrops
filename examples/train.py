@@ -18,7 +18,7 @@ import sklearn.metrics
 
 
 def train(args):
-    traindataloader, testdataloader, meta = get_dataloader(args.datapath, args.mode, args.batchsize, args.workers, args.preload_ram)
+    traindataloader, testdataloader, meta = get_dataloader(args.datapath, args.mode, args.batchsize, args.workers, args.preload_ram, args.level)
 
     num_classes = meta["num_classes"]
     ndims = meta["ndims"]
@@ -54,8 +54,8 @@ def train(args):
         log_df = pd.DataFrame(log).set_index("epoch")
         log_df.to_csv(os.path.join(logdir, "trainlog.csv"))
 
-def get_dataloader(datapath, mode, batchsize, workers, preload_ram=False):
-    print(f"Setting up datasets in {os.path.abspath(datapath)}")
+def get_dataloader(datapath, mode, batchsize, workers, preload_ram=False, level="L1C"):
+    print(f"Setting up datasets in {os.path.abspath(datapath)}, level {level}")
     datapath = os.path.abspath(datapath)
 
     padded_value = -1
@@ -82,15 +82,17 @@ def get_dataloader(datapath, mode, batchsize, workers, preload_ram=False):
         return torch.from_numpy(x).type(torch.FloatTensor)
 
     def target_transform(y):
-        y = frh01.mapping.loc[y].id
         return torch.tensor(y, dtype=torch.long)
 
     frh01 = breizhcrops.BreizhCrops(region="frh01", root=datapath, transform=transform,
-                                    target_transform=target_transform, padding_value=padded_value, preload_ram=preload_ram)
+                                    target_transform=target_transform, padding_value=padded_value,
+                                    preload_ram=preload_ram, level=level)
     frh02 = breizhcrops.BreizhCrops(region="frh02", root=datapath, transform=transform,
-                                    target_transform=target_transform, padding_value=padded_value, preload_ram=preload_ram)
+                                    target_transform=target_transform, padding_value=padded_value,
+                                    preload_ram=preload_ram, level=level)
     frh03 = breizhcrops.BreizhCrops(region="frh03", root=datapath, transform=transform,
-                                    target_transform=target_transform, padding_value=padded_value, preload_ram=preload_ram)
+                                    target_transform=target_transform, padding_value=padded_value,
+                                    preload_ram=preload_ram, level=level)
     if mode == "evaluation":
         frh04 = breizhcrops.BreizhCrops(region="frh04", root=datapath, transform=transform,
                                         target_transform=target_transform, padding_value=padded_value, preload_ram=preload_ram)
@@ -232,6 +234,8 @@ def parse_args():
     parser.add_argument(
         '-H', '--hyperparameter', type=str, default=None, help='model specific hyperparameter as single string, '
                                                                'separated by comma of format param1=value1,param2=value2')
+    parser.add_argument(
+        '--level', type=str, default="L1C", help='Sentinel 2 processing level (L1C, L2A)')
     parser.add_argument(
         '--weight-decay', type=float, default=1e-6, help='optimizer weight_decay (default 1e-6)')
     parser.add_argument(

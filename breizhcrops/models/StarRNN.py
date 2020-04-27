@@ -20,7 +20,7 @@ class StarRNN(torch.nn.Module):
 
         super(StarRNN, self).__init__()
         self.modelname = f"StarRNN_input-dim={input_dim}_num-classes={num_classes}_" \
-                         f"hidden-dims={hidden_dims}_num-layers={num_layers}"
+                         f"hidden-dims={hidden_dims}_num-layers={num_layers}_dropout={dropout}"
         
         self.nclasses=num_classes
         self.use_batchnorm = use_batchnorm

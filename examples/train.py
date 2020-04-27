@@ -82,7 +82,6 @@ def get_dataloader(datapath, mode, batchsize, workers, preload_ram=False, level=
         return torch.from_numpy(x).type(torch.FloatTensor)
 
     def target_transform(y):
-        y = frh01.mapping.loc[y].id
         return torch.tensor(y, dtype=torch.long)
 
     frh01 = breizhcrops.BreizhCrops(region="frh01", root=datapath, transform=transform,

@@ -83,6 +83,10 @@ class BreizhCrops(Dataset):
         else:
             self.X_list = None
 
+        # add classname and id from mapping to the index dataframe
+        mapping = self.mapping.reset_index().rename(columns={"code": "CODE_CULTU"})
+        self.index = self.index.merge(mapping, on="CODE_CULTU")
+
         self.get_codes()
 
     def download_csv_files(self):
@@ -149,9 +153,11 @@ class BreizhCrops(Dataset):
 
         if not os.path.exists(self.shapefile):
             targzfile = os.path.join(os.path.dirname(self.shapefile), self.region + ".tar.gz")
-            download_file(SHP_URLs[self.region], targzfile)
-            with tarfile.open(targzfile) as tar:
-                tar.extractall()
+            download_file(SHP_URLs[self.year][self.region], targzfile)
+            untar(targzfile)
+            os.remove(targzfile)
+            #with tarfile.open(targzfile) as tar:
+            #    tar.extractall()
 
         geom = gpd.read_file(self.shapefile).set_index("ID")
         geom.index.name = "id"
@@ -208,7 +214,7 @@ class BreizhCrops(Dataset):
                 X = np.array(dataset[(row.path)])
         else:
             X = self.X_list[index]
-        y = row["CODE_CULTU"]
+        y = row["id"]
 
         npad = self.maxseqlength - X.shape[0]
         X = np.pad(X, [(0, npad), (0, 0)], 'constant', constant_values=self.padding_value)

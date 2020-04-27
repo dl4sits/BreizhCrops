@@ -14,7 +14,7 @@ https://www.mdpi.com/2072-4292/11/5/523
 __all__ = ['TempCNN']
 
 class TempCNN(torch.nn.Module):
-    def __init__(self, input_dim, num_classes, sequencelength, kernel_size=5, hidden_dims=64, dropout=0.5):
+    def __init__(self, input_dim=13, num_classes=9, sequencelength=45, kernel_size=7, hidden_dims=128, dropout=0.18203942949809093):
         super(TempCNN, self).__init__()
         self.modelname = f"TempCNN_input-dim={input_dim}_num-classes={num_classes}_sequencelenght={sequencelength}_" \
                          f"kernelsize={kernel_size}_hidden-dims={hidden_dims}_dropout={dropout}"

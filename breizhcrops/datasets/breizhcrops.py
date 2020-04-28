@@ -84,8 +84,8 @@ class BreizhCrops(Dataset):
             self.X_list = None
 
         # add classname and id from mapping to the index dataframe
-        mapping = self.mapping.reset_index().rename(columns={"code": "CODE_CULTU"})
-        self.index = self.index.merge(mapping, on="CODE_CULTU")
+        #mapping = self.mapping.reset_index().rename(columns={"code": "CODE_CULTU"})
+        #self.index = self.index.merge(mapping, on="CODE_CULTU")
         self.index.rename(columns={"meanQA60": "meanCLD"}, inplace=True)
 
         self.get_codes()
@@ -216,7 +216,9 @@ class BreizhCrops(Dataset):
                 X = np.array(dataset[(row.path)])
         else:
             X = self.X_list[index]
-        y = row["id"]
+
+        # translate CODE_CULTU to class id
+        y = self.mapping.loc[row["CODE_CULTU"]].id
 
         npad = self.maxseqlength - X.shape[0]
         X = np.pad(X, [(0, npad), (0, 0)], 'constant', constant_values=self.padding_value)

@@ -28,6 +28,18 @@ def test_init_breizhcrops():
     BreizhCrops(region="frh02", root=datapath, load_timeseries=False, level="L2A")
     BreizhCrops(region="frh03", root=datapath, load_timeseries=False, level="L2A")
 
+def test_breizhcrops_index_columnames():
+    l1c = BreizhCrops(region="frh01", root="/tmp", load_timeseries=False)
+    l2a = BreizhCrops(region="frh01", root="/tmp", load_timeseries=False, level="L2A")
+    reference = ['CODE_CULTU', 'path', 'meanCLD', 'sequencelength', 'id', 'classname']
+
+    assert len(list(l1c.index.columns)) == len(reference)
+    assert len(list(l2a.index.columns)) == len(reference)
+
+    for colref, coll1c, coll2a in zip(reference, list(l1c.index.columns), list(l2a.index.columns)):
+        assert colref == coll1c
+        assert colref == coll2a
+
 #def test_raw_processing():
 #    BreizhCrops(region="frh03", root="/tmp, load_timeseries=True, level="L2A", recompile_h5_from_csv=True)
 

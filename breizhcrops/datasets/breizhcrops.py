@@ -86,6 +86,7 @@ class BreizhCrops(Dataset):
         # add classname and id from mapping to the index dataframe
         mapping = self.mapping.reset_index().rename(columns={"code": "CODE_CULTU"})
         self.index = self.index.merge(mapping, on="CODE_CULTU")
+        self.index.rename(columns={"meanQA60": "meanCLD"}, inplace=True)
 
         self.get_codes()
 

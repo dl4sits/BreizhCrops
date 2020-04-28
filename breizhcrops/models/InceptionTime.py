@@ -72,7 +72,7 @@ class InceptionModule(nn.Module):
         # collapse feature dimension
         input_inception = self.bottleneck(input_tensor.transpose(1,2)).transpose(1,2)
         features = [conv(input_inception) for conv in self.convolutions]
-        features.append(self.pool_conv(input_tensor))
+        features.append(self.pool_conv(input_tensor.contiguous()))
         features = torch.cat(features, dim=1)
         features = self.bn_relu(features)
         if self.residual:

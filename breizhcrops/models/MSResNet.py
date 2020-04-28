@@ -128,7 +128,7 @@ class BasicBlock7x7(nn.Module):
 
 
 class MSResNet(torch.nn.Module):
-    def __init__(self, input_dim, layers=[1, 1, 1, 1], num_classes=10, hidden_dims=64):
+    def __init__(self, input_dim=13, layers=[1, 1, 1, 1], num_classes=9, hidden_dims=32):
         self.modelname = f"MSResNet_input-dim={input_dim}_num-classes={num_classes}_hidden-dims={hidden_dims}"
 
         self.d_model = hidden_dims

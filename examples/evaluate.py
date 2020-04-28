@@ -45,17 +45,19 @@ def select_hyperparameter(model):
     in the defaults of the respective model parameters.
     """
     if model == "LSTM":
-        epochs, learning_rate, weight_decay = 20, 1e-3, 1e-6
+        epochs, learning_rate, weight_decay = 20, 0.009880117756170353, 5.256755602421856e-07
     elif model == "StarRNN":
-        epochs, learning_rate, weight_decay = 20, 1e-3, 1e-6
+        epochs, learning_rate, weight_decay = 20, 0.008960989762612663, 2.2171861339535254e-06
     elif model == "InceptionTime":
-        epochs, learning_rate, weight_decay = 20, 1e-3, 1e-6
+        epochs, learning_rate, weight_decay = 20, 0.0005930998594456241, 1.8660112778851542e-05
     elif model == "MSResNet":
-        epochs, learning_rate, weight_decay = 20, 1e-3, 1e-6
+        epochs, learning_rate, weight_decay = 20, 0.0006271686393146093, 4.750234747127917e-06
     elif model == "TransformerEncoder":
-        epochs, learning_rate, weight_decay = 20, 1e-3, 1e-6
+        epochs, learning_rate, weight_decay = 20, 0.0013144015360979785, 5.523908582054716e-08
     elif model == "TempCNN":
-        epochs, learning_rate, weight_decay = 20, 1e-3, 1e-6
+        epochs, learning_rate, weight_decay = 20, 0.00023892874563871753, 5.181869707846283e-05
+    elif model == "OmniScaleCNN":
+        epochs, learning_rate, weight_decay = 20, 0.001057192239267413, 2.2522895556530792e-07
     return epochs, learning_rate, weight_decay
 
 def parse_args():
@@ -77,6 +79,9 @@ def parse_args():
                                                        'default will check by torch.cuda.is_available() ')
     parser.add_argument(
         '-l', '--logdir', type=str, default="/tmp", help='logdir to store progress and models (defaults to /tmp)')
+    parser.add_argument(
+        '--preload-ram', action='store_true', help='load dataset into RAM upon initialization')
+
     args, _ = parser.parse_known_args()
 
     if args.device is None:

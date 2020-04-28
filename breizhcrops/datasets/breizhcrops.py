@@ -108,10 +108,11 @@ class BreizhCrops(Dataset):
               <level>
                  <region>.csv
                  <region>.h5
-                 <csv>
-                     123123.csv
-                     123125.csv
-                     ...
+                 <region>
+                     <csv>
+                         123123.csv
+                         123125.csv
+                         ...
         """
         year = str(year)
 

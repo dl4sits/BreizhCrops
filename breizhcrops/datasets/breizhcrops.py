@@ -83,9 +83,6 @@ class BreizhCrops(Dataset):
         else:
             self.X_list = None
 
-        # add classname and id from mapping to the index dataframe
-        #mapping = self.mapping.reset_index().rename(columns={"code": "CODE_CULTU"})
-        #self.index = self.index.merge(mapping, on="CODE_CULTU")
         self.index.rename(columns={"meanQA60": "meanCLD"}, inplace=True)
 
         self.get_codes()
@@ -151,15 +148,12 @@ class BreizhCrops(Dataset):
         return self.codes
 
     def geodataframe(self):
-        import tarfile
 
         if not os.path.exists(self.shapefile):
             targzfile = os.path.join(os.path.dirname(self.shapefile), self.region + ".tar.gz")
             download_file(SHP_URLs[self.year][self.region], targzfile)
             untar(targzfile)
             os.remove(targzfile)
-            #with tarfile.open(targzfile) as tar:
-            #    tar.extractall()
 
         geom = gpd.read_file(self.shapefile).set_index("ID")
         geom.index.name = "id"

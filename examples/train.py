@@ -251,7 +251,7 @@ def parse_args():
                                                        'default will check by torch.cuda.is_available() ')
     parser.add_argument(
         '-l', '--logdir', type=str, default="/tmp", help='logdir to store progress and models (defaults to /tmp)')
-    args, _ = parser.parse_known_args()
+    args = parser.parse_args()
 
     hyperparameter_dict = dict()
     if args.hyperparameter is not None:

@@ -164,8 +164,8 @@ class BreizhCrops(Dataset):
         geom.index.name = "id"
 
         geom["sequencelength"] = self.index["sequencelength"]
-        geom["meanQA60"] = self.index["meanQA60"]
-        geom["cloudCoverage"] = geom["meanQA60"] / 1024  # 1024 indicates complete cloud coverage
+        geom["meanCLD"] = self.index["meanCLD"]
+        geom["cloudCoverage"] = geom["meanCLD"] / 1024  # 1024 indicates complete cloud coverage
         geom["region"] = self.region
 
         return geom

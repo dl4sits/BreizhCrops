@@ -40,6 +40,11 @@ def test_breizhcrops_index_columnames():
         assert colref == coll1c
         assert colref == coll2a
 
+def test_breizhcrops_geodataframe():
+    """includes downloading ~100mb. may be too heavy for a test"""
+    BreizhCrops(region="frh01", root="/tmp", load_timeseries=False).geodataframe()
+    BreizhCrops(region="frh01", root="/tmp", load_timeseries=False, level="L2A").geodataframe()
+
 #def test_raw_processing():
 #    BreizhCrops(region="frh03", root="/tmp, load_timeseries=True, level="L2A", recompile_h5_from_csv=True)
 

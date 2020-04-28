@@ -15,7 +15,9 @@ BANDS = {
     "L1C": ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
             'B8A', 'B9', 'QA10', 'QA20', 'QA60', 'doa'],
     "L2A": ['B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
-       'B8A', 'B11', 'B12', 'CLD', 'EDG', 'SAT']
+       'B8A', 'B11', 'B12', 'CLD', 'EDG', 'SAT'],
+    "L2A-interp": ['B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
+       'B8A', 'B11', 'B12']
 }
 
 
@@ -26,7 +28,7 @@ class BreizhCrops(Dataset):
                  filter_length=0, verbose=False, load_timeseries=True, recompile_h5_from_csv=False, preload_ram=False):
 
         assert year in [2017]
-        assert level in ["L1C", "L2A"]
+        assert level in ["L1C", "L2A", "L2A-interp"]
         assert region in ["frh01", "frh02", "frh03", "frh04"]
 
         self.region = region.lower()
@@ -40,13 +42,14 @@ class BreizhCrops(Dataset):
 
         if verbose:
             print(f"Initializing BreizhCrops region {region}, year {year}, level {level}")
-
+			
         self.root = root
         self.h5path, self.indexfile, self.codesfile, self.shapefile, self.classmapping, self.csvfolder = \
             self.build_folder_structure(self.root, self.year, self.level, self.region)
-
+	
         self.load_classmapping(self.classmapping)
 
+		
         if not os.path.exists(self.indexfile):
             download_file(INDEX_FILE_URLs[year][level][region], self.indexfile)
 
@@ -90,10 +93,11 @@ class BreizhCrops(Dataset):
         self.get_codes()
 
     def download_csv_files(self):
-        zipped_file = os.path.join(self.root, str(self.year), self.level, f"{self.region}.zip")
-        download_file(RAW_CSV_URL[self.year][self.level][self.region], zipped_file)
-        unzip(zipped_file, self.csvfolder)
-        os.remove(zipped_file)
+        if not os.path.exists(self.csvfolder):
+            zipped_file = os.path.join(self.root, str(self.year), self.level, f"{self.region}.zip")
+            download_file(RAW_CSV_URL[self.year][self.level][self.region], zipped_file)
+            unzip(zipped_file, self.csvfolder)
+            os.remove(zipped_file)
 
     def build_folder_structure(self, root, year, level, region):
         """
@@ -193,8 +197,12 @@ class BreizhCrops(Dataset):
 
         sample = pd.read_csv(os.path.join(self.csvfolder, os.path.basename(csv_file)), index_col=0).dropna()
         # convert datetime to int
-        sample["doa"] = pd.to_datetime(sample["doa"]).astype(int)
-        sample = sample.groupby(by="doa").first().reset_index()
+        if self.level=="L1C"  or self.level=="L2A":
+            sample["doa"] = pd.to_datetime(sample["doa"]).astype(int)
+            sample = sample.groupby(by="doa").first().reset_index()
+        #else:
+        #    print(sample)
+        #    print(1/0)
         X = np.array(sample[self.bands].values)
 
         if np.isnan(X).any():

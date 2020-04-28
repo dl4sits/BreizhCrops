@@ -8,6 +8,7 @@ import argparse
 import breizhcrops
 from breizhcrops.models import LSTM, TempCNN, MSResNet, TransformerModel, InceptionTime, StarRNN, OmniScaleCNN
 from torch.utils.data import DataLoader
+from breizhcrops.datasets.breizhcrops import BANDS
 from tqdm import tqdm
 from torch.optim import Adam
 import numpy as np
@@ -61,9 +62,11 @@ def get_dataloader(datapath, mode, batchsize, workers, preload_ram=False, level=
     padded_value = -1
     sequencelength = 45
 
-    bands = ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
-             'B8A', 'B9', 'QA10', 'QA20', 'QA60', 'doa']
-    selected_bands = ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9']
+    bands = BANDS[level]
+    if level == "L1C":
+        selected_bands = ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9']
+    elif level == "L2A":
+        selected_bands = ['B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B11', 'B12']
     selected_band_idxs = np.array([bands.index(b) for b in selected_bands])
 
     def transform(x):
@@ -95,7 +98,8 @@ def get_dataloader(datapath, mode, batchsize, workers, preload_ram=False, level=
                                     preload_ram=preload_ram, level=level)
     if mode == "evaluation":
         frh04 = breizhcrops.BreizhCrops(region="frh04", root=datapath, transform=transform,
-                                        target_transform=target_transform, padding_value=padded_value, preload_ram=preload_ram)
+                                        target_transform=target_transform, padding_value=padded_value,
+                                        preload_ram=preload_ram, level=level)
         traindatasets = torch.utils.data.ConcatDataset([frh01, frh02, frh03])
         testdataset = frh04
     elif mode == "validation":

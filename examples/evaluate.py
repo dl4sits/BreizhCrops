@@ -5,8 +5,17 @@ import sklearn.metrics
 import os
 import numpy as np
 
+
+def save(model, path="model.pth"):
+    print("\nsaving model to " + path)
+    model_state = model.state_dict()
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    torch.save(dict(model_state=model_state), path)
+
+
 def main(args):
-    traindataloader, testdataloader, meta = get_dataloader(args.datapath, "evaluation", args.batchsize, args.workers)
+    traindataloader, testdataloader, meta = get_dataloader(args.datapath, "evaluation", args.batchsize,
+                                                           args.workers, level=args.level, preload_ram=args.preload_ram)
 
     num_classes = meta["num_classes"]
     ndims = meta["ndims"]
@@ -30,6 +39,8 @@ def main(args):
         train_epoch(model, optimizer, criterion, traindataloader, device)
     losses, y_true, y_pred, y_score, field_ids = test_epoch(model, criterion, dataloader=testdataloader, device=device)
 
+    logdir = os.path.join(logdir, args.model)
+    os.makedirs(logdir,exist_ok=True)
     print(f"saving results to {logdir}")
     print(sklearn.metrics.classification_report(y_true.cpu(), y_pred.cpu()),
           file=open(os.path.join(logdir, "classification_report.txt"), "w"))
@@ -37,7 +48,7 @@ def main(args):
     np.save(os.path.join(logdir, "y_true.npy"), y_true.cpu().numpy())
     np.save(os.path.join(logdir, "y_score.npy"), y_score.cpu().numpy())
     np.save(os.path.join(logdir, "field_ids.npy"), field_ids.numpy())
-    model.save(os.path.join(logdir, model.modelname + ".pth"))
+    save(model, os.path.join(logdir, model.modelname + ".pth"))
 
 def select_hyperparameter(model):
     """
@@ -75,6 +86,8 @@ def parse_args():
     parser.add_argument(
         '-w', '--workers', type=int, default=0, help='number of CPU workers to load the next batch')
     parser.add_argument(
+        '--level', type=str, default="L1C", help='Level either L1C oder L2A')
+    parser.add_argument(
         '-d', '--device', type=str, default=None, help='torch.Device. either "cpu" or "cuda". '
                                                        'default will check by torch.cuda.is_available() ')
     parser.add_argument(
@@ -82,7 +95,7 @@ def parse_args():
     parser.add_argument(
         '--preload-ram', action='store_true', help='load dataset into RAM upon initialization')
 
-    args, _ = parser.parse_known_args()
+    args = parser.parse_args()
 
     if args.device is None:
         args.device = "cuda" if torch.cuda.is_available() else "cpu"

@@ -56,7 +56,7 @@ class BreizhCrops(Dataset):
         self.index = pd.read_csv(self.indexfile, index_col=0)
         if verbose:
             print(f"loaded {len(self.index)} time series references from {self.indexfile}")
-
+       
         if load_timeseries and ((not os.path.exists(self.h5path))
                                 or (not os.path.getsize(self.h5path) == FILESIZES[year][level][region])):
             if recompile_h5_from_csv:
@@ -87,8 +87,8 @@ class BreizhCrops(Dataset):
             self.X_list = None
 
         # add classname and id from mapping to the index dataframe
-        mapping = self.mapping.reset_index().rename(columns={"code": "CODE_CULTU"})
-        self.index = self.index.merge(mapping, on="CODE_CULTU")
+        #mapping = self.mapping.reset_index().rename(columns={"code": "CODE_CULTU"})
+        #self.index = self.index.merge(mapping, on="CODE_CULTU")
 
         self.get_codes()
 
@@ -222,10 +222,11 @@ class BreizhCrops(Dataset):
                 X = np.array(dataset[(row.path)])
         else:
             X = self.X_list[index]
-        y = row["id"]
-
-        npad = self.maxseqlength - X.shape[0]
-        X = np.pad(X, [(0, npad), (0, 0)], 'constant', constant_values=self.padding_value)
+        y = self.mapping.loc[row["CODE_CULTU"]].id
+		
+		if self.padding_value is not None:
+			npad = self.maxseqlength - X.shape[0]
+			X = np.pad(X, [(0, npad), (0, 0)], 'constant', constant_values=self.padding_value)
 
         if self.transform is not None:
             X = self.transform(X)

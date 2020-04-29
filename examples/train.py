@@ -8,6 +8,7 @@ import argparse
 import breizhcrops
 from breizhcrops.models import LSTM, TempCNN, MSResNet, TransformerModel, InceptionTime, StarRNN, OmniScaleCNN
 from torch.utils.data import DataLoader
+from breizhcrops.datasets.breizhcrops import BANDS
 from tqdm import tqdm
 from torch.optim import Adam
 import numpy as np
@@ -18,7 +19,7 @@ import sklearn.metrics
 
 
 def train(args):
-    traindataloader, testdataloader, meta = get_dataloader(args.datapath, args.mode, args.batchsize, args.workers, args.preload_ram)
+    traindataloader, testdataloader, meta = get_dataloader(args.datapath, args.mode, args.batchsize, args.workers, args.preload_ram, args.level)
 
     num_classes = meta["num_classes"]
     ndims = meta["ndims"]
@@ -54,16 +55,18 @@ def train(args):
         log_df = pd.DataFrame(log).set_index("epoch")
         log_df.to_csv(os.path.join(logdir, "trainlog.csv"))
 
-def get_dataloader(datapath, mode, batchsize, workers, preload_ram=False):
-    print(f"Setting up datasets in {os.path.abspath(datapath)}")
+def get_dataloader(datapath, mode, batchsize, workers, preload_ram=False, level="L1C"):
+    print(f"Setting up datasets in {os.path.abspath(datapath)}, level {level}")
     datapath = os.path.abspath(datapath)
 
     padded_value = -1
     sequencelength = 45
 
-    bands = ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
-             'B8A', 'B9', 'QA10', 'QA20', 'QA60', 'doa']
-    selected_bands = ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9']
+    bands = BANDS[level]
+    if level == "L1C":
+        selected_bands = ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9']
+    elif level == "L2A":
+        selected_bands = ['B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B11', 'B12']
     selected_band_idxs = np.array([bands.index(b) for b in selected_bands])
 
     def transform(x):
@@ -82,18 +85,21 @@ def get_dataloader(datapath, mode, batchsize, workers, preload_ram=False):
         return torch.from_numpy(x).type(torch.FloatTensor)
 
     def target_transform(y):
-        y = frh01.mapping.loc[y].id
         return torch.tensor(y, dtype=torch.long)
 
     frh01 = breizhcrops.BreizhCrops(region="frh01", root=datapath, transform=transform,
-                                    target_transform=target_transform, padding_value=padded_value, preload_ram=preload_ram)
+                                    target_transform=target_transform, padding_value=padded_value,
+                                    preload_ram=preload_ram, level=level)
     frh02 = breizhcrops.BreizhCrops(region="frh02", root=datapath, transform=transform,
-                                    target_transform=target_transform, padding_value=padded_value, preload_ram=preload_ram)
+                                    target_transform=target_transform, padding_value=padded_value,
+                                    preload_ram=preload_ram, level=level)
     frh03 = breizhcrops.BreizhCrops(region="frh03", root=datapath, transform=transform,
-                                    target_transform=target_transform, padding_value=padded_value, preload_ram=preload_ram)
+                                    target_transform=target_transform, padding_value=padded_value,
+                                    preload_ram=preload_ram, level=level)
     if mode == "evaluation":
         frh04 = breizhcrops.BreizhCrops(region="frh04", root=datapath, transform=transform,
-                                        target_transform=target_transform, padding_value=padded_value, preload_ram=preload_ram)
+                                        target_transform=target_transform, padding_value=padded_value,
+                                        preload_ram=preload_ram, level=level)
         traindatasets = torch.utils.data.ConcatDataset([frh01, frh02, frh03])
         testdataset = frh04
     elif mode == "validation":
@@ -233,6 +239,8 @@ def parse_args():
         '-H', '--hyperparameter', type=str, default=None, help='model specific hyperparameter as single string, '
                                                                'separated by comma of format param1=value1,param2=value2')
     parser.add_argument(
+        '--level', type=str, default="L1C", help='Sentinel 2 processing level (L1C, L2A)')
+    parser.add_argument(
         '--weight-decay', type=float, default=1e-6, help='optimizer weight_decay (default 1e-6)')
     parser.add_argument(
         '--learning-rate', type=float, default=1e-2, help='optimizer learning rate (default 1e-2)')
@@ -243,7 +251,7 @@ def parse_args():
                                                        'default will check by torch.cuda.is_available() ')
     parser.add_argument(
         '-l', '--logdir', type=str, default="/tmp", help='logdir to store progress and models (defaults to /tmp)')
-    args, _ = parser.parse_known_args()
+    args = parser.parse_args()
 
     hyperparameter_dict = dict()
     if args.hyperparameter is not None:

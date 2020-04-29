@@ -45,19 +45,19 @@ def select_hyperparameter(model):
     in the defaults of the respective model parameters.
     """
     if model == "LSTM":
-        epochs, learning_rate, weight_decay = 20, 0.009880117756170353, 5.256755602421856e-07
+        epochs, learning_rate, weight_decay = 17, 0.009880117756170353, 5.256755602421856e-07
     elif model == "StarRNN":
-        epochs, learning_rate, weight_decay = 20, 0.008960989762612663, 2.2171861339535254e-06
+        epochs, learning_rate, weight_decay = 17, 0.008960989762612663, 2.2171861339535254e-06
     elif model == "InceptionTime":
-        epochs, learning_rate, weight_decay = 20, 0.0005930998594456241, 1.8660112778851542e-05
+        epochs, learning_rate, weight_decay = 23, 0.0005930998594456241, 1.8660112778851542e-05
     elif model == "MSResNet":
-        epochs, learning_rate, weight_decay = 20, 0.0006271686393146093, 4.750234747127917e-06
+        epochs, learning_rate, weight_decay = 23, 0.0006271686393146093, 4.750234747127917e-06
     elif model == "TransformerEncoder":
-        epochs, learning_rate, weight_decay = 20, 0.0013144015360979785, 5.523908582054716e-08
+        epochs, learning_rate, weight_decay = 26, 0.0013144015360979785, 5.523908582054716e-08
     elif model == "TempCNN":
-        epochs, learning_rate, weight_decay = 20, 0.00023892874563871753, 5.181869707846283e-05
+        epochs, learning_rate, weight_decay = 11, 0.00023892874563871753, 5.181869707846283e-05
     elif model == "OmniScaleCNN":
-        epochs, learning_rate, weight_decay = 20, 0.001057192239267413, 2.2522895556530792e-07
+        epochs, learning_rate, weight_decay = 19, 0.001057192239267413, 2.2522895556530792e-07
     return epochs, learning_rate, weight_decay
 
 def parse_args():

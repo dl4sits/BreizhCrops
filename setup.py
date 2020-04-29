@@ -2,14 +2,17 @@ from setuptools import setup, find_packages
 
 #try:
     # for pip >= 10
-from pip._internal.req import parse_requirements
+#from pip._internal.req import parse_requirements
 #except ImportError:
     # for pip <= 9.0.3
 #    from pip.req import parse_requirements
 
-def load_requirements(fname):
-    reqs = parse_requirements(fname, session="test")
-    return [str(ir.req) for ir in reqs]
+#def load_requirements(fname):
+#    reqs = parse_requirements(fname, session="test")
+#    return [str(ir.req) for ir in reqs]
+
+with open('requirements.txt') as fp:
+    install_requires = fp.read()
 
 setup(name='breizhcrops',
       version='0.01',
@@ -19,5 +22,5 @@ setup(name='breizhcrops',
       author_email='marc.russwurm@tum.de',
       license='MIT',
       packages=find_packages(),
-      install_requires=load_requirements("requirements.txt"),
+      install_requires=install_requires,
       zip_safe=False)

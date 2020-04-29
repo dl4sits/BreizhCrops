@@ -224,9 +224,9 @@ class BreizhCrops(Dataset):
             X = self.X_list[index]
         y = self.mapping.loc[row["CODE_CULTU"]].id
 		
-		if self.padding_value is not None:
-			npad = self.maxseqlength - X.shape[0]
-			X = np.pad(X, [(0, npad), (0, 0)], 'constant', constant_values=self.padding_value)
+        if self.padding_value is not None:
+            npad = self.maxseqlength - X.shape[0]
+            X = np.pad(X, [(0, npad), (0, 0)], 'constant', constant_values=self.padding_value)
 
         if self.transform is not None:
             X = self.transform(X)

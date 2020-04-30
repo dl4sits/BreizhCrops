@@ -9,7 +9,7 @@ from torch.utils.data import Dataset
 from tqdm import tqdm
 
 from .urls import CODESURL, CLASSMAPPINGURL, INDEX_FILE_URLs, FILESIZES, SHP_URLs, H5_URLs, RAW_CSV_URL
-from ..utils import download_file, unzip
+from ..utils import download_file, unzip, untar
 
 BANDS = {
     "L1C": ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
@@ -223,12 +223,6 @@ class BreizhCrops(Dataset):
             y = self.target_transform(y)
 
         return X, y, int(os.path.splitext(os.path.basename(row.path))[0])
-
-
-def untar(filepath):
-    dirname = os.path.dirname(filepath)
-    with tarfile.open(filepath, 'r:gz') as tar:
-        tar.extractall(path=dirname)
 
 if __name__ == '__main__':
     BreizhCrops(region="frh03", root="/tmp", load_timeseries=False, level="L2A",recompile_h5_from_csv=True)

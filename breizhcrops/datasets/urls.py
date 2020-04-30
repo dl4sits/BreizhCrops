@@ -68,9 +68,9 @@ H5_URLs = {
         },
         "L2A": {
             "frh01": "https://syncandshare.lrz.de/dl/fi2nFLV4A1NTunX6ToMTDtJv/frh01.h5.tar.gz",
-            "frh02": "https://syncandshare.lrz.de/dl/fi3dyXpipntJyiCZZJdLNcTi/frh02.h5.tar.gz",
-            "frh03": "https://syncandshare.lrz.de/dl/fi8ahoBEbekCKh61PxDAvjQ/frh03.h5.tar.gz",
-            "frh04": "https://syncandshare.lrz.de/dl/fi77rzsEJMWXumq3jpi1VPYF/frh04.h5.tar.gz",
+            "frh02": "https://syncandshare.lrz.de/dl/fiLsDJhryRD8cLvCTrjystRC/frh02.h5.tar.gz",
+            "frh03": "https://syncandshare.lrz.de/dl/fiUuD8uDusismDjHauz45E8N/frh03.h5.tar.gz",
+            "frh04": "https://syncandshare.lrz.de/dl/fiGo8zYM2biSN8qUGbcWUk4q/frh04.h5.tar.gz",
         }
     }
 }

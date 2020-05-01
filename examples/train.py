@@ -96,7 +96,7 @@ def get_dataloader(datapath, mode, batchsize, workers, preload_ram=False, level=
     frh03 = breizhcrops.BreizhCrops(region="frh03", root=datapath, transform=transform,
                                     target_transform=target_transform, padding_value=padded_value,
                                     preload_ram=preload_ram, level=level)
-    if mode == "evaluation":
+    if "evaluation" in mode:
             frh04 = breizhcrops.BreizhCrops(region="frh04", root=datapath, transform=transform,
                                             target_transform=target_transform, padding_value=padded_value,
                                             preload_ram=preload_ram, level=level)

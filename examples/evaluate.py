@@ -23,7 +23,7 @@ def main(args):
     sequencelength = meta["sequencelength"]
 
     print(f"Logging results to {args.logdir}")
-    logdir = os.path.join(args.logdir,str(fold))
+    logdir = os.path.join(args.logdir, str(args.fold))
     os.makedirs(logdir, exist_ok=True)
 
     epochs, learning_rate, weight_decay = select_hyperparameter(args.model)

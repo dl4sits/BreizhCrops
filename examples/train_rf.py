@@ -26,7 +26,7 @@ def train(args):
 
 	X_train, y_train, X_test, y_test = get_dataloader(args.datapath, args.mode, args.preload_ram, args.level)
 
-	rf = RandomForestClassifier(n_estimators=100, max_features='sqrt',
+	rf = RandomForestClassifier(n_estimators=500, max_features='sqrt',
 					max_depth=25, min_samples_split=2, oob_score=True, n_jobs=args.workers, verbose=1)
 	
 	#-- train a rf classifier
@@ -105,7 +105,7 @@ def get_dataloader(datapath, mode, preload_ram=False, level="L1C"):
 	
 	if 0:
 		#-- debug test
-		frh02 = breizhcrops.BreizhCrops(region="frh02", root=datapath,  transform=transform, load_timeseries=False,
+		frh02 = breizhcrops.BreizhCrops(region="frh02", root=datapath,  transform=transform, load_timeseries=True,
 										target_transform=target_transform, padding_value=padded_value,
 										preload_ram=preload_ram, level=level, recompile_h5_from_csv=True)
 		testareas = [frh02]
@@ -117,17 +117,17 @@ def get_dataloader(datapath, mode, preload_ram=False, level="L1C"):
 		print(1/0)
 	
 	
-	frh01 = breizhcrops.BreizhCrops(region="frh01", root=datapath, transform=transform, load_timeseries=False,
+	frh01 = breizhcrops.BreizhCrops(region="frh01", root=datapath, transform=transform, load_timeseries=True,
 									target_transform=target_transform, padding_value=padded_value,
 									preload_ram=preload_ram, level=level, recompile_h5_from_csv=True )
-	frh02 = breizhcrops.BreizhCrops(region="frh02", root=datapath,  transform=transform, load_timeseries=False,
+	frh02 = breizhcrops.BreizhCrops(region="frh02", root=datapath,  transform=transform, load_timeseries=True,
 									target_transform=target_transform, padding_value=padded_value,
 									preload_ram=preload_ram, level=level, recompile_h5_from_csv=True)
-	frh03 = breizhcrops.BreizhCrops(region="frh03", root=datapath, transform=transform, load_timeseries=False,
+	frh03 = breizhcrops.BreizhCrops(region="frh03", root=datapath, transform=transform, load_timeseries=True,
 									target_transform=target_transform, padding_value=padded_value,
 									preload_ram=preload_ram, level=level, recompile_h5_from_csv=True)
 	if mode == "evaluation":
-		frh04 = breizhcrops.BreizhCrops(region="frh04", root=datapath, transform=transform, load_timeseries=False,
+		frh04 = breizhcrops.BreizhCrops(region="frh04", root=datapath, transform=transform, load_timeseries=True,
 									target_transform=target_transform, padding_value=padded_value, 
 									preload_ram=preload_ram, level=level, recompile_h5_from_csv=True)
 		trainareas = [frh01, frh02, frh03]

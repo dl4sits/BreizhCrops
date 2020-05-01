@@ -17,6 +17,12 @@ RAW_CSV_URL = {
             "frh02": "https://syncandshare.lrz.de/dl/XXX/frh02.zip",
             "frh03": "https://syncandshare.lrz.de/dl/XXX/frh03.zip",
             "frh04": "https://syncandshare.lrz.de/dl/XXX/frh04.zip",
+        },
+        "L1C-interp": {
+            "frh01": "https://syncandshare.lrz.de/dl/XXX/frh01.zip",
+            "frh02": "https://syncandshare.lrz.de/dl/XXX/frh02.zip",
+            "frh03": "https://syncandshare.lrz.de/dl/XXX/frh03.zip",
+            "frh04": "https://syncandshare.lrz.de/dl/XXX/frh04.zip",
         }
     }
 }
@@ -40,6 +46,12 @@ INDEX_FILE_URLs = {
             "frh02": "https://syncandshare.lrz.de/dl/fi1749MFuYgWc4qKwrVWu2hR/frh02.csv",
             "frh03": "https://syncandshare.lrz.de/dl/fiTKuWmkwnxRoP84V3gWMpqs/frh03.csv",
             "frh04": "https://syncandshare.lrz.de/dl/fiDmi5qobgbfJHJLNEPf99xT/frh04.csv",
+        },
+        "L1C-interp": {
+            "frh01": "https://syncandshare.lrz.de/dl/fiE7ExSPEF5j1LHADGZ1GcAV/frh01.csv",
+            "frh02": "https://syncandshare.lrz.de/dl/fiEutoBWs3JFjCfJpoLWq5HF/frh02.csv",
+            "frh03": "https://syncandshare.lrz.de/dl/fiJL3LMrzYwmULbvzFiyVZuY/frh03.csv",
+            "frh04": "https://syncandshare.lrz.de/dl/fiCntufUMakKdjWZNq8eS5vw/frh04.csv",
         }
     }
 }
@@ -72,6 +84,12 @@ FILESIZES = {
             "frh02": 0,
             "frh03": 0,
             "frh04": 0
+        },
+        "L1C-interp": {
+            "frh01": 0,
+            "frh02": 0,
+            "frh03": 0,
+            "frh04": 0
         }
     }
 }
@@ -91,6 +109,12 @@ H5_URLs = {
             "frh04": "https://syncandshare.lrz.de/dl/fi77rzsEJMWXumq3jpi1VPYF/frh04.h5.tar.gz",
         },
         "L2A-interp": {
+            "frh01": "https://syncandshare.lrz.de/dl/XXX/frh01.h5.tar.gz",
+            "frh02": "https://syncandshare.lrz.de/dl/XXX/frh02.h5.tar.gz",
+            "frh03": "https://syncandshare.lrz.de/dl/XXX/frh03.h5.tar.gz",
+            "frh04": "https://syncandshare.lrz.de/dl/XXX/frh04.h5.tar.gz",
+        },
+        "L1C-interp": {
             "frh01": "https://syncandshare.lrz.de/dl/XXX/frh01.h5.tar.gz",
             "frh02": "https://syncandshare.lrz.de/dl/XXX/frh02.h5.tar.gz",
             "frh03": "https://syncandshare.lrz.de/dl/XXX/frh03.h5.tar.gz",

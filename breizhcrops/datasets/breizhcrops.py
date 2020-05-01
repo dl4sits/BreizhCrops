@@ -16,6 +16,8 @@ BANDS = {
             'B8A', 'B9', 'QA10', 'QA20', 'QA60', 'doa'],
     "L2A": ['B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
        'B8A', 'B11', 'B12', 'CLD', 'EDG', 'SAT'],
+    "L1C-interp": ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
+            'B8A', 'B9', 'B10', 'B11', 'B12'],
     "L2A-interp": ['B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
        'B8A', 'B11', 'B12']
 }
@@ -28,7 +30,7 @@ class BreizhCrops(Dataset):
                  filter_length=0, verbose=False, load_timeseries=True, recompile_h5_from_csv=False, preload_ram=False):
 
         assert year in [2017]
-        assert level in ["L1C", "L2A", "L2A-interp"]
+        assert level in ["L1C", "L2A", "L1C-interp", "L2A-interp"]
         assert region in ["frh01", "frh02", "frh03", "frh04"]
 
         self.region = region.lower()
@@ -111,10 +113,11 @@ class BreizhCrops(Dataset):
               <level>
                  <region>.csv
                  <region>.h5
-                 <csv>
-                     123123.csv
-                     123125.csv
-                     ...
+                 <region>
+                     <csv>
+                         123123.csv
+                         123125.csv
+                         ...
         """
         year = str(year)
 
@@ -144,10 +147,11 @@ class BreizhCrops(Dataset):
         print("ok!")
 
     def write_h5_database_from_csv(self):
-        with h5py.File(self.h5path, "w") as dataset:
-            for idx, row in tqdm(self.index.iterrows(), total=len(self.index), desc=f"writing {self.h5path}"):
-                X = self.load(os.path.join(self.root, row.path))
-                dataset.create_dataset(row.path, data=X)
+        if not os.path.exists(self.h5path):
+            with h5py.File(self.h5path, "w") as dataset:
+                for idx, row in tqdm(self.index.iterrows(), total=len(self.index), desc=f"writing {self.h5path}"):
+                    X = self.load(os.path.join(self.root, row.path))
+                    dataset.create_dataset(row.path, data=X)
 
     def get_codes(self):
         return self.codes
@@ -167,8 +171,12 @@ class BreizhCrops(Dataset):
         geom.index.name = "id"
 
         geom["sequencelength"] = self.index["sequencelength"]
-        geom["meanQA60"] = self.index["meanQA60"]
-        geom["cloudCoverage"] = geom["meanQA60"] / 1024  # 1024 indicates complete cloud coverage
+        if (level=="L1C" or level=="L1C-inter"):
+            geom["meanQA60"] = self.index["meanQA60"]            
+            geom["cloudCoverage"] = geom["meanQA60"] / 1024  # 1024 indicates complete cloud coverage
+        else:
+            geom["meanCLD"] = self.index["meanCLD"]
+            geom["cloudCoverage"] = geom["meanCLD"] / 1024  # 1024 indicates complete cloud coverage    
         geom["region"] = self.region
 
         return geom

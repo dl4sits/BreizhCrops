@@ -97,11 +97,22 @@ def get_dataloader(datapath, mode, batchsize, workers, preload_ram=False, level=
                                     target_transform=target_transform, padding_value=padded_value,
                                     preload_ram=preload_ram, level=level)
     if mode == "evaluation":
-        frh04 = breizhcrops.BreizhCrops(region="frh04", root=datapath, transform=transform,
-                                        target_transform=target_transform, padding_value=padded_value,
-                                        preload_ram=preload_ram, level=level)
+            frh04 = breizhcrops.BreizhCrops(region="frh04", root=datapath, transform=transform,
+                                            target_transform=target_transform, padding_value=padded_value,
+                                            preload_ram=preload_ram, level=level)
+
+    if mode == "evaluation" or mode == "evaluation1":
         traindatasets = torch.utils.data.ConcatDataset([frh01, frh02, frh03])
         testdataset = frh04
+    elif mode == "evaluation2":
+        traindatasets = torch.utils.data.ConcatDataset([frh01, frh02, frh04])
+        testdataset = frh03
+    elif mode == "evaluation3":
+        traindatasets = torch.utils.data.ConcatDataset([frh01, frh03, frh04])
+        testdataset = frh02
+    elif mode == "evaluation4":
+        traindatasets = torch.utils.data.ConcatDataset([frh02, frh03, frh04])
+        testdataset = frh01
     elif mode == "validation":
         traindatasets = torch.utils.data.ConcatDataset([frh01, frh02])
         testdataset = frh03

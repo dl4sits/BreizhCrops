@@ -14,7 +14,8 @@ def save(model, path="model.pth"):
 
 
 def main(args):
-    traindataloader, testdataloader, meta = get_dataloader(args.datapath, "evaluation", args.batchsize,
+    mode = "evaluation" + str(args.fold)
+    traindataloader, testdataloader, meta = get_dataloader(args.datapath, mode, args.batchsize,
                                                            args.workers, level=args.level, preload_ram=args.preload_ram)
 
     num_classes = meta["num_classes"]
@@ -22,7 +23,7 @@ def main(args):
     sequencelength = meta["sequencelength"]
 
     print(f"Logging results to {args.logdir}")
-    logdir = args.logdir
+    logdir = os.path.join(args.logdir,str(fold))
     os.makedirs(logdir, exist_ok=True)
 
     epochs, learning_rate, weight_decay = select_hyperparameter(args.model)
@@ -85,6 +86,8 @@ def parse_args():
         '-D', '--datapath', type=str, default="../data", help='directory to download and store the dataset')
     parser.add_argument(
         '-w', '--workers', type=int, default=0, help='number of CPU workers to load the next batch')
+    parser.add_argument(
+        '-f', '--fold', type=int, default=1, help='fold 1,2,3,4')
     parser.add_argument(
         '--level', type=str, default="L1C", help='Level either L1C oder L2A')
     parser.add_argument(

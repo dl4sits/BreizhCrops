@@ -29,8 +29,12 @@ def update_progress(progress):
 def untar(filepath):
     dirname = os.path.dirname(filepath)
     with tarfile.open(filepath, 'r:gz') as tar:
-        tar.extractall(path=dirname)
-
+        #tar.extractall(path=dirname)
+	#tar = tarfile.open(tar_file)
+        for member in tar.getmembers():
+            if member.isreg():  # skip if the TarInfo is not files
+                member.name = os.path.basename(member.name) # remove the path by reset it
+                tar.extract(member,dirname) # extract 
 
 class DownloadProgressBar(tqdm):
     def update_to(self, b=1, bsize=1, tsize=None):

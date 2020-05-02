@@ -1,5 +1,6 @@
 from breizhcrops import BreizhCrops
 from examples.train import get_model
+import breizhcrops
 import torch
 
 def test_get_model():
@@ -27,6 +28,11 @@ def test_init_breizhcrops():
     BreizhCrops(region="frh01", root=datapath, load_timeseries=False, level="L2A")
     BreizhCrops(region="frh02", root=datapath, load_timeseries=False, level="L2A")
     BreizhCrops(region="frh03", root=datapath, load_timeseries=False, level="L2A")
+
+def test_pretrained():
+    x = torch.zeros(1, 45, 13)
+    for model in ["omniscalecnn", "transformer", "lstm", "tempcnn", "msresnet", "inceptiontime", "starrnn"]:
+        breizhcrops.models.pretrained(model)(x)
 
 def test_breizhcrops_index_columnames():
     l1c = BreizhCrops(region="frh01", root="/tmp", load_timeseries=False)

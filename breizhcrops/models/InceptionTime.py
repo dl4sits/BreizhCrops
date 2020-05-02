@@ -7,7 +7,7 @@ __all__ = ['InceptionTime']
 
 class InceptionTime(nn.Module):
 
-    def __init__(self, input_dim=13, num_classes=9, num_layers=4, hidden_dims=64, use_bias=False, device=torch.device("cuda")):
+    def __init__(self, input_dim=13, num_classes=9, num_layers=4, hidden_dims=64, use_bias=False, device=torch.device("cpu")):
         super(InceptionTime, self).__init__()
         self.modelname = f"InceptionTime_input-dim={input_dim}_num-classes={num_classes}_" \
                          f"hidden-dims={hidden_dims}_num-layers={num_layers}"

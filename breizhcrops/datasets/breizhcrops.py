@@ -21,7 +21,7 @@ BANDS = {
 
 class BreizhCrops(Dataset):
 
-    def __init__(self, region, root="data", year=2017, level="L1C",
+    def __init__(self, region, root="breizhcrops_dataset", year=2017, level="L1C",
                  transform=None, target_transform=None, padding_value=-1,
                  filter_length=0, verbose=False, load_timeseries=True, recompile_h5_from_csv=False, preload_ram=False):
 

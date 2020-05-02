@@ -23,7 +23,11 @@ def train(args):
 	logdir = os.path.join(args.logdir, "RF")
 	os.makedirs(logdir, exist_ok=True)
 	print(f"Logging results to {logdir}")
-
+	
+	out_csv_path = os.path.join(logdir, "resultlog_"+args.level+"_"+args.mode+".csv")
+	if os.path.exists(out_csv_path):
+		return
+	
 	X_train, y_train, X_test, y_test = get_dataloader(args.datapath, args.mode, args.preload_ram, args.level)
 
 	rf = RandomForestClassifier(n_estimators=500, max_features='sqrt',
@@ -57,7 +61,7 @@ def train(args):
 	log = list()
 	log.append(scores)
 	log_df = pd.DataFrame(log)
-	log_df.to_csv(os.path.join(logdir, "resultlog.csv"))
+	log_df.to_csv(out_csv_path)
 	
 
 def get_dataloader(datapath, mode, preload_ram=False, level="L1C"):
@@ -126,22 +130,34 @@ def get_dataloader(datapath, mode, preload_ram=False, level="L1C"):
 	frh03 = breizhcrops.BreizhCrops(region="frh03", root=datapath, transform=transform, load_timeseries=True,
 									target_transform=target_transform, padding_value=padded_value,
 									preload_ram=preload_ram, level=level, recompile_h5_from_csv=True)
-	if mode == "evaluation":
+	if mode != "validation":
 		frh04 = breizhcrops.BreizhCrops(region="frh04", root=datapath, transform=transform, load_timeseries=True,
 									target_transform=target_transform, padding_value=padded_value, 
 									preload_ram=preload_ram, level=level, recompile_h5_from_csv=True)
-		trainareas = [frh01, frh02, frh03]
-		X_train, y_train = get_data(trainareas)
-		testareas = [frh04]
-		X_test, y_test = get_data(testareas)
-	elif mode == "validation":
-		trainareas = [frh01, frh02]   
-		X_train, y_train = get_data(trainareas)
-		testareas = [frh03]
-		X_test, y_test = get_data(testareas)
+									
+	if mode == "validation":
+		trainareas = [frh01, frh02]
+		testareas = [frh03]				
+	elif "evaluation" in mode:
+		if mode=="evaluation" or mode=="evaluation4":
+			trainareas = [frh01, frh02, frh03]
+			testareas = [frh04]
+		elif mode=="evaluation1":
+			trainareas = [frh02, frh03, frh04]
+			testareas = [frh01]
+		elif mode=="evaluation2":
+			trainareas = [frh01, frh03, frh04]
+			testareas = [frh02]
+		elif mode=="evaluation3":
+			trainareas = [frh01, frh02, frh04]
+			testareas = [frh03]			
+		else:
+			raise ValueError("--mode not defined")
 	else:
 		raise ValueError("only --mode 'validation' or 'evaluation' allowed")
-
+	
+	X_train, y_train = get_data(trainareas)
+	X_test, y_test = get_data(testareas)
 	
 	meta = dict()
 	if 0:

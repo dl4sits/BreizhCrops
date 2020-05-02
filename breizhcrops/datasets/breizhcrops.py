@@ -69,7 +69,7 @@ class BreizhCrops(Dataset):
         # filter zero-length time series
         self.index = self.index.loc[self.index.sequencelength > filter_length].set_index("idx")
 
-        self.maxseqlength = self.index["sequencelength"].max()
+        self.maxseqlength = int(self.index["sequencelength"].max())
 
         if not os.path.exists(self.codesfile):
             download_file(CODESURL, self.codesfile)

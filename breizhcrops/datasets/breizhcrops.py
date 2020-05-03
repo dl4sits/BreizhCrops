@@ -1,5 +1,4 @@
 import os
-import tarfile
 
 import geopandas as gpd
 import h5py
@@ -7,6 +6,9 @@ import numpy as np
 import pandas as pd
 from torch.utils.data import Dataset
 from tqdm import tqdm
+import torch
+import numpy as np
+
 
 from .urls import CODESURL, CLASSMAPPINGURL, INDEX_FILE_URLs, FILESIZES, SHP_URLs, H5_URLs, RAW_CSV_URL
 from ..utils import download_file, unzip, untar
@@ -18,22 +20,28 @@ BANDS = {
        'B8A', 'B11', 'B12', 'CLD', 'EDG', 'SAT']
 }
 
+PADDING_VALUE=-1
 
 class BreizhCrops(Dataset):
 
     def __init__(self, region, root="breizhcrops_dataset", year=2017, level="L1C",
-                 transform=None, target_transform=None, padding_value=-1,
+                 transform=None, target_transform=None,
                  filter_length=0, verbose=False, load_timeseries=True, recompile_h5_from_csv=False, preload_ram=False):
 
         assert year in [2017]
         assert level in ["L1C", "L2A"]
         assert region in ["frh01", "frh02", "frh03", "frh04"]
 
-        self.region = region.lower()
-        self.bands = BANDS[level]
+        if transform is None:
+            transform = get_default_transform(level)
+        if target_transform is None:
+            target_transform = get_default_target_transform()
         self.transform = transform
         self.target_transform = target_transform
-        self.padding_value = padding_value
+
+        self.region = region.lower()
+        self.bands = BANDS[level]
+
         self.verbose = verbose
         self.year = year
         self.level = level
@@ -215,7 +223,7 @@ class BreizhCrops(Dataset):
         y = self.mapping.loc[row["CODE_CULTU"]].id
 
         npad = self.maxseqlength - X.shape[0]
-        X = np.pad(X, [(0, npad), (0, 0)], 'constant', constant_values=self.padding_value)
+        X = np.pad(X, [(0, npad), (0, 0)], 'constant', constant_values=PADDING_VALUE)
 
         if self.transform is not None:
             X = self.transform(X)
@@ -223,6 +231,39 @@ class BreizhCrops(Dataset):
             y = self.target_transform(y)
 
         return X, y, int(os.path.splitext(os.path.basename(row.path))[0])
+
+def get_default_transform(level):
+
+    padded_value = PADDING_VALUE
+    sequencelength = 45
+
+    bands = BANDS[level]
+    if level == "L1C":
+        selected_bands = ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9']
+    elif level == "L2A":
+        selected_bands = ['B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B11', 'B12']
+
+    selected_band_idxs = np.array([bands.index(b) for b in selected_bands])
+
+    def transform(x):
+        x = x[x[:, 0] != padded_value, :]  # remove padded values
+
+        # choose selected bands
+        x = x[:, selected_band_idxs] * 1e-4  # scale reflectances to 0-1
+
+        # choose with replacement if sequencelength smaller als choose_t
+        replace = False if x.shape[0] >= sequencelength else True
+        idxs = np.random.choice(x.shape[0], sequencelength, replace=replace)
+        idxs.sort()
+
+        x = x[idxs]
+
+        return torch.from_numpy(x).type(torch.FloatTensor)
+    return transform
+
+def get_default_target_transform():
+    return lambda y: torch.tensor(y, dtype=torch.long)
+
 
 if __name__ == '__main__':
     BreizhCrops(region="frh03", root="/tmp", load_timeseries=False, level="L2A",recompile_h5_from_csv=True)

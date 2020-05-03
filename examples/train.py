@@ -59,46 +59,14 @@ def get_dataloader(datapath, mode, batchsize, workers, preload_ram=False, level=
     print(f"Setting up datasets in {os.path.abspath(datapath)}, level {level}")
     datapath = os.path.abspath(datapath)
 
-    padded_value = -1
-    sequencelength = 45
-
-    bands = BANDS[level]
-    if level == "L1C":
-        selected_bands = ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9']
-    elif level == "L2A":
-        selected_bands = ['B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B11', 'B12']
-    selected_band_idxs = np.array([bands.index(b) for b in selected_bands])
-
-    def transform(x):
-        x = x[x[:, 0] != padded_value, :]  # remove padded values
-
-        # choose selected bands
-        x = x[:, selected_band_idxs] * 1e-4  # scale reflectances to 0-1
-
-        # choose with replacement if sequencelength smaller als choose_t
-        replace = False if x.shape[0] >= sequencelength else True
-        idxs = np.random.choice(x.shape[0], sequencelength, replace=replace)
-        idxs.sort()
-
-        x = x[idxs]
-
-        return torch.from_numpy(x).type(torch.FloatTensor)
-
-    def target_transform(y):
-        return torch.tensor(y, dtype=torch.long)
-
-    frh01 = breizhcrops.BreizhCrops(region="frh01", root=datapath, transform=transform,
-                                    target_transform=target_transform, padding_value=padded_value,
+    frh01 = breizhcrops.BreizhCrops(region="frh01", root=datapath,
                                     preload_ram=preload_ram, level=level)
-    frh02 = breizhcrops.BreizhCrops(region="frh02", root=datapath, transform=transform,
-                                    target_transform=target_transform, padding_value=padded_value,
+    frh02 = breizhcrops.BreizhCrops(region="frh02", root=datapath,
                                     preload_ram=preload_ram, level=level)
-    frh03 = breizhcrops.BreizhCrops(region="frh03", root=datapath, transform=transform,
-                                    target_transform=target_transform, padding_value=padded_value,
+    frh03 = breizhcrops.BreizhCrops(region="frh03", root=datapath,
                                     preload_ram=preload_ram, level=level)
     if "evaluation" in mode:
-            frh04 = breizhcrops.BreizhCrops(region="frh04", root=datapath, transform=transform,
-                                            target_transform=target_transform, padding_value=padded_value,
+            frh04 = breizhcrops.BreizhCrops(region="frh04", root=datapath,
                                             preload_ram=preload_ram, level=level)
 
     if mode == "evaluation" or mode == "evaluation1":

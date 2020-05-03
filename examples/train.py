@@ -8,10 +8,8 @@ import argparse
 import breizhcrops
 from breizhcrops.models import LSTM, TempCNN, MSResNet, TransformerModel, InceptionTime, StarRNN, OmniScaleCNN
 from torch.utils.data import DataLoader
-from breizhcrops.datasets.breizhcrops import BANDS
 from tqdm import tqdm
 from torch.optim import Adam
-import numpy as np
 import torch
 import pandas as pd
 import os
@@ -91,9 +89,9 @@ def get_dataloader(datapath, mode, batchsize, workers, preload_ram=False, level=
     testdataloader = DataLoader(testdataset, batch_size=batchsize, shuffle=False, num_workers=workers)
 
     meta = dict(
-        ndims=len(selected_bands),
+        ndims=13 if level=="L1C" else 10,
         num_classes=len(frh01.classes),
-        sequencelength=sequencelength
+        sequencelength=45
     )
 
     return traindataloader, testdataloader, meta

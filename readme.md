@@ -48,7 +48,7 @@ The model implementations from this repository are based on the following papers
 * OmniscaleCNN [Tang et al., 2020](https://arxiv.org/abs/2002.10061)
 
 The raw label data originates from 
-* [Registre parcellaire graphique (RPG)](https://www.data.gouv.fr/fr/datasets/registre-parcellaire-graphique-rpg-contours-des-parcelles-et-ilots-culturaux-et-leur-groupe-de-cultures-majoritaire/) of the Institut National de l'Information Géographique et Forestière (IGM)
+* [Registre parcellaire graphique (RPG)](https://www.data.gouv.fr/fr/datasets/registre-parcellaire-graphique-rpg-contours-des-parcelles-et-ilots-culturaux-et-leur-groupe-de-cultures-majoritaire/) of the French National Geographic Institute (IGN)
 
 ### Reference
 

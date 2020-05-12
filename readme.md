@@ -17,23 +17,26 @@ This minimal working example
 ```python
 # import package
 import breizhcrops as bzh
- 
+
 # initialize and download FRH04 data
 dataset = bzh.BreizhCrops("frh04")
 
-# get data sample 
-x, y, field_id = dataset[0] 
+# get data sample
+x, y, field_id = dataset[0]
 
 # load pretrained model
 model = bzh.models.pretrained("Transformer")
 
-# create a batch of batchsize 1 
+# create a batch of batchsize 1
 x = x.unsqueeze(0)
 
-# perform inference 
-y_pred = model(x) 
+# perform inference
+y_pred = model(x)
 ```
 downloads the FRH04 dataset partition (used for evaluation), loads a pretrained model and performs a prediction on the first sample.
+
+
+![mimimum working example](doc/breizhcrops_zsh_short.gif)
 
 ### Acknowledgements
 
@@ -44,10 +47,10 @@ The model implementations from this repository are based on the following papers
 * MS-ResNet implementation from [Fei Wang](https://github.com/geekfeiw/Multi-Scale-1D-ResNet)
 * TransformerEncoder implementation was originally adopted from Yu-Hsiang Huang [GitHub](https://github.com/jadore801120/attention-is-all-you-need-pytorch), but later replaced by own implementation when `torch.nn.transformer` modules became available
 * InceptionTime [Fawaz et al., 2019](https://arxiv.org/abs/1909.04939)
-* StarRNN [Turkoglu et al., 2019](https://arxiv.org/abs/1911.11033) 
+* StarRNN [Turkoglu et al., 2019](https://arxiv.org/abs/1911.11033)
 * OmniscaleCNN [Tang et al., 2020](https://arxiv.org/abs/2002.10061)
 
-The raw label data originates from 
+The raw label data originates from
 * [Registre parcellaire graphique (RPG)](https://www.data.gouv.fr/fr/datasets/registre-parcellaire-graphique-rpg-contours-des-parcelles-et-ilots-culturaux-et-leur-groupe-de-cultures-majoritaire/) of the French National Geographic Institute (IGN)
 
 ### Reference
@@ -62,7 +65,7 @@ This work will be published in the proceedings of ISPRS Archives 2020. [Preprint
 }
 ```
 
-### ICML workshop 2019 
+### ICML workshop 2019
 
 <a href=https://arxiv.org/abs/1905.11893><img height=300px src=doc/paper.png /></a>
 <a href="doc/poster.pdf"><img height=300px src=doc/poster.png /></a>

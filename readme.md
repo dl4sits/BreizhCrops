@@ -52,7 +52,7 @@ The raw label data originates from
 
 ### Reference
 
-This work will be published in the proceedings of ISPRS Archives 2020  
+This work will be published in the proceedings of ISPRS Archives 2020. [Preprint available on ArXiv](https://arxiv.org/abs/1905.11893)
 ```
 @article{breizhcrops2020,
   title={BreizhCrops: A Time Series Dataset for Crop Type Mapping},

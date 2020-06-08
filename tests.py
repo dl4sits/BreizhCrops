@@ -31,7 +31,8 @@ def test_init_breizhcrops():
 
 def test_pretrained():
     x = torch.zeros(1, 45, 13)
-    for model in ["omniscalecnn", "transformer", "lstm", "tempcnn", "msresnet", "inceptiontime", "starrnn"]:
+    for model in ["omniscalecnn", "lstm", "tempcnn", "msresnet", "inceptiontime", "starrnn"]:
+        # todo re-add transformer to tests after pretrained weights are re-uploaded
         breizhcrops.models.pretrained(model)(x)
 
 def test_breizhcrops_index_columnames():

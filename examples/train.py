@@ -116,7 +116,7 @@ def get_model(model, ndims, num_classes, sequencelength, device, **hyperparamete
     elif model == "MSResNet":
         model = MSResNet(input_dim=ndims, num_classes=num_classes, **hyperparameter).to(device)
     elif model == "TransformerEncoder":
-        model = TransformerModel(input_dim=ndims, num_classes=num_classes, sequencelength=sequencelength,
+        model = TransformerModel(input_dim=ndims, num_classes=num_classes,
                             activation="relu",
                             **hyperparameter).to(device)
     elif model == "TempCNN":

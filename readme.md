@@ -38,6 +38,18 @@ downloads the FRH04 dataset partition (used for evaluation), loads a pretrained 
 
 ![mimimum working example](doc/breizhcrops_zsh_short.gif)
 
+### Train a model
+
+Train a model via the example script `train.py`
+```bash
+python train.py TransformerEncoder --learning-rate 0.001 --weight-decay 5e-08 --preload-ram
+```
+
+This script uses the default model parameters from `breizhcrops.models.TransformerModel`. 
+When training multiple epochs, the `--preload-ram` flag speeds up training significantly 
+
+
+
 ### Acknowledgements
 
 The model implementations from this repository are based on the following papers and github repositories.
@@ -50,7 +62,7 @@ The model implementations from this repository are based on the following papers
 * StarRNN [Turkoglu et al., 2019](https://arxiv.org/abs/1911.11033)
 * OmniscaleCNN [Tang et al., 2020](https://arxiv.org/abs/2002.10061)
 
-The raw label data originates from
+The raw label data originates from  
 * [Registre parcellaire graphique (RPG)](https://www.data.gouv.fr/fr/datasets/registre-parcellaire-graphique-rpg-contours-des-parcelles-et-ilots-culturaux-et-leur-groupe-de-cultures-majoritaire/) of the French National Geographic Institute (IGN)
 
 ### Reference

@@ -23,6 +23,7 @@ def test_init_breizhcrops():
     BreizhCrops(region="frh01", root=datapath, load_timeseries=False)
     BreizhCrops(region="frh02", root=datapath, load_timeseries=False)
     BreizhCrops(region="frh03", root=datapath, load_timeseries=False)
+    BreizhCrops(region="belle-ile", root=datapath, load_timeseries=False)
 
     BreizhCrops(region="frh04", root=datapath, load_timeseries=False, level="L2A")
     BreizhCrops(region="frh01", root=datapath, load_timeseries=False, level="L2A")
@@ -84,6 +85,12 @@ def test_urls():
     check(INDEX_FILE_URLs)
     check(SHP_URLs)
     check(H5_URLs)
+
+def test_belle_ile():
+    gdf = BreizhCrops(region="belle-ile", root="/tmp", load_timeseries=False).geodataframe()
+    dataset = BreizhCrops(region="belle-ile", root="/tmp")
+    dataset[0]
+
 
 def test_get_codes_breizhcrops():
     BreizhCrops(region="frh04", root="/tmp", load_timeseries=False).get_codes()

@@ -97,7 +97,7 @@ def parse_args():
                                                        'default will check by torch.cuda.is_available() ')
     parser.add_argument(
         '--preload-ram', action='store_true', help='load dataset into RAM upon initialization')
-	parser.add_argument('--level', type=str, default="L1C", help='select level either "L1C" or "L2A". Default will select "L1C".')
+    parser.add_argument('--level', type=str, default="L1C", help='level L1C by default')
     args = parser.parse_args()
 
     if args.device is None:

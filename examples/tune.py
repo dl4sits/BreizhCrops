@@ -41,10 +41,11 @@ def tune(args):
 
             # d_model = int(np.random.choice([32, 64, 128, 256, 512], 1))
             d_model = 32
+            n_head = int(np.random.choice([1, 2, 3, 4, 5], 1))
 
             args.hyperparameter = dict(
                 # d_model=d_model,
-                n_head=int(np.random.choice([1, 2, 3, 4, 5], 1)), # 6, 7, 8], 1)),
+                n_head=n_head,  # n_head = int(np.random.choice([1, 2, 3, 4, 5, 6, 7, 8], 1)),
                 d_model=d_model * n_head,
                 n_layers=int(np.random.choice([1, 2, 3, 4, 5, 6, 7, 8], 1)),
                 d_inner=d_model * 4,

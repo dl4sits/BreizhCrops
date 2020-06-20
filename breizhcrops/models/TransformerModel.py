@@ -8,8 +8,8 @@ import torch.nn.functional as F
 __all__ = ['TransformerModel']
 
 class TransformerModel(nn.Module):
-    def __init__(self, input_dim=13, num_classes=9, d_model=64, n_head=1, n_layers=3,
-                 d_inner=256, activation="relu", dropout=0.39907201621346594):
+    def __init__(self, input_dim=13, num_classes=9, d_model=64, n_head=2, n_layers=5,
+                 d_inner=128, activation="relu", dropout=0.017998950510888446):
 
         super(TransformerModel, self).__init__()
         self.modelname = f"TransformerEncoder_input-dim={input_dim}_num-classes={num_classes}_" \

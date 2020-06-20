@@ -65,7 +65,7 @@ def select_hyperparameter(model):
     elif model == "MSResNet":
         epochs, learning_rate, weight_decay = 23, 0.0006271686393146093, 4.750234747127917e-06
     elif model == "TransformerEncoder":
-        epochs, learning_rate, weight_decay = 26, 0.0013144015360979785, 5.523908582054716e-08
+        epochs, learning_rate, weight_decay = 30, 0.00017369201853408445, 3.5156458637523697e-06
     elif model == "TempCNN":
         epochs, learning_rate, weight_decay = 11, 0.00023892874563871753, 5.181869707846283e-05
     elif model == "OmniScaleCNN":

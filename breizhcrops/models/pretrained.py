@@ -58,11 +58,9 @@ def pretrained(model, device=torch.device("cpu")):
         _download_and_load_weights(MSRESNET_URL, model)
         return model
     elif model == "transformerencoder" or model == "transformer":
-        # TODO fix uploaded weights
-        raise NotImplementedError("Transformer Implementation changed. Not compatible with weights anymore")
-        #model = TransformerModel(input_dim=ndims, num_classes=num_classes,activation="relu").to(device)
-        #_download_and_load_weights(TRANSFORMER_URL, model)
-        #return model
+        model = TransformerModel(input_dim=ndims, num_classes=num_classes).to(device)
+        _download_and_load_weights(TRANSFORMER_URL, model)
+        return model
     elif model == "tempcnn":
         model = TempCNN(input_dim=ndims, num_classes=num_classes, sequencelength=sequencelength).to(device)
         _download_and_load_weights(TEMPCNN_URL, model)

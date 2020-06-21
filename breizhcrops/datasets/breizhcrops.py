@@ -93,6 +93,10 @@ class BreizhCrops(Dataset):
 
         self.index.rename(columns={"meanQA60": "meanCLD"}, inplace=True)
 
+        if "id" not in self.index.columns:
+            # parse field id from csv path
+            self.index["id"] = self.index["path"].apply(lambda path: int(os.path.splitext(os.path.basename(path))[0]))
+
         self.get_codes()
 
     def download_csv_files(self):
@@ -163,15 +167,20 @@ class BreizhCrops(Dataset):
             untar(targzfile)
             os.remove(targzfile)
 
+
+        geodataframe = gpd.GeoDataFrame(self.index.set_index("id"))
+
+        # copy geometry from shapefile to index file
         geom = gpd.read_file(self.shapefile).set_index("ID")
         geom.index.name = "id"
+        geodataframe["geometry"] = geom["geometry"]
 
-        geom["sequencelength"] = self.index["sequencelength"]
-        geom["meanCLD"] = self.index["meanCLD"]
-        geom["cloudCoverage"] = geom["meanCLD"] / 1024  # 1024 indicates complete cloud coverage
-        geom["region"] = self.region
+        # drop fields that are not in the class mapping
+        geodataframe = geodataframe.loc[geom["CODE_CULTU"].isin(self.mapping.index)]
+        geodataframe[["classid", "classname"]] = geodataframe["CODE_CULTU"].apply(lambda code: self.mapping.loc[code])
+        geodataframe["region"] = self.region
 
-        return geom
+        return geodataframe.reset_index()
 
     def load_classmapping(self, classmapping):
         if not os.path.exists(classmapping):
@@ -230,7 +239,7 @@ class BreizhCrops(Dataset):
         if self.target_transform is not None:
             y = self.target_transform(y)
 
-        return X, y, int(os.path.splitext(os.path.basename(row.path))[0])
+        return X, y, row.id
 
 def get_default_transform(level):
 

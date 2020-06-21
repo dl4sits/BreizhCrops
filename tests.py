@@ -38,7 +38,7 @@ def test_pretrained():
 def test_breizhcrops_index_columnames():
     l1c = BreizhCrops(region="frh01", root="/tmp", load_timeseries=False)
     l2a = BreizhCrops(region="frh01", root="/tmp", load_timeseries=False, level="L2A")
-    reference = ['CODE_CULTU', 'path', 'meanCLD', 'sequencelength']
+    reference = ['CODE_CULTU', 'path', 'meanCLD', 'sequencelength', 'id']
 
     assert len(list(l1c.index.columns)) == len(reference)
     assert len(list(l2a.index.columns)) == len(reference)

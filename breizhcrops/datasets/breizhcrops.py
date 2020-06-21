@@ -174,6 +174,7 @@ class BreizhCrops(Dataset):
         geom = gpd.read_file(self.shapefile).set_index("ID")
         geom.index.name = "id"
         geodataframe["geometry"] = geom["geometry"]
+        geodataframe.crs = geom.crs
 
         # drop fields that are not in the class mapping
         geodataframe = geodataframe.loc[geom["CODE_CULTU"].isin(self.mapping.index)]

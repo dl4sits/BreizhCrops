@@ -4,7 +4,7 @@ MSRESNET_URL = "https://syncandshare.lrz.de/dl/fi6FKvymvpyHZ4JVtyWo64wh/MSResNet
 OMNISCALECNN_URL = "https://syncandshare.lrz.de/dl/fi8BZ53crPbExH79xMpNXop3/OmniScaleCNN_learning-rate%3D0.001057192239267413_weight-decay%3D2.2522895556530792e-07.pth"
 STARRNN_URL = "https://syncandshare.lrz.de/dl/fiDxFhPxyFxAUVTJKCbncnnS/StarRNN_input-dim%3D13_num-classes%3D9_hidden-dims%3D128_num-layers%3D3_dropout%3D0.5_learning-rate%3D0.008960989762612663_weight-decay%3D2.2171861339535254e-06.pth"
 TEMPCNN_URL = "https://syncandshare.lrz.de/dl/fiVpXRMKiEQKfLFnRrKGFhwV/TempCNN_input-dim%3D13_num-classes%3D9_sequencelenght%3D45_kernelsize%3D7_hidden-dims%3D128_dropout%3D0.18203942949809093_learning-rate%3D0.00023892874563871753_weight-decay%3D5.181869707846283e-05.pth"
-TRANSFORMER_URL = "https://syncandshare.lrz.de/dl/fiCRWyYZgeJVgXrSmB3aC9pn/new_TransformerEncoder_input-dim%3D13_num-classes%3D9_d-model%3D64_d-inner%3D256_n-layers%3D3_n-head%3D1_dropout%3D0.39907201621346594_learning-rate%3D0.0013144015360979785_weight-decay%3D5.523908582054716e-08.pth"
+TRANSFORMER_URL = "https://syncandshare.lrz.de/dl/fiJEVQ1SmvqwNh3EvTGSZnML/new_TransformerEncoder_input-dim%3D13_num-classes%3D9_d-model%3D64_d-inner%3D128_n-layers%3D5_n-head%3D2_dropout%3D0.017998950510888446_learning-rate%3D0.00017369201853408445_weight-decay%3D3.5156458637523697e-06.pth"
 
 from .OmniScaleCNN import OmniScaleCNN
 from .LongShortTermMemory import LSTM

@@ -29,6 +29,7 @@ def test_init_breizhcrops():
     BreizhCrops(region="frh01", root=datapath, load_timeseries=False, level="L2A")
     BreizhCrops(region="frh02", root=datapath, load_timeseries=False, level="L2A")
     BreizhCrops(region="frh03", root=datapath, load_timeseries=False, level="L2A")
+    BreizhCrops(region="belle-ile", root=datapath, load_timeseries=False, level="L2A")
 
 def test_pretrained():
     x = torch.zeros(1, 45, 13)
@@ -86,10 +87,11 @@ def test_urls():
     check(H5_URLs)
 
 def test_belle_ile():
-    gdf = BreizhCrops(region="belle-ile", root="/tmp", load_timeseries=False).geodataframe()
-    dataset = BreizhCrops(region="belle-ile", root="/tmp")
+    BreizhCrops(region="belle-ile", root="/tmp", load_timeseries=False).geodataframe()
+    dataset = BreizhCrops(region="belle-ile", root="/tmp", level="L1C")
     dataset[0]
-
+    dataset = BreizhCrops(region="belle-ile", root="/tmp", level="L2A")
+    dataset[0]
 
 def test_get_codes_breizhcrops():
     BreizhCrops(region="frh04", root="/tmp", load_timeseries=False).get_codes()

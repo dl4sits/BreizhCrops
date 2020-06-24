@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='breizhcrops',
-      version='0.0.2.1',
+      version='0.0.2.2',
       description='A Satellite Time Series Dataset for Crop Type Identification',
       url='http://github.com/dl4sits/breizhcrops',
       author='Marc Rußwurm, Charlotte Pelletier',

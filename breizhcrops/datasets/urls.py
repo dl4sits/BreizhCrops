@@ -58,7 +58,7 @@ FILESIZES = {
             "frh02": 803455680,
             "frh03": 890016904,
             "frh04": 639211696,
-            "belle-ile": 5882368
+            "belle-ile": 6304512
         }
     }
 }
@@ -77,7 +77,7 @@ H5_URLs = {
             "frh02": "https://syncandshare.lrz.de/dl/fiUuDvGN7HcKbXtD51WiEzJY/frh02.h5.tar.gz",
             "frh03": "https://syncandshare.lrz.de/dl/fiNdfLwoTDvSh3WJRq5MsWS4/frh03.h5.tar.gz",
             "frh04": "https://syncandshare.lrz.de/dl/fiDV4vSvsqmxKm3UYb6cMRku/frh04.h5.tar.gz",
-            "belle-ile": "https://syncandshare.lrz.de/dl/fiMBX3rfpVjVHPSQH4fhtyna/belle-ile.h5.tar.gz"
+            "belle-ile": "https://syncandshare.lrz.de/dl/fimuRkLLrFvBWHYF2exxBxZ/belle-ile.h5.tar.gz"
         }
     }
 }

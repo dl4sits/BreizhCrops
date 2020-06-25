@@ -17,7 +17,7 @@ BANDS = {
     "L1C": ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
             'B8A', 'B9', 'QA10', 'QA20', 'QA60', 'doa'],
     "L2A": ['B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
-       'B8A', 'B11', 'B12', 'CLD', 'EDG', 'SAT']
+       'B8A', 'B11', 'B12', 'CLD', 'EDG', 'SAT','doa']
 }
 
 PADDING_VALUE=-1

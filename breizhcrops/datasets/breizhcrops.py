@@ -113,9 +113,14 @@ class BreizhCrops(Dataset):
 
         self.index.rename(columns={"meanQA60": "meanCLD"}, inplace=True)
 
-        if "id" not in self.index.columns:
+        #if "id" not in self.index.columns:
             # parse field id from csv path
-            self.index["id"] = self.index["path"].apply(lambda path: int(os.path.splitext(os.path.basename(path))[0]))
+        self.index["id"] = self.index["path"].apply(lambda path: int(os.path.splitext(os.path.basename(path))[0]))
+
+        # drop fields that are not in the class mapping
+        self.index = self.index.loc[self.index["CODE_CULTU"].isin(self.mapping.index)]
+        self.index[["classid", "classname"]] = self.index["CODE_CULTU"].apply(lambda code: self.mapping.loc[code])
+        self.index["region"] = self.region
 
         self.get_codes()
 
@@ -195,11 +200,6 @@ class BreizhCrops(Dataset):
         geom.index.name = "id"
         geodataframe["geometry"] = geom["geometry"]
         geodataframe.crs = geom.crs
-
-        # drop fields that are not in the class mapping
-        geodataframe = geodataframe.loc[geom["CODE_CULTU"].isin(self.mapping.index)]
-        geodataframe[["classid", "classname"]] = geodataframe["CODE_CULTU"].apply(lambda code: self.mapping.loc[code])
-        geodataframe["region"] = self.region
 
         return geodataframe.reset_index()
 

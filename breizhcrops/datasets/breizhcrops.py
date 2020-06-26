@@ -24,10 +24,30 @@ PADDING_VALUE=-1
 
 class BreizhCrops(Dataset):
 
-    def __init__(self, region, root="breizhcrops_dataset", year=2017, level="L1C",
-                 transform=None, target_transform=None,
-                 filter_length=0, verbose=False, load_timeseries=True, recompile_h5_from_csv=False, preload_ram=False):
-
+    def __init__(self,
+                 region,
+                 root="breizhcrops_dataset",
+                 year=2017, level="L1C",
+                 transform=None,
+                 target_transform=None,
+                 filter_length=0,
+                 verbose=False,
+                 load_timeseries=True,
+                 recompile_h5_from_csv=False,
+                 preload_ram=False):
+        """
+        :param region: dataset region. choose from "frh01", "frh02", "frh03", "frh04", "belle-ile"
+        :param root: where the data will be stored. defaults to `./breizhcrops_dataset`
+        :param year: year of the data. currently only `2017`
+        :param level: Sentinel 2 processing level. Either `L1C` (top of atmosphere) or `L2A` (bottom of atmosphere)
+        :param transform: a transformation function applied to the raw data before retrieving a sample. Can be used for featured extraction or data augmentaiton
+        :param target_transform: a transformation function applied to the label.
+        :param filter_length: time series shorter than `filter_length` will be ignored
+        :param bool verbose: verbosity flag
+        :param bool load_timeseries: if False, no time series data will be loaded. Only index file and class initialization. Used mostly for tests
+        :param bool recompile_h5_from_csv: downloads raw csv files and recompiles the h5 databases. Only required when dealing with new datasets
+        :param bool preload_ram: loads all time series data in RAM at initialization. Can speed up training if data is stored on HDD.
+        """
         assert year in [2017]
         assert level in ["L1C", "L2A"]
         assert region in ["frh01", "frh02", "frh03", "frh04", "belle-ile"]
@@ -232,8 +252,8 @@ class BreizhCrops(Dataset):
         # translate CODE_CULTU to class id
         y = self.mapping.loc[row["CODE_CULTU"]].id
 
-        npad = self.maxseqlength - X.shape[0]
-        X = np.pad(X, [(0, npad), (0, 0)], 'constant', constant_values=PADDING_VALUE)
+        #npad = self.maxseqlength - X.shape[0]
+        #X = np.pad(X, [(0, npad), (0, 0)], 'constant', constant_values=PADDING_VALUE)
 
         if self.transform is not None:
             X = self.transform(X)
@@ -244,7 +264,7 @@ class BreizhCrops(Dataset):
 
 def get_default_transform(level):
 
-    padded_value = PADDING_VALUE
+    #padded_value = PADDING_VALUE
     sequencelength = 45
 
     bands = BANDS[level]
@@ -256,7 +276,7 @@ def get_default_transform(level):
     selected_band_idxs = np.array([bands.index(b) for b in selected_bands])
 
     def transform(x):
-        x = x[x[:, 0] != padded_value, :]  # remove padded values
+        #x = x[x[:, 0] != padded_value, :]  # remove padded values
 
         # choose selected bands
         x = x[:, selected_band_idxs] * 1e-4  # scale reflectances to 0-1

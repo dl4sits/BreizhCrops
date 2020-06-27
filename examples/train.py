@@ -6,11 +6,10 @@ sys.path.append("..")
 import argparse
 
 import breizhcrops
-from breizhcrops.models import LSTM, TempCNN, MSResNet, TransformerModel, InceptionTime, StarRNN
+from breizhcrops.models import LSTM, TempCNN, MSResNet, TransformerModel, InceptionTime, StarRNN, OmniScaleCNN
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from torch.optim import Adam
-import numpy as np
 import torch
 import pandas as pd
 import os
@@ -18,14 +17,11 @@ import sklearn.metrics
 
 
 def train(args):
-    traindataloader, testdataloader, meta = get_dataloader(args.datapath, args.mode, args.batchsize, args.workers)
+    traindataloader, testdataloader, meta = get_dataloader(args.datapath, args.mode, args.batchsize, args.workers, args.preload_ram, args.level)
 
     num_classes = meta["num_classes"]
     ndims = meta["ndims"]
     sequencelength = meta["sequencelength"]
-
-    print(f"Logging results to {args.logdir}")
-    logdir = args.logdir
 
     device = torch.device(args.device)
     model = get_model(args.model, ndims, num_classes, sequencelength, device, **args.hyperparameter)
@@ -33,12 +29,16 @@ def train(args):
     model.modelname += f"_learning-rate={args.learning_rate}_weight-decay={args.weight_decay}"
     print(f"Initialized {model.modelname}")
 
+    logdir = os.path.join(args.logdir, model.modelname)
+    os.makedirs(logdir, exist_ok=True)
+    print(f"Logging results to {logdir}")
+
     criterion = torch.nn.CrossEntropyLoss(reduction="mean")
 
     log = list()
     for epoch in range(args.epochs):
         train_loss = train_epoch(model, optimizer, criterion, traindataloader, device)
-        test_loss, y_true, y_pred, _ = test_epoch(model, criterion, testdataloader, device)
+        test_loss, y_true, y_pred, *_ = test_epoch(model, criterion, testdataloader, device)
         scores = metrics(y_true.cpu(), y_pred.cpu())
         scores_msg = ", ".join([f"{k}={v:.2f}" for (k, v) in scores.items()])
         test_loss = test_loss.cpu().detach().numpy()[0]
@@ -50,55 +50,35 @@ def train(args):
         scores["testloss"] = test_loss
         log.append(scores)
 
-    log = pd.DataFrame(log).set_index("epoch")
-    log.to_csv(os.path.join(logdir, "trainlog.csv"))
+        log_df = pd.DataFrame(log).set_index("epoch")
+        log_df.to_csv(os.path.join(logdir, "trainlog.csv"))
 
-    test_loss, y_true, y_pred = test_epoch(model, criterion, testdataloader, device)
-    print(sklearn.metrics.classification_report(y_true.cpu(), y_pred.cpu()))
-
-
-def get_dataloader(datapath, mode, batchsize, workers):
-    print(f"Setting up datasets in {os.path.abspath(datapath)}")
+def get_dataloader(datapath, mode, batchsize, workers, preload_ram=False, level="L1C"):
+    print(f"Setting up datasets in {os.path.abspath(datapath)}, level {level}")
     datapath = os.path.abspath(datapath)
 
-    padded_value = -1
-    sequencelength = 45
+    frh01 = breizhcrops.BreizhCrops(region="frh01", root=datapath,
+                                    preload_ram=preload_ram, level=level)
+    frh02 = breizhcrops.BreizhCrops(region="frh02", root=datapath,
+                                    preload_ram=preload_ram, level=level)
+    frh03 = breizhcrops.BreizhCrops(region="frh03", root=datapath,
+                                    preload_ram=preload_ram, level=level)
+    if "evaluation" in mode:
+            frh04 = breizhcrops.BreizhCrops(region="frh04", root=datapath,
+                                            preload_ram=preload_ram, level=level)
 
-    bands = ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
-             'B8A', 'B9', 'QA10', 'QA20', 'QA60', 'doa']
-    selected_bands = ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9']
-    selected_band_idxs = np.array([bands.index(b) for b in selected_bands])
-
-    def transform(x):
-        x = x[x[:, 0] != padded_value, :]  # remove padded values
-
-        # choose selected bands
-        x = x[:, selected_band_idxs] * 1e-4  # scale reflectances to 0-1
-
-        # choose with replacement if sequencelength smaller als choose_t
-        replace = False if x.shape[0] >= sequencelength else True
-        idxs = np.random.choice(x.shape[0], sequencelength, replace=replace)
-        idxs.sort()
-
-        x = x[idxs]
-
-        return torch.from_numpy(x).type(torch.FloatTensor)
-
-    def target_transform(y):
-        y = frh01.mapping.loc[y].id
-        return torch.tensor(y, dtype=torch.long)
-
-    frh01 = breizhcrops.BreizhCrops(region="frh01", root=datapath, transform=transform,
-                                    target_transform=target_transform, padding_value=padded_value)
-    frh02 = breizhcrops.BreizhCrops(region="frh02", root=datapath, transform=transform,
-                                    target_transform=target_transform, padding_value=padded_value)
-    frh03 = breizhcrops.BreizhCrops(region="frh03", root=datapath, transform=transform,
-                                    target_transform=target_transform, padding_value=padded_value)
-    if mode == "evaluation":
-        frh04 = breizhcrops.BreizhCrops(region="frh04", root=datapath, transform=transform,
-                                        target_transform=target_transform, padding_value=padded_value)
+    if mode == "evaluation" or mode == "evaluation1":
         traindatasets = torch.utils.data.ConcatDataset([frh01, frh02, frh03])
         testdataset = frh04
+    elif mode == "evaluation2":
+        traindatasets = torch.utils.data.ConcatDataset([frh01, frh02, frh04])
+        testdataset = frh03
+    elif mode == "evaluation3":
+        traindatasets = torch.utils.data.ConcatDataset([frh01, frh03, frh04])
+        testdataset = frh02
+    elif mode == "evaluation4":
+        traindatasets = torch.utils.data.ConcatDataset([frh02, frh03, frh04])
+        testdataset = frh01
     elif mode == "validation":
         traindatasets = torch.utils.data.ConcatDataset([frh01, frh02])
         testdataset = frh03
@@ -109,16 +89,18 @@ def get_dataloader(datapath, mode, batchsize, workers):
     testdataloader = DataLoader(testdataset, batch_size=batchsize, shuffle=False, num_workers=workers)
 
     meta = dict(
-        num_classes=len(selected_bands),
-        ndims=len(frh01.classes),
-        sequencelength=sequencelength
+        ndims=13 if level=="L1C" else 10,
+        num_classes=len(frh01.classes),
+        sequencelength=45
     )
 
     return traindataloader, testdataloader, meta
 
 
 def get_model(model, ndims, num_classes, sequencelength, device, **hyperparameter):
-    if model == "LSTM":
+    if model == "OmniScaleCNN":
+        model = OmniScaleCNN(input_dim=ndims, num_classes=num_classes, sequencelength=sequencelength, **hyperparameter).to(device)
+    elif model == "LSTM":
         model = LSTM(input_dim=ndims, num_classes=num_classes, **hyperparameter).to(device)
     elif model == "StarRNN":
         model = StarRNN(input_dim=ndims,
@@ -134,7 +116,7 @@ def get_model(model, ndims, num_classes, sequencelength, device, **hyperparamete
     elif model == "MSResNet":
         model = MSResNet(input_dim=ndims, num_classes=num_classes, **hyperparameter).to(device)
     elif model == "TransformerEncoder":
-        model = TransformerModel(input_dim=ndims, num_classes=num_classes, sequencelength=sequencelength,
+        model = TransformerModel(input_dim=ndims, num_classes=num_classes,
                             activation="relu",
                             **hyperparameter).to(device)
     elif model == "TempCNN":
@@ -144,33 +126,6 @@ def get_model(model, ndims, num_classes, sequencelength, device, **hyperparamete
         raise ValueError("invalid model argument. choose from 'LSTM','MSResNet','TransformerEncoder', or 'TempCNN'")
 
     return model
-
-<<<<<<< HEAD
-    criterion = torch.nn.CrossEntropyLoss(reduction="mean")
-
-    log = list()
-    for epoch in range(args.epochs):
-        train_loss = train_epoch(model, optimizer, criterion, traindataloader, device)
-        test_loss, y_true, y_pred = test_epoch(model, criterion, testdataloader, device)
-        scores = metrics(y_true.cpu(), y_pred.cpu())
-        scores_msg = ", ".join([f"{k}={v:.2f}" for (k,v) in scores.items()])
-        test_loss = test_loss.cpu().detach().numpy()[0]
-        train_loss = train_loss.cpu().detach().numpy()[0]
-        print(f"epoch {epoch}: trainloss {train_loss:.2f}, testloss {test_loss:.2f} " + scores_msg)
-
-        scores["epoch"] = epoch
-        scores["trainloss"] = train_loss
-        scores["testloss"] = test_loss
-        log.append(scores)
-
-    log = pd.DataFrame(log).set_index("epoch")
-    os.makedirs(logdir, exist_ok=True)
-    log.to_csv(os.path.join(logdir,"trainlog.csv"))
-
-    test_loss, y_true, y_pred = test_epoch(model, criterion, testdataloader, device)
-    print(sklearn.metrics.classification_report(y_true.cpu(), y_pred.cpu()))
-=======
->>>>>>> upstream/master
 
 def metrics(y_true, y_pred):
     accuracy = sklearn.metrics.accuracy_score(y_true, y_pred)
@@ -261,15 +216,19 @@ def parse_args():
         '-H', '--hyperparameter', type=str, default=None, help='model specific hyperparameter as single string, '
                                                                'separated by comma of format param1=value1,param2=value2')
     parser.add_argument(
+        '--level', type=str, default="L1C", help='Sentinel 2 processing level (L1C, L2A)')
+    parser.add_argument(
         '--weight-decay', type=float, default=1e-6, help='optimizer weight_decay (default 1e-6)')
     parser.add_argument(
         '--learning-rate', type=float, default=1e-2, help='optimizer learning rate (default 1e-2)')
+    parser.add_argument(
+        '--preload-ram', action='store_true', help='load dataset into RAM upon initialization')
     parser.add_argument(
         '-d', '--device', type=str, default=None, help='torch.Device. either "cpu" or "cuda". '
                                                        'default will check by torch.cuda.is_available() ')
     parser.add_argument(
         '-l', '--logdir', type=str, default="/tmp", help='logdir to store progress and models (defaults to /tmp)')
-    args, _ = parser.parse_known_args()
+    args = parser.parse_args()
 
     hyperparameter_dict = dict()
     if args.hyperparameter is not None:

@@ -1,127 +1,87 @@
 # BreizhCrops:
-#### A Satellite Time Series Dataset for Crop Type Identification
+#### A Time Series Dataset for Crop Type Mapping
 
 ![](https://github.com/tum-lmf/breizhcrops/workflows/build-package/badge.svg)
 
-[Paper](https://arxiv.org/abs/1905.11893) presented at the [ICML 2019 Time Series workshop, Long Beach, USA](http://roseyu.com/time-series-workshop/)
+### Python Package
+
+Install Breizhcrops as python package from [PyPI](https://pypi.org/project/breizhcrops/)!
+
 ```
-@article{russwurm2019:BreizhCrops,
-  author    = {Marc Ru{\ss}wurm and
-               S{\'{e}}bastien Lef{\`{e}}vre and
-               Marco K{\"{o}}rner},
-  title     = {BreizhCrops: A Satellite Time Series Dataset for Crop Type Identification},
-  journal   = {CoRR},
-  volume    = {abs/1905.11893},
-  year      = {2019},
-  url       = {http://arxiv.org/abs/1905.11893},
-  archivePrefix = {arXiv},
-  eprint    = {1905.11893},
-  timestamp = {Mon, 03 Jun 2019 13:42:33 +0200},
-  biburl    = {https://dblp.org/rec/bib/journals/corr/abs-1905-11893},
-  bibsource = {dblp computer science bibliography, https://dblp.org}
-}
+pip install breizhcrops
 ```
 
-<a href=https://arxiv.org/abs/1905.11893><img height=300px src=doc/paper.png /></a>
-<a href="doc/poster.pdf"><img height=300px src=doc/poster.png /></a>
+### Getting Started
 
-### Raw Field Geometry Datasets in France
+This minimal working example
+```python
+# import package
+import breizhcrops as bzh
 
-The raw label data originates from [Registre parcellaire graphique (RPG)](https://www.data.gouv.fr/fr/datasets/registre-parcellaire-graphique-rpg-contours-des-parcelles-et-ilots-culturaux-et-leur-groupe-de-cultures-majoritaire/) of the Institut National de l'Information Géographique et Forestière (IGM)
+# initialize and download FRH04 data
+dataset = bzh.BreizhCrops("frh04")
 
-### Model implementations and Acknowledgements
+# get data sample
+x, y, field_id = dataset[0]
+
+# load pretrained model
+model = bzh.models.pretrained("Transformer")
+
+# create a batch of batchsize 1
+x = x.unsqueeze(0)
+
+# perform inference
+y_pred = model(x)
+```
+downloads the FRH04 dataset partition (used for evaluation), loads a pretrained model and performs a prediction on the first sample.
+
+
+![mimimum working example](doc/breizhcrops_zsh_short.gif)
+
+### Train a model
+
+Train a model via the example script `train.py`
+```bash
+python train.py TransformerEncoder --learning-rate 0.001 --weight-decay 5e-08 --preload-ram
+```
+
+This script uses the default model parameters from `breizhcrops.models.TransformerModel`. 
+When training multiple epochs, the `--preload-ram` flag speeds up training significantly 
+
+
+
+### Acknowledgements
 
 The model implementations from this repository are based on the following papers and github repositories.
 
 * TempCNN (reimplementation from [keras source code](https://github.com/charlotte-pel/igarss2019-dl4sits) ) [Pelletier et al., 2019](https://www.mdpi.com/2072-4292/11/5/523)
-* RNN [Rußwurm & Körner, 2017](http://openaccess.thecvf.com/content_cvpr_2017_workshops/w18/html/Russwurm_Temporal_Vegetation_Modelling_CVPR_2017_paper.html)
+* LSTM Recurrent Neural Network adapted from [Rußwurm & Körner, 2017](http://openaccess.thecvf.com/content_cvpr_2017_workshops/w18/html/Russwurm_Temporal_Vegetation_Modelling_CVPR_2017_paper.html)
 * MS-ResNet implementation from [Fei Wang](https://github.com/geekfeiw/Multi-Scale-1D-ResNet)
-* TransformerEncoder implementation from Yu-Hsiang Huang [GitHub](https://github.com/jadore801120/attention-is-all-you-need-pytorch)
+* TransformerEncoder implementation was originally adopted from Yu-Hsiang Huang [GitHub](https://github.com/jadore801120/attention-is-all-you-need-pytorch), but later replaced by own implementation when `torch.nn.transformer` modules became available
+* InceptionTime [Fawaz et al., 2019](https://arxiv.org/abs/1909.04939)
+* StarRNN [Turkoglu et al., 2019](https://arxiv.org/abs/1911.11033)
+* OmniscaleCNN [Tang et al., 2020](https://arxiv.org/abs/2002.10061)
 
-### Installation
+The raw label data originates from  
+* [Registre parcellaire graphique (RPG)](https://www.data.gouv.fr/fr/datasets/registre-parcellaire-graphique-rpg-contours-des-parcelles-et-ilots-culturaux-et-leur-groupe-de-cultures-majoritaire/) of the French National Geographic Institute (IGN)
 
-#### Anaconda Environment Setup
+### Reference
 
+This work will be published in the proceedings of ISPRS Archives 2020. [Preprint available on ArXiv](https://arxiv.org/abs/1905.11893)
 ```
-conda create -n breizhcrops python=3.8 pip
-conda activate breizhcrops
-```
-
-intall from GitHub
-```
-pip install git+https://github.com/tum-lmf/breizhcrops
-```
-
-install from sources
-```
-git clone https://github.com/tum-lmf/breizhcrops
-cd BreizhCrops
-pip install .
+@article{breizhcrops2020,
+  title={BreizhCrops: A Time Series Dataset for Crop Type Mapping},
+  author={Ru{\ss}wurm, Marc and Pelletier, Charlotte and Zollner, Maximilian and Lef{\`e}vre, S{\'e}bastien and K{\"o}rner, Marco},
+  journal={International Archives of the Photogrammetry, Remote Sensing and Spatial Information Sciences ISPRS (2020)},
+  year={2020}
+}
 ```
 
-### Usage
+### ICML workshop 2019
 
-```
-from breizhcrops import BreizhCrops
-from breizhcrops.models import LSTM, TransformerEncoder, TempCNN, MSResNet
-```
+<a href=https://arxiv.org/abs/1905.11893><img height=300px src=doc/paper.png /></a>
+<a href="doc/poster.pdf"><img height=300px src=doc/poster.png /></a>
 
-### Train models
-
-```
-cd examples
-python train.py TempCNN --epochs 1 --logdir /tmp --hyperparameter "kernel_size=5,hidden_dims=64,dropout=0.5"
-```
-
-### Download Dataset
-
-Simply initialize the Dataset
-
-```
-BreizhCrops(root="data",region="frh01")
-```
-
-## Organization in NUTS Administrative Regions
-
-<img width=54% src=doc/BrittanyParcels.png>
-<img width=45% src=doc/regions.png>
-
-
-### Data organization
-
-```
-# mapping from ~160 categories to 13 most frequenc groups
-data/classmapping.csv
-
-# csv files
-data/csv/frh0{1,2,3,4}/*.csv
-
-# polygon ids per departement
-data/ids/frh0{1,2,3,4}.txt
-
-# cached numpy arrays for faster data loading
-data/frh0{1,2,3,4}/*.npz
-
-# raw shapefile geometries with labels
-data/shp/*
-```
-
-### Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### Data organization scripts
-
-#### Query satellite data from Google Earth Engine
-
-```
-python src/query_gee.py data/shp/raw/frh01.shp --start 2017-01-01 --end 2017-12-31 --label-col CODE_CULTU --id-col ID --outfolder data/csv/frh01
-```
-
-#### Evaluation
-
-```
-python evaluate.py LSTM --workers 4 --batchsize 256 --logdir /data2/breizhcrops/evaluation/lstm
-```
+A previous version (see [workshop website](http://roseyu.com/time-series-workshop/submissions/2019/timeseries-ICML19_paper_34.pdf) or [arxiv version 1](https://arxiv.org/abs/1905.11893v1)) was presented at the
+ presented at the [ICML 2019 Time Series workshop, Long Beach, USA](http://roseyu.com/time-series-workshop/)
+ICML workshop contributions do not appear in the ICML proceedings.

@@ -7,7 +7,7 @@ __all__ = ['InceptionTime']
 
 class InceptionTime(nn.Module):
 
-    def __init__(self, input_dim=8, num_classes=2, num_layers=6, hidden_dims=32, use_bias=False, device=torch.device("cpu")):
+    def __init__(self, input_dim=13, num_classes=9, num_layers=4, hidden_dims=64, use_bias=False, device=torch.device("cpu")):
         super(InceptionTime, self).__init__()
         self.modelname = f"InceptionTime_input-dim={input_dim}_num-classes={num_classes}_" \
                          f"hidden-dims={hidden_dims}_num-layers={num_layers}"
@@ -72,7 +72,7 @@ class InceptionModule(nn.Module):
         # collapse feature dimension
         input_inception = self.bottleneck(input_tensor.transpose(1,2)).transpose(1,2)
         features = [conv(input_inception) for conv in self.convolutions]
-        features.append(self.pool_conv(input_tensor))
+        features.append(self.pool_conv(input_tensor.contiguous()))
         features = torch.cat(features, dim=1)
         features = self.bn_relu(features)
         if self.residual:

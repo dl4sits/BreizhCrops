@@ -19,13 +19,9 @@ import tempfile
 import os
 
 def _download_and_load_weights(url, model):
-    fd, path = tempfile.mkstemp()
-    try:
-        download_file(url, output_path=path, overwrite=True)
-        model.load_state_dict(torch.load(path, map_location=torch.device('cpu'))["model_state"])
-        model.eval()
-    finally:
-        os.remove(path)
+    path = os.path.join(tempfile.gettempdir(), os.path.basename(url))
+    download_file(url, output_path=path, overwrite=True)
+    model.load_state_dict(torch.load(path, map_location=torch.device('cpu'))["model_state"])
 
 def pretrained(model, device=torch.device("cpu")):
     # make case insensitive
@@ -39,34 +35,30 @@ def pretrained(model, device=torch.device("cpu")):
     if model == "omniscalecnn":
         model = OmniScaleCNN(input_dim=ndims, num_classes=num_classes, sequencelength=sequencelength).to(device)
         _download_and_load_weights(OMNISCALECNN_URL, model)
-        return model
     elif model == "lstm":
         model = LSTM(input_dim=ndims, num_classes=num_classes).to(device)
         _download_and_load_weights(LSTM_URL, model)
-        return model
     elif model == "starrnn":
         model = StarRNN(input_dim=ndims,num_classes=num_classes,bidirectional=False,use_batchnorm=False,
                         use_layernorm=True,device=device).to(device)
         _download_and_load_weights(STARRNN_URL, model)
-        return model
     elif model == "inceptiontime":
         model = InceptionTime(input_dim=ndims, num_classes=num_classes, device=device).to(device)
         _download_and_load_weights(INCEPTIONTIME_URL, model)
-        return model
     elif model == "msresnet":
         model = MSResNet(input_dim=ndims, num_classes=num_classes).to(device)
         _download_and_load_weights(MSRESNET_URL, model)
-        return model
     elif model == "transformerencoder" or model == "transformer":
         model = TransformerModel(input_dim=ndims, num_classes=num_classes).to(device)
         _download_and_load_weights(TRANSFORMER_URL, model)
-        return model
     elif model == "tempcnn":
         model = TempCNN(input_dim=ndims, num_classes=num_classes, sequencelength=sequencelength).to(device)
         _download_and_load_weights(TEMPCNN_URL, model)
-        return model
     else:
         raise ValueError("invalid model argument")
+
+    model.eval()
+    return model
 
 if __name__ == '__main__':
     pass

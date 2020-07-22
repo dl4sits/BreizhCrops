@@ -12,6 +12,14 @@ RAW_CSV_URL = {
             "frh03": "https://syncandshare.lrz.de/dl/fiMygybgQtqUJ7x4EQexy4ZU/frh03.zip",
             "frh04": "https://syncandshare.lrz.de/dl/fiSB111Gsx4v1c4HT4Gh4jY/frh04.zip",
         }
+    },
+    2018: {
+        "L1C": {
+            "frh01": "https://syncandshare.lrz.de/dl/fiUTbmrK3yXyshiQBXkvr9ZX/frh01.zip",
+            "frh02": "https://syncandshare.lrz.de/dl/fiFJZn7uBmGkdJAKn47edxqg/frh02.zip",
+            "frh03": "https://syncandshare.lrz.de/dl/fi74422CywCLeoSYa7QNNA9X/frh03.zip",
+            "frh04": "https://syncandshare.lrz.de/dl/fiDvCLTvC93Xky6UdVbe3Ps6/frh04.zip",
+        }
     }
 }
 
@@ -41,6 +49,12 @@ SHP_URLs = {
         "frh03": "https://syncandshare.lrz.de/dl/fiTdWAa8b9K4XVmrBbZ6413i/frh03.tar.gz",
         "frh04": "https://syncandshare.lrz.de/dl/fiKfoL1VW9jiDXPgnVXu7ZFK/frh04.tar.gz",
         "belle-ile": "https://syncandshare.lrz.de/dl/fiVKniyfTVARvAhZfVxq7keW/belle-ile.tar.gz"
+    },
+    2018: {
+        "frh01": "https://syncandshare.lrz.de/dl/fiUe1VMZrrbcsK82TKJ9EFi2/frh01.tar.gz",
+        "frh02": "https://syncandshare.lrz.de/dl/fi7CAQab5f8MGp3dc4NdnpWg/frh02.tar.gz",
+        "frh03": "https://syncandshare.lrz.de/dl/fiQBZMk2vCPVJuuRifHiTqeX/frh03.tar.gz",
+        "frh04": "https://syncandshare.lrz.de/dl/fiUpxJimscvcTi6aBx7r4sEz/frh04.tar.gz",
     }
 }
 
@@ -59,6 +73,14 @@ FILESIZES = {
             "frh03": 890016904,
             "frh04": 639211696,
             "belle-ile": 6304512
+        }
+    },
+    2018: {
+        "L1C": {
+            "frh01": 9878839310,
+            "frh02": 8567550069,
+            "frh03": 10196638286,
+            "frh04": 6270634169
         }
     }
 }

@@ -48,7 +48,7 @@ class BreizhCrops(Dataset):
         :param bool recompile_h5_from_csv: downloads raw csv files and recompiles the h5 databases. Only required when dealing with new datasets
         :param bool preload_ram: loads all time series data in RAM at initialization. Can speed up training if data is stored on HDD.
         """
-        assert year in [2017]
+        assert year in [2017, 2018]
         assert level in ["L1C", "L2A"]
         assert region in ["frh01", "frh02", "frh03", "frh04", "belle-ile"]
 

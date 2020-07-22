@@ -10,3 +10,4 @@ tqdm>=4.32.2
 scikit-learn
 h5py
 requests
+pytest

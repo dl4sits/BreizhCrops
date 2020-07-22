@@ -75,21 +75,18 @@ class BreizhCrops(Dataset):
 
         self.load_classmapping(self.classmapping)
 
-        if not os.path.exists(self.indexfile):
-            download_file(INDEX_FILE_URLs[year][level][region], self.indexfile)
-
-        self.index = pd.read_csv(self.indexfile, index_col=0)
-        if verbose:
-            print(f"loaded {len(self.index)} time series references from {self.indexfile}")
-
         if load_timeseries and ((not os.path.exists(self.h5path))
                                 or (not os.path.getsize(self.h5path) == FILESIZES[year][level][region])):
             if recompile_h5_from_csv:
-                self.download_csv_files()
-                self.write_h5_database_from_csv()
+                # self.download_csv_files()
+                self.write_index()
+                self.write_h5_database_from_csv(self.index)
             else:
+                if not os.path.exists(self.indexfile):
+                    download_file(INDEX_FILE_URLs[year][level][region], self.indexfile)
                 self.download_h5_database()
 
+        self.index = pd.read_csv(self.indexfile, index_col=0)
         self.index = self.index.loc[self.index["CODE_CULTU"].isin(self.mapping.index)]
         if verbose:
             print(f"kept {len(self.index)} time series references from applying class mapping")
@@ -175,23 +172,25 @@ class BreizhCrops(Dataset):
         assert os.path.getsize(self.h5path) == FILESIZES[self.year][self.level][self.region]
         print("ok!")
 
-    def write_h5_database_from_csv(self):
+    def write_h5_database_from_csv(self, index):
         with h5py.File(self.h5path, "w") as dataset:
-            for idx, row in tqdm(self.index.iterrows(), total=len(self.index), desc=f"writing {self.h5path}"):
+            for idx, row in tqdm(index.iterrows(), total=len(index), desc=f"writing {self.h5path}"):
                 X = self.load(os.path.join(self.root, row.path))
                 dataset.create_dataset(row.path, data=X)
 
     def get_codes(self):
         return self.codes
 
+    def download_geodataframe(self):
+        targzfile = os.path.join(os.path.dirname(self.shapefile), self.region + ".tar.gz")
+        download_file(SHP_URLs[self.year][self.region], targzfile)
+        untar(targzfile)
+        os.remove(targzfile)
+
     def geodataframe(self):
 
         if not os.path.exists(self.shapefile):
-            targzfile = os.path.join(os.path.dirname(self.shapefile), self.region + ".tar.gz")
-            download_file(SHP_URLs[self.year][self.region], targzfile)
-            untar(targzfile)
-            os.remove(targzfile)
-
+            self.dowload_geodataframe()
 
         geodataframe = gpd.GeoDataFrame(self.index.set_index("id"))
 
@@ -262,6 +261,39 @@ class BreizhCrops(Dataset):
 
         return X, y, row.id
 
+    def write_index(self):
+        csv_files = os.listdir(self.csvfolder)
+        listcsv_statistics = list()
+
+        self.download_geodataframe()
+        gdf = gpd.read_file(self.shapefile)
+        i = 1
+
+        for csvfile in csv_files:
+            X = self.load(os.path.join(self.csvfolder, csvfile))
+            if self.level == "L1C":
+                cldindex = BANDS["L1C"].index("QA60")
+            elif self.level == "L2A":
+                cldindex = BANDS["L2A"].index("CLD")
+
+            cld = np.mean(X[:, cldindex])
+            culture_code = gdf.loc[gdf["ID_PARCEL"] == 3]["CODE_CULTU"]
+
+            listcsv_statistics.append(
+                dict(
+                    meanQA60=cld,
+                    id=int(os.path.splitext(f"{csvfile}")[0]), # woooot
+                    CODE_CULTU=None, # culture_code
+                    path=f"{self.csvfolder}",
+                    idx=i,
+                    sequencelength=len(X)
+                )
+            )
+            i += 1
+
+        self.index = pd.DataFrame(listcsv_statistics)
+        self.index.to_csv(self.indexfile)
+
 def get_default_transform(level):
 
     #padded_value = PADDING_VALUE
@@ -294,6 +326,5 @@ def get_default_transform(level):
 def get_default_target_transform():
     return lambda y: torch.tensor(y, dtype=torch.long)
 
-
 if __name__ == '__main__':
-    BreizhCrops(region="frh03", root="/tmp", load_timeseries=False, level="L2A",recompile_h5_from_csv=True)
+    BreizhCrops(region="frh03", root="/tmp", load_timeseries=False, level="L2A",recompile_h5_from_csv=True, year=2018)

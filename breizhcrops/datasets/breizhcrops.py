@@ -262,34 +262,54 @@ class BreizhCrops(Dataset):
         return X, y, row.id
 
     def write_index(self):
+        BANDS_ADD = {
+            "L1C": ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
+                    'B8A', 'B9', 'QA10', 'QA20', 'QA60', 'doa', 'label', 'id'],
+            "L2A": ['B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
+                    'B8A', 'B11', 'B12', 'CLD', 'EDG', 'SAT', 'doa', 'label', 'id']
+        }
+
         csv_files = os.listdir(self.csvfolder)
         listcsv_statistics = list()
-
-        self.download_geodataframe()
-        gdf = gpd.read_file(self.shapefile)
         i = 1
 
-        for csvfile in csv_files:
-            X = self.load(os.path.join(self.csvfolder, csvfile))
-            if self.level == "L1C":
-                cldindex = BANDS["L1C"].index("QA60")
-            elif self.level == "L2A":
-                cldindex = BANDS["L2A"].index("CLD")
+        for csv_file in csv_files:
+            sample = pd.read_csv(os.path.join(self.csvfolder, os.path.basename(csv_file)), index_col=0).dropna()
+            sample["doa"] = pd.to_datetime(sample["doa"]).astype(int)
+            sample = sample.groupby(by="doa").first().reset_index()
 
-            cld = np.mean(X[:, cldindex])
-            culture_code = gdf.loc[gdf["ID_PARCEL"] == 3]["CODE_CULTU"]
+            X_ADD = np.array(sample.values)
+            X = np.array(sample[self.bands].values)
+
+            if np.isnan(X).any():
+                t_without_nans = np.isnan(X).sum(1) > 0
+                X = X[~t_without_nans]
+
+            if self.level == "L1C":
+                cld_index = BANDS_ADD["L1C"].index("QA60")
+                cc_index = BANDS_ADD["L1C"].index("label")
+                id_index = BANDS_ADD["L1C"].index("id")
+            elif self.level == "L2A":
+                cld_index = BANDS_ADD["L2A"].index("CLD")
+                cc_index = BANDS_ADD["L2A"].index("label")
+                id_index = BANDS_ADD["L2A"].index("id")
+
+            cld = np.mean(X[:, cld_index])
+            id = X_ADD[0, id_index]
+            culture_code = X_ADD[0, cc_index]
 
             listcsv_statistics.append(
                 dict(
                     meanQA60=cld,
-                    id=int(os.path.splitext(f"{csvfile}")[0]), # woooot
-                    CODE_CULTU=None, # culture_code
+                    id=id,  # int(os.path.splitext(f"{csv_file}")[0]), ID IN NAME
+                    CODE_CULTU=culture_code,
                     path=f"{self.csvfolder}",
                     idx=i,
                     sequencelength=len(X)
                 )
             )
             i += 1
+            if i > 8693: break
 
         self.index = pd.DataFrame(listcsv_statistics)
         self.index.to_csv(self.indexfile)

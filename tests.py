@@ -107,6 +107,6 @@ def test_write_index():
     #BreizhCrops(region="frh01", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2018)
     #BreizhCrops(region="frh02", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2018)
     BreizhCrops(region="frh03", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2018)
-    BreizhCrops(region="frh04", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2018)
-    BreizhCrops(region="belle-ile", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True,
-                year=2018)
+    #BreizhCrops(region="frh04", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2018)
+    #BreizhCrops(region="belle-ile", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True,
+                #year=2018)

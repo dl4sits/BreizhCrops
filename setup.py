@@ -1,4 +1,37 @@
 from setuptools import setup, find_packages
+import sys
+
+with open('requirements.txt') as req_file:
+    requirements = [req.strip() for req in req_file.read().splitlines()]
+
+def remove_requirements(requirements, name, replace=''):
+    new_requirements = []
+    for requirement in requirements:
+        if requirement.split(' ')[0] != name:
+            new_requirements.append(requirement)
+        elif replace is not None:
+            new_requirements.append(replace)
+    return new_requirements
+
+if sys.platform in ['win32','cygwin','windows']:
+    requirements = remove_requirements(requirements,'torch')
+
+    print('Trying to install pytorch and torchvision!')
+    code = 1
+    try:
+        code = subprocess.call(['pip', 'install', 'torch==1.6.0', '-f', 'https://download.pytorch.org/whl/torch_stable.html'])
+        if code != 0:
+            raise Exception('Torch installation failed !')
+    except:
+        try:
+            code = subprocess.call(['pip3', 'install', 'torch==1.6.0', '-f', 'https://download.pytorch.org/whl/torch_stable.html'])
+            if code != 0:
+                raise Exception('Torch installation failed !')
+        except:
+            print('Failed to install pytorch, please install pytorch and torchvision manually be following the simple instructions over at: https://pytorch.org/get-started/locally/')
+    if code == 0:
+        print('Successfully installed pytorch version!')
+
 
 setup(name='breizhcrops',
       version='0.0.2.4',
@@ -8,21 +41,5 @@ setup(name='breizhcrops',
       author_email='marc.russwurm@tum.de',
       license='MIT',
       packages=find_packages(),
-      install_requires=[
-            "geopandas>=0.5.0",
-            "numpy>=1.17.0",
-            "pandas>=0.24.2",
-            "geojson>=2.4.1",
-            "jupyter>=1.0.0",
-            "matplotlib>=3.1.0",
-            "seaborn>=0.9.0",
-            "torch==1.6.0",
-            "tqdm>=4.32.2",
-            "scikit-learn",
-            "h5py",
-            "requests"
-      ],
-      dependency_links=[
-          'https://download.pytorch.org/whl/torch_stable.html'
-      ],
+      install_requires=requirements
       zip_safe=False)

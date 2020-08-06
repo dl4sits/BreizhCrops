@@ -22,4 +22,7 @@ setup(name='breizhcrops',
             "h5py",
             "requests"
       ],
+      dependency_links=[
+          'https://download.pytorch.org/whl/torch_stable.html'
+      ],
       zip_safe=False)

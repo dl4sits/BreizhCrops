@@ -41,5 +41,5 @@ setup(name='breizhcrops',
       author_email='marc.russwurm@tum.de',
       license='MIT',
       packages=find_packages(),
-      install_requires=requirements
+      install_requires=requirements,
       zip_safe=False)

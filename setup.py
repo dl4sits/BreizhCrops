@@ -1,5 +1,6 @@
 from setuptools import setup, find_packages
 import sys
+import subprocess
 
 with open('requirements.txt') as req_file:
     requirements = [req.strip() for req in req_file.read().splitlines()]

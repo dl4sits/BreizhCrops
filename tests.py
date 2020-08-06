@@ -2,6 +2,7 @@ from breizhcrops import BreizhCrops
 from examples.train import get_model
 import breizhcrops
 import torch
+import pytest
 
 def test_get_model():
     batchsize = 16
@@ -48,8 +49,8 @@ def test_breizhcrops_index_columnames():
         assert colref == coll1c
         assert colref == coll2a
 
+@pytest.mark.skip(reason="skipping. requires downloading 100mb which is too heavy for a test")
 def test_breizhcrops_geodataframe():
-    """includes downloading ~100mb. may be too heavy for a test"""
     BreizhCrops(region="frh01", root="/tmp", load_timeseries=False).geodataframe()
     BreizhCrops(region="frh01", root="/tmp", load_timeseries=False, level="L2A").geodataframe()
 

@@ -39,7 +39,15 @@ INDEX_FILE_URLs = {
             "frh04": "https://syncandshare.lrz.de/dl/fiDmi5qobgbfJHJLNEPf99xT/frh04.csv",
             "belle-ile": "https://syncandshare.lrz.de/dl/fiVn3VpGhLETZkaRnEBDgUad/belle-ile.csv"
         }
-    }
+    },
+    2018: {
+            "L1C": {
+                "frh01": "https://syncandshare.lrz.de/dl/fiWdBJxymGfNMJ4AfRZLS1vf/frh01.csv",
+                "frh02": "https://syncandshare.lrz.de/dl/fiCMvKxLh5KHSjHXoesgVvs6/frh02.csv",
+                "frh03": "https://syncandshare.lrz.de/dl/fiXNTFuoox7agRzYYZv9uurh/frh03.csv",
+                "frh04": "https://syncandshare.lrz.de/dl/fiRMLCLwLamgzWKwtTeWienw/frh04.csv",
+            }
+        }
 }
 
 SHP_URLs = {

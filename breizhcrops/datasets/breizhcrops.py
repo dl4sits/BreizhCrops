@@ -232,7 +232,7 @@ class BreizhCrops(Dataset):
         return sample
 
     def load(self, csv_file):
-        sample = self.load_raw(os.path.join(self.csvfolder, csv_file))
+        sample = self.load_raw(csv_file)
         X = np.array(sample[self.bands[1:17]].values)
 
         if np.isnan(X).any():
@@ -242,7 +242,7 @@ class BreizhCrops(Dataset):
         return X
 
     def load_culturecode_and_id(self, csv_file):
-        sample = self.load_raw(os.path.join(self.csvfolder, csv_file))
+        sample = self.load_raw(csv_file)
         X = np.array(sample.values)
 
         if self.level == "L1C":
@@ -308,7 +308,7 @@ class BreizhCrops(Dataset):
                     meanQA60=np.mean(X[:, cld_index]),
                     id=id,
                     CODE_CULTU=culturecode,
-                    path=f"{self.csvfolder}",
+                    path=os.path.join(self.csvfolder, f"{id}" + ".csv"),
                     idx=i,
                     sequencelength=len(X)
                 )

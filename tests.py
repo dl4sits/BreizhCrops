@@ -2,6 +2,7 @@ from breizhcrops import BreizhCrops
 from examples.train import get_model
 import breizhcrops
 import torch
+import pytest
 
 
 def test_get_model():
@@ -53,8 +54,8 @@ def test_breizhcrops_index_columnames():
         assert colref == coll2a
 
 
+@pytest.mark.skip(reason="skipping. requires downloading 100mb which is too heavy for a test")
 def test_breizhcrops_geodataframe():
-    """includes downloading ~100mb. may be too heavy for a test"""
     BreizhCrops(region="frh01", root="/tmp", load_timeseries=False).geodataframe()
     BreizhCrops(region="frh01", root="/tmp", load_timeseries=False, level="L2A").geodataframe()
 
@@ -106,6 +107,7 @@ def test_get_codes_breizhcrops():
     BreizhCrops(region="frh04", root="/tmp", load_timeseries=False).get_codes()
 
 
+@pytest.mark.skip(reason="skipping. takes to long for a test")
 def test_write_index():
     BreizhCrops(region="frh01", root="/tmp", load_timeseries=True, level="L1C",recompile_h5_from_csv=True, year=2017)
     BreizhCrops(region="frh02", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2017)

@@ -107,17 +107,17 @@ def test_get_codes_breizhcrops():
     BreizhCrops(region="frh04", root="/tmp", load_timeseries=False).get_codes()
 
 
-@pytest.mark.skip(reason="skipping. takes to long for a test")
+# @pytest.mark.skip(reason="skipping. takes to long for a test")
 def test_write_index():
-    BreizhCrops(region="frh01", root="/tmp", load_timeseries=True, level="L1C",recompile_h5_from_csv=True, year=2017)
-    BreizhCrops(region="frh02", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2017)
-    BreizhCrops(region="frh03", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2017)
-    BreizhCrops(region="frh04", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2017)
-    BreizhCrops(region="belle-ile", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True,
-                year=2018)
+    # BreizhCrops(region="frh01", root="/tmp", load_timeseries=True, level="L1C",recompile_h5_from_csv=True, year=2017)
+    # BreizhCrops(region="frh02", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2017)
+    # BreizhCrops(region="frh03", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2017)
+    # BreizhCrops(region="frh04", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2017)
+    # BreizhCrops(region="belle-ile", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True,
+    #             year=2018)
 
-    BreizhCrops(region="frh01", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2018)
-    BreizhCrops(region="frh02", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2018)
+    # BreizhCrops(region="frh01", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2018)
+    # BreizhCrops(region="frh02", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2018)
     BreizhCrops(region="frh03", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2018)
-    BreizhCrops(region="frh04", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2018)
+    # BreizhCrops(region="frh04", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2018)
 

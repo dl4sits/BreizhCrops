@@ -17,10 +17,11 @@ BANDS = {
     "L1C": ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
             'B8A', 'B9', 'QA10', 'QA20', 'QA60', 'doa', 'label', 'id'],
     "L2A": ['B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
-       'B8A', 'B11', 'B12', 'CLD', 'EDG', 'SAT', 'doa', 'label', 'id']
+            'B8A', 'B11', 'B12', 'CLD', 'EDG', 'SAT', 'doa', 'label', 'id']
 }
 
-PADDING_VALUE=-1
+PADDING_VALUE = -1
+
 
 class BreizhCrops(Dataset):
 
@@ -78,7 +79,7 @@ class BreizhCrops(Dataset):
         if load_timeseries and ((not os.path.exists(self.h5path))
                                 or (not os.path.getsize(self.h5path) == FILESIZES[year][level][region])):
             if recompile_h5_from_csv:
-                self.download_csv_files()
+                # self.download_csv_files()
                 self.write_index()
                 self.write_h5_database_from_csv(self.index)
             else:
@@ -110,8 +111,8 @@ class BreizhCrops(Dataset):
 
         self.index.rename(columns={"meanQA60": "meanCLD"}, inplace=True)
 
-        #if "id" not in self.index.columns:
-            # parse field id from csv path
+        # if "id" not in self.index.columns:
+        # parse field id from csv path
         self.index["id"] = self.index["path"].apply(lambda path: int(os.path.splitext(os.path.basename(path))[0]))
 
         # drop fields that are not in the class mapping
@@ -233,7 +234,9 @@ class BreizhCrops(Dataset):
 
     def load(self, csv_file):
         sample = self.load_raw(csv_file)
-        X = np.array(sample[self.bands[1:17]].values)
+        selected_bands = ["B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B8A", "B9", "B10", "B11", "B12", "QA10",
+                          "QA20", "QA60", "doa"]
+        X = np.array(sample[selected_bands].values)
 
         if np.isnan(X).any():
             t_without_nans = np.isnan(X).sum(1) > 0
@@ -245,12 +248,8 @@ class BreizhCrops(Dataset):
         sample = self.load_raw(csv_file)
         X = np.array(sample.values)
 
-        if self.level == "L1C":
-            cc_index = BANDS["L1C"].index("label")
-            id_index = BANDS["L1C"].index("id")
-        elif self.level == "L2A":
-            cc_index = BANDS["L2A"].index("label")
-            id_index = BANDS["L2A"].index("id")
+        cc_index = self.bands.index("label")
+        id_index = self.bands.index("id")
 
         if len(X) > 0:
             field_id = X[0, id_index]

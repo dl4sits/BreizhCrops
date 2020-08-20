@@ -4,6 +4,7 @@ import breizhcrops
 import torch
 import pytest
 
+
 def test_get_model():
     batchsize = 16
     ndims = 13
@@ -16,6 +17,7 @@ def test_get_model():
                           device=torch.device("cpu"))
         pred = model(data)
         assert pred.shape == (batchsize, num_classes)
+
 
 def test_init_breizhcrops():
     datapath = "/tmp"
@@ -32,10 +34,12 @@ def test_init_breizhcrops():
     BreizhCrops(region="frh03", root=datapath, load_timeseries=False, level="L2A")
     BreizhCrops(region="belle-ile", root=datapath, load_timeseries=False, level="L2A")
 
+
 def test_pretrained():
     x = torch.zeros(1, 45, 13)
     for model in ["omniscalecnn", "lstm", "tempcnn", "msresnet", "inceptiontime", "starrnn", "transformer"]:
         breizhcrops.models.pretrained(model)(x)
+
 
 def test_breizhcrops_index_columnames():
     l1c = BreizhCrops(region="frh01", root="/tmp", load_timeseries=False)
@@ -49,13 +53,16 @@ def test_breizhcrops_index_columnames():
         assert colref == coll1c
         assert colref == coll2a
 
+
 @pytest.mark.skip(reason="skipping. requires downloading 100mb which is too heavy for a test")
 def test_breizhcrops_geodataframe():
     BreizhCrops(region="frh01", root="/tmp", load_timeseries=False).geodataframe()
     BreizhCrops(region="frh01", root="/tmp", load_timeseries=False, level="L2A").geodataframe()
 
+
 #def test_raw_processing():
 #    BreizhCrops(region="frh03", root="/tmp, load_timeseries=True, level="L2A", recompile_h5_from_csv=True)
+
 
 def test_urls():
     import requests
@@ -87,6 +94,7 @@ def test_urls():
     check(SHP_URLs)
     check(H5_URLs)
 
+
 def test_belle_ile():
     BreizhCrops(region="belle-ile", root="/tmp", load_timeseries=False).geodataframe()
     dataset = BreizhCrops(region="belle-ile", root="/tmp", level="L1C")
@@ -94,5 +102,22 @@ def test_belle_ile():
     dataset = BreizhCrops(region="belle-ile", root="/tmp", level="L2A")
     dataset[0]
 
+
 def test_get_codes_breizhcrops():
     BreizhCrops(region="frh04", root="/tmp", load_timeseries=False).get_codes()
+
+
+@pytest.mark.skip(reason="skipping. takes to long for a test")
+def test_write_index():
+    BreizhCrops(region="frh01", root="/tmp", load_timeseries=True, level="L1C",recompile_h5_from_csv=True, year=2017)
+    BreizhCrops(region="frh02", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2017)
+    BreizhCrops(region="frh03", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2017)
+    BreizhCrops(region="frh04", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2017)
+    BreizhCrops(region="belle-ile", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True,
+                year=2018)
+
+    BreizhCrops(region="frh01", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2018)
+    BreizhCrops(region="frh02", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2018)
+    BreizhCrops(region="frh03", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2018)
+    BreizhCrops(region="frh04", root="/tmp", load_timeseries=True, level="L1C", recompile_h5_from_csv=True, year=2018)
+

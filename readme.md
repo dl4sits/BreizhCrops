@@ -45,8 +45,8 @@ Train a model via the example script `train.py`
 python train.py TransformerEncoder --learning-rate 0.001 --weight-decay 5e-08 --preload-ram
 ```
 
-This script uses the default model parameters from `breizhcrops.models.TransformerModel`. 
-When training multiple epochs, the `--preload-ram` flag speeds up training significantly 
+This script uses the default model parameters from `breizhcrops.models.TransformerModel`.
+When training multiple epochs, the `--preload-ram` flag speeds up training significantly
 
 
 
@@ -67,7 +67,7 @@ The raw label data originates from
 
 ### Reference
 
-This work will be published in the proceedings of ISPRS Archives 2020. [Preprint available on ArXiv](https://arxiv.org/abs/1905.11893)
+This work will be published in the proceedings of [ISPRS Archives 2020](https://www.int-arch-photogramm-remote-sens-spatial-inf-sci.net/XLIII-B2-2020/1545/2020/isprs-archives-XLIII-B2-2020-1545-2020.pdf). [Preprint available on ArXiv](https://arxiv.org/abs/1905.11893)
 ```
 @article{breizhcrops2020,
   title={BreizhCrops: A Time Series Dataset for Crop Type Mapping},
@@ -76,6 +76,8 @@ This work will be published in the proceedings of ISPRS Archives 2020. [Preprint
   year={2020}
 }
 ```
+
+ISPRS virtual congress video can be found [here](http://isprs.stream-up.tv/media-221-breizhcrops-a-time-series-dataset-for-crop-type-mapping)
 
 ### ICML workshop 2019
 

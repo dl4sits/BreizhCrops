@@ -5,6 +5,7 @@ import subprocess
 with open('requirements.txt') as req_file:
     requirements = [req.strip() for req in req_file.read().splitlines()]
 
+
 def remove_requirements(requirements, name, replace=''):
     new_requirements = []
     for requirement in requirements:
@@ -14,22 +15,20 @@ def remove_requirements(requirements, name, replace=''):
             new_requirements.append(replace)
     return new_requirements
 
-if sys.platform in ['win32','cygwin','windows']:
-    requirements = remove_requirements(requirements,'torch')
+
+if sys.platform in ['win32', 'cygwin', 'windows']:
+    requirements = remove_requirements(requirements, 'torch')
+    requirements = remove_requirements(requirements, 'geopandas')
 
     print('Trying to install pytorch and torchvision!')
     code = 1
-    try:
-        code = subprocess.call(['pip', 'install', 'torch==1.6.0', '-f', 'https://download.pytorch.org/whl/torch_stable.html'])
-        if code != 0:
-            raise Exception('Torch installation failed !')
-    except:
-        try:
-            code = subprocess.call(['pip3', 'install', 'torch==1.6.0', '-f', 'https://download.pytorch.org/whl/torch_stable.html'])
-            if code != 0:
-                raise Exception('Torch installation failed !')
-        except:
-            print('Failed to install pytorch, please install pytorch and torchvision manually be following the simple instructions over at: https://pytorch.org/get-started/locally/')
+    code = subprocess.call(['pip', 'install', 'pipwin'])
+    code = subprocess.call(['pipwin', 'install', 'gdal'])
+    code = subprocess.call(['pipwin', 'install', 'fiona'])
+    code = subprocess.call(['pipwin', 'install', 'geopandas'])
+    code = subprocess.call(['pip', 'install', 'torch==1.6.0', '-f', 'https://download.pytorch.org/whl/torch_stable.html'])
+    if code != 0:
+        raise Exception('Failed to install pytorch, please install pytorch and torchvision manually be following the simple instructions over at: https://pytorch.org/get-started/locally/')
     if code == 0:
         print('Successfully installed pytorch version!')
 

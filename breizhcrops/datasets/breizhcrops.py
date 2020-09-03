@@ -9,7 +9,6 @@ from tqdm import tqdm
 import torch
 import numpy as np
 
-
 from .urls import CODESURL, CLASSMAPPINGURL, INDEX_FILE_URLs, FILESIZES, SHP_URLs, H5_URLs, RAW_CSV_URL
 from ..utils import download_file, unzip, untar
 
@@ -122,7 +121,12 @@ class BreizhCrops(Dataset):
 
         # drop fields that are not in the class mapping
         self.index = self.index.loc[self.index["CODE_CULTU"].isin(self.mapping.index)]
-        self.index[["classid", "classname"]] = self.index["CODE_CULTU"].apply(lambda code: self.mapping.loc[code])
+        #self.index[["classid", "classname"]] = self.mapping.loc[self.index["CODE_CULTU"]]
+        id_classnames = self.mapping.loc[self.index["CODE_CULTU"]]
+        id_classnames.index = self.index.index
+        self.index[["classid", "classname"]] = id_classnames
+
+        #self.index[["classid", "classname"]] = self.index["CODE_CULTU"].apply(lambda code: self.mapping.loc[code])
         self.index["region"] = self.region
 
         self.get_codes()

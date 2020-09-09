@@ -3,12 +3,25 @@
 
 ![](https://github.com/tum-lmf/breizhcrops/workflows/build-package/badge.svg)
 
-### Python Package
+### Installation
+#### Python Package
 
 Install Breizhcrops as python package from [PyPI](https://pypi.org/project/breizhcrops/)!
 
 ```
 pip install breizhcrops
+```
+
+#### Windows
+
+```
+git clone https://github.com/dl4sits/BreizhCrops.git
+
+pip install torch==1.6.0 -f https://download.pytorch.org/whl/torch_stable.html
+
+conda install gdal fiona geopandas
+
+pip install .
 ```
 
 ### Getting Started

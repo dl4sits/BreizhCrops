@@ -48,6 +48,9 @@ downloads the FRH04 dataset partition (used for evaluation), loads a pretrained 
 
 ![mimimum working example](doc/breizhcrops_zsh_short.gif)
 
+
+Furthermore, for a detailed data analysis you can check the [Hands-on Tutorial on Time Series](https://colab.research.google.com/drive/1i0M_X5-ytFhF0NO-FjhKiqnraclSEIb0?usp=sharing). This is a Jupyter Notebook for timeseries data exploration with BreizhCrops benchmark.
+
 ### Train a model
 
 Train a model via the example script `train.py`

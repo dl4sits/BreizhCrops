@@ -85,11 +85,11 @@ class BreizhCrops(Dataset):
         if not os.path.exists(self.indexfile):
             download_file(INDEX_FILE_URLs[year][level][region], self.indexfile)
 
-        if not h5_database_ok and recompile_h5_from_csv:
+        if not h5_database_ok and recompile_h5_from_csv and load_timeseries:
             self.download_csv_files()
             self.write_index()
             self.write_h5_database_from_csv(self.index)
-        elif load_timeseries:
+        if not h5_database_ok and not recompile_h5_from_csv and load_timeseries:
             self.download_h5_database()
 
         self.index = pd.read_csv(self.indexfile, index_col=0)

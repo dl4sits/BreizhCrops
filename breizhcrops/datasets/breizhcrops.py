@@ -115,17 +115,16 @@ class BreizhCrops(Dataset):
             self.X_list = None
 
         self.index.rename(columns={"meanQA60": "meanCLD"}, inplace=True)
-
+        
         if "id" not in self.index.columns:
             # parse field id from csv path
-	    self.index["id"] = self.index["path"].apply(lambda path: int(os.path.splitext(os.path.basename(path))[0]))
-
-	    # drop fields that are not in the class mapping
-	    self.index = self.index.loc[self.index["CODE_CULTU"].isin(self.mapping.index)]
-	    self.index[["classid", "classname"]] = self.index["CODE_CULTU"].apply(lambda code: self.mapping.loc[code])
-	    self.index["region"] = self.region
-	    self.index.to_csv(self.indexfile)
-	
+            self.index["id"] = self.index["path"].apply(lambda path: int(os.path.splitext(os.path.basename(path))[0]))
+            # drop fields that are not in the class mapping
+            self.index = self.index.loc[self.index["CODE_CULTU"].isin(self.mapping.index)]
+            self.index[["classid", "classname"]] = self.index["CODE_CULTU"].apply(lambda code: self.mapping.loc[code])
+            self.index["region"] = self.region
+            self.index.to_csv(self.indexfile)
+        
         self.get_codes()
 
     def download_csv_files(self):

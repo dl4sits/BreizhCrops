@@ -3,12 +3,22 @@
 
 ![](https://github.com/tum-lmf/breizhcrops/workflows/build-package/badge.svg)
 
-### Python Package
+### Installation
+#### Linux and macOS
 
 Install Breizhcrops as python package from [PyPI](https://pypi.org/project/breizhcrops/)!
-
 ```
 pip install breizhcrops
+```
+
+#### Windows
+
+If you use Windows, execute these lines.
+```
+git clone https://github.com/dl4sits/BreizhCrops.git
+pip install torch==1.6.0 -f https://download.pytorch.org/whl/torch_stable.html
+conda install gdal fiona geopandas
+pip install .
 ```
 
 ### Getting Started
@@ -37,6 +47,9 @@ downloads the FRH04 dataset partition (used for evaluation), loads a pretrained 
 
 
 ![mimimum working example](doc/breizhcrops_zsh_short.gif)
+
+
+Furthermore, for a detailed data analysis you can check the [Hands-on Tutorial on Time Series](https://colab.research.google.com/drive/1i0M_X5-ytFhF0NO-FjhKiqnraclSEIb0?usp=sharing). This is a Jupyter Notebook for timeseries data exploration with BreizhCrops benchmark.
 
 ### Train a model
 

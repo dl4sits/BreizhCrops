@@ -98,7 +98,8 @@ class BreizhCrops(Dataset):
             print(f"kept {len(self.index)} time series references from applying class mapping")
 
         # filter zero-length time series
-        self.index = self.index.loc[self.index.sequencelength > filter_length].set_index("idx")
+        if self.index.index.name != "idx":
+            self.index = self.index.loc[self.index.sequencelength > filter_length].set_index("idx")
 
         self.maxseqlength = int(self.index["sequencelength"].max())
 

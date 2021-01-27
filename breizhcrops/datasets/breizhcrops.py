@@ -16,8 +16,15 @@ from ..utils import download_file, unzip, untar
 BANDS = {
     "L1C": ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
             'B8A', 'B9', 'QA10', 'QA20', 'QA60', 'doa', 'label', 'id'],
-    "L2A": ['B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
-            'B8A', 'B11', 'B12', 'CLD', 'EDG', 'SAT', 'doa', 'label', 'id']
+    "L2A": ['doa', 'id', 'code_cultu', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
+            'B8A', 'B11', 'B12', 'CLD', 'EDG', 'SAT']
+}
+
+SELECTED_BANDS = {
+			"L1C": ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9', 'B10', 'B11', 'B12', 
+						'QA10', 'QA20', 'QA60', 'doa'],
+			"L2A": ['doa','B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B11', 'B12', 
+					'CLD', 'EDG', 'SAT',]
 }
 
 PADDING_VALUE = -1
@@ -181,7 +188,7 @@ class BreizhCrops(Dataset):
 
     def write_h5_database_from_csv(self, index):
         with h5py.File(self.h5path, "w") as dataset:
-            for idx, row in tqdm(index.iterrows(), total=len(index), desc=f"writing {self.h5path}"):
+            for idx, row in tqdm(index.iterrows(), total=len(index), desc=f"writing {self.h5path}"):                             
                 X = self.load(os.path.join(self.root, row.path))
                 dataset.create_dataset(row.path, data=X)
 
@@ -230,8 +237,8 @@ class BreizhCrops(Dataset):
     def load_raw(self, csv_file):
         """['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8',
                'B8A', 'B9', 'QA10', 'QA20', 'QA60', 'doa', 'label', 'id']"""
-
         sample = pd.read_csv(os.path.join(self.csvfolder, os.path.basename(csv_file)), index_col=0).dropna()
+
         # convert datetime to int
         sample["doa"] = pd.to_datetime(sample["doa"]).astype(int)
         sample = sample.groupby(by="doa").first().reset_index()
@@ -240,10 +247,9 @@ class BreizhCrops(Dataset):
 
     def load(self, csv_file):
         sample = self.load_raw(csv_file)
-        selected_bands = ["B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B8A", "B9", "B10", "B11", "B12", "QA10",
-                          "QA20", "QA60", "doa"]
-        X = np.array(sample[selected_bands].values)
-
+        
+        selected_bands = SELECTED_BANDS[self.level]
+        X = np.array(sample[selected_bands].values)	
         if np.isnan(X).any():
             t_without_nans = np.isnan(X).sum(1) > 0
             X = X[~t_without_nans]
@@ -253,14 +259,16 @@ class BreizhCrops(Dataset):
     def load_culturecode_and_id(self, csv_file):
         sample = self.load_raw(csv_file)
         X = np.array(sample.values)
-
-        cc_index = self.bands.index("label")
+		
+        if self.level=="L1C":
+            cc_index = self.bands.index("label")
+        else:
+            cc_index = self.bands.index("code_cultu")
         id_index = self.bands.index("id")
 
         if len(X) > 0:
             field_id = X[0, id_index]
             culture_code = X[0, cc_index]
-
             return culture_code, field_id
 
         else:
@@ -298,9 +306,9 @@ class BreizhCrops(Dataset):
 
         for csv_file in tqdm(csv_files):
             if self.level == "L1C":
-                cld_index = BANDS["L1C"].index("QA60")
+                cld_index = SELECTED_BANDS["L1C"].index("QA60")
             elif self.level == "L2A":
-                cld_index = BANDS["L2A"].index("CLD")
+                cld_index = SELECTED_BANDS["L2A"].index("CLD")
 
             X = self.load(os.path.join(self.csvfolder, csv_file))
             culturecode, id = self.load_culturecode_and_id(os.path.join(self.csvfolder, csv_file))

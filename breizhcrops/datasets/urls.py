@@ -11,6 +11,7 @@ RAW_CSV_URL = {
             "frh02": "https://syncandshare.lrz.de/dl/fiSz3L41G8CkTJ2si9grVtcB/frh02.zip",
             "frh03": "https://syncandshare.lrz.de/dl/fiMygybgQtqUJ7x4EQexy4ZU/frh03.zip",
             "frh04": "https://syncandshare.lrz.de/dl/fiSB111Gsx4v1c4HT4Gh4jY/frh04.zip",
+            
         }
     },
     2018: {
@@ -37,7 +38,7 @@ INDEX_FILE_URLs = {
             "frh02": "https://syncandshare.lrz.de/dl/fi1749MFuYgWc4qKwrVWu2hR/frh02.csv",
             "frh03": "https://syncandshare.lrz.de/dl/fiTKuWmkwnxRoP84V3gWMpqs/frh03.csv",
             "frh04": "https://syncandshare.lrz.de/dl/fiDmi5qobgbfJHJLNEPf99xT/frh04.csv",
-            "belle-ile": "https://syncandshare.lrz.de/dl/fiVn3VpGhLETZkaRnEBDgUad/belle-ile.csv"
+            #"belle-ile": "https://syncandshare.lrz.de/dl/fiVn3VpGhLETZkaRnEBDgUad/belle-ile.csv"
         }
     },
     2018: {
@@ -80,7 +81,7 @@ FILESIZES = {
             "frh02": 803455680,
             "frh03": 890016904,
             "frh04": 639211696,
-            "belle-ile": 6304512
+            #"belle-ile": 6304512
         }
     },
     2018: {
@@ -103,11 +104,11 @@ H5_URLs = {
             "belle-ile": "https://syncandshare.lrz.de/dl/fiTMJz5aByhqtMZShJoBmSnY/belle-ile.h5.tar.gz"
         },
         "L2A": {
-            "frh01": "https://syncandshare.lrz.de/dl/fiQwe2cBtP5iZWyvKuLeXfB2/frh01.h5.tar.gz",
-            "frh02": "https://syncandshare.lrz.de/dl/fiUuDvGN7HcKbXtD51WiEzJY/frh02.h5.tar.gz",
-            "frh03": "https://syncandshare.lrz.de/dl/fiNdfLwoTDvSh3WJRq5MsWS4/frh03.h5.tar.gz",
-            "frh04": "https://syncandshare.lrz.de/dl/fiDV4vSvsqmxKm3UYb6cMRku/frh04.h5.tar.gz",
-            "belle-ile": "https://syncandshare.lrz.de/dl/fimuRkLLrFvBWHYF2exxBxZ/belle-ile.h5.tar.gz"
+            "frh01": "https://syncandshare.lrz.de/dl/fiLH5KGLKXedTSTTjosdHvar/frh01.h5",
+            "frh02": "https://syncandshare.lrz.de/dl/fiYbtMkrVFGM2UDGez24QJt6/frh02.h5",
+            "frh03": "https://syncandshare.lrz.de/dl/fiT5efJwbktMTMbRsr8cvsuh/frh03.h5",
+            "frh04": "https://syncandshare.lrz.de/dl/fiTuAYAMGPzYd9VTKtSmsFzE/frh04.h5",
+            #"belle-ile": "https://syncandshare.lrz.de/dl/fimuRkLLrFvBWHYF2exxBxZ/belle-ile.h5.tar.gz"
         }
     }
 }

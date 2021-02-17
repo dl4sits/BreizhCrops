@@ -99,7 +99,7 @@ class BreizhCrops(Dataset):
         if not h5_database_ok and not recompile_h5_from_csv and load_timeseries:
             self.download_h5_database()
 
-        self.index = pd.read_csv(self.indexfile, index_col=0)
+        self.index = pd.read_csv(self.indexfile, index_col=None)
         self.index = self.index.loc[self.index["CODE_CULTU"].isin(self.mapping.index)]
         if verbose:
             print(f"kept {len(self.index)} time series references from applying class mapping")
@@ -124,9 +124,7 @@ class BreizhCrops(Dataset):
 
         self.index.rename(columns={"meanQA60": "meanCLD"}, inplace=True)
         
-        if "id" not in self.index.columns:
-            # parse field id from csv path
-            self.index["id"] = self.index["path"].apply(lambda path: int(os.path.splitext(os.path.basename(path))[0]))
+        if "classid" not in self.index.columns or "classname" not in self.index.columns or "region" not in self.index.columns:
             # drop fields that are not in the class mapping
             self.index = self.index.loc[self.index["CODE_CULTU"].isin(self.mapping.index)]
             self.index[["classid", "classname"]] = self.index["CODE_CULTU"].apply(lambda code: self.mapping.loc[code])
@@ -134,6 +132,7 @@ class BreizhCrops(Dataset):
             self.index.to_csv(self.indexfile)
         
         self.get_codes()
+
 
     def download_csv_files(self):
         zipped_file = os.path.join(self.root, str(self.year), self.level, f"{self.region}.zip")

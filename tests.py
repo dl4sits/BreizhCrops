@@ -45,11 +45,17 @@ def test_breizhcrops_index_columnames():
     l1c = BreizhCrops(region="frh01", root="/tmp", load_timeseries=False)
     l2a = BreizhCrops(region="frh01", root="/tmp", load_timeseries=False, level="L2A")
     reference = ['CODE_CULTU', 'path', 'meanCLD', 'sequencelength', 'id', 'classid', 'classname', 'region']
+    reference.sort()
 
     assert len(list(l1c.index.columns)) == len(reference)
     assert len(list(l2a.index.columns)) == len(reference)
 
-    for colref, coll1c, coll2a in zip(reference, list(l1c.index.columns), list(l2a.index.columns)):
+    l1c_list = list(l1c.index.columns)
+    l2a_list = list(l2a.index.columns)
+    l1c_list.sort()
+    l2a_list.sort()
+
+    for colref, coll1c, coll2a in zip(reference, l1c_list, l2a_list):
         assert colref == coll1c
         assert colref == coll2a
 

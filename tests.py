@@ -9,7 +9,7 @@ def test_get_model():
     batchsize = 16
     ndims = 13
     num_classes = 10
-    sequencelength=24
+    sequencelength = 24
 
     data = torch.rand(batchsize, sequencelength, ndims)
     for model in ["TempCNN", "StarRNN", "LSTM", "TransformerEncoder", "InceptionTime", "MSResNet"]:
@@ -80,7 +80,7 @@ def test_urls():
         e.g. https://syncandshare.lrz.de/dl/fiKfoL1VW9jiDXPgnVXu7ZFK/frh04.tar.gz
         """
         if url_or_dict is None:
-            pass #None is allowed placeholder
+            pass # None is allowed placeholder
         elif isinstance(url_or_dict, str):
             # sync and share urls return a html page with /getlink/ which is much faster
             # than checking the download "/dl/" file

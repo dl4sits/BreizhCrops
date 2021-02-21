@@ -84,7 +84,7 @@ def test_urls():
         elif isinstance(url_or_dict, str):
             # sync and share urls return a html page with /getlink/ which is much faster
             # than checking the download "/dl/" file
-            url = url_or_dict.replace("/dl/","/getlink/")
+            url = url_or_dict.replace("/dl/", "/getlink/")
 
             response = requests.get(url)
             code = response.status_code

@@ -37,7 +37,7 @@ def test_init_breizhcrops():
 
 def test_pretrained():
     x = torch.zeros(1, 45, 13)
-    for model in ["omniscalecnn", "lstm", "tempcnn", "msresnet",''' "inceptiontime",''' "starrnn", "transformer"]:
+    for model in ["omniscalecnn", "lstm", "tempcnn", "msresnet", "starrnn", "transformer"]:  # "InceptionTime"
         breizhcrops.models.pretrained(model)(x)
 
 

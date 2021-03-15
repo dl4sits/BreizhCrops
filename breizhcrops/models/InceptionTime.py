@@ -20,13 +20,13 @@ class InceptionTime(nn.Module):
         )
 
         self.avgpool = nn.AdaptiveAvgPool1d(1)
-        self.outlinear = nn.Linear(hidden_dims*4,num_classes)
+        self.outlinear = nn.Linear(hidden_dims*4, num_classes)
 
         self.to(device)
 
     def forward(self,x):
         # N x T x D -> N x D x T
-        x = x.transpose(1,2)
+        x = x.transpose(1, 2)
 
         # expand dimensions
         x = self.inlinear(x.transpose(1, 2)).transpose(1, 2)
@@ -63,26 +63,46 @@ class InceptionModule(nn.Module):
         )
 
         if residual:
-            self.residual_relu = nn.ReLU()
+            # self.residual_relu = nn.ReLU()
+            self.shortcut_layer = ShortcutLayer(num_filters, num_filters, stride=1, bias=use_bias)
 
         self.to(device)
 
 
     def forward(self, input_tensor):
         # collapse feature dimension
-        input_inception = self.bottleneck(input_tensor.transpose(1,2)).transpose(1,2)
+        input_inception = self.bottleneck(input_tensor.transpose(1, 2)).transpose(1, 2)
         features = [conv(input_inception) for conv in self.convolutions]
         features.append(self.pool_conv(input_tensor.contiguous()))
         features = torch.cat(features, dim=1)
         features = self.bn_relu(features)
         if self.residual:
-            features = features + input_tensor
-            features = self.residual_relu(features)
+            # features = features + input_tensor
+            features = self.shortcut_layer(input_tensor, out_tensor=features)
         return features
 
+
+class ShortcutLayer(nn.Module):
+    def __init__(self, in_planes, out_planes, stride, bias):
+        super(ShortcutLayer, self).__init__()
+        self.sc = nn.Sequential(nn.Conv1d(in_channels=in_planes,
+                                          out_channels=out_planes,
+                                          kernel_size=1,
+                                          stride=stride,
+                                          bias=bias),
+                                nn.BatchNorm1d(num_features=out_planes))
+        self.relu = nn.ReLU()
+
+    def forward(self, input_tensor, out_tensor):
+        x = out_tensor + self.sc(input_tensor)
+        x = self.relu(x)
+
+        return x
+
+
 if __name__=="__main__":
-    model = InceptionTime(input_dim=28, hidden_dims=32, num_classes=2, num_layers=2).to(torch.device("cpu"))
+    model = InceptionTime(input_dim=13, hidden_dims=32, num_classes=2, num_layers=2).to(torch.device("cpu"))
     #                N   T   D
-    src = torch.rand(16, 28, 13)
+    src = torch.rand(16, 128, 13)
     model(src)
     print()

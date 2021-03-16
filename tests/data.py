@@ -1,0 +1,25 @@
+import sys
+import os
+this_folder = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(os.path.join(this_folder,".."))
+
+from breizhcrops import BreizhCrops
+import pytest
+from itertools import product
+
+TESTS_DATA_ROOT = os.environ.get('TESTS_DATA_ROOT', '/tmp')
+
+
+@pytest.mark.parametrize("region,year,level",
+                         product(["frh01", "frh02", "frh03", "frh04"],
+                                 [2017, 2018],
+                                 ["L1C", "L2A"]))
+def test_download_dataset(region, year, level):
+    BreizhCrops(region=region, root=TESTS_DATA_ROOT, load_timeseries=True, level=level, recompile_h5_from_csv=False, year=year)
+
+@pytest.mark.parametrize("region,year,level",
+                         product(["frh01", "frh02", "frh03", "frh04"],
+                                 [2017, 2018],
+                                 ["L1C", "L2A"]))
+def test_breizhcrops_geodataframe(region, year, level):
+    BreizhCrops(region=region, root=TESTS_DATA_ROOT, year=year, level=level, load_timeseries=False).geodataframe()

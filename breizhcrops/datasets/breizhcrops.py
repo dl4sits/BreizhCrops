@@ -207,8 +207,13 @@ class BreizhCrops(Dataset):
 
         geodataframe = gpd.GeoDataFrame(self.index.set_index("id"))
 
+        gdf = gpd.read_file(self.shapefile)
+
+        # 2018 shapefile calls ID ID_PARCEL: rename if necessary
+        gdf = gdf.rename(columns={"ID_PARCEL": "ID"})
+
         # copy geometry from shapefile to index file
-        geom = gpd.read_file(self.shapefile).set_index("ID")
+        geom = gdf.set_index("ID")
         geom.index.name = "id"
         geodataframe["geometry"] = geom["geometry"]
         geodataframe.crs = geom.crs

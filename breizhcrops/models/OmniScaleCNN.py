@@ -76,7 +76,7 @@ class OmniScaleCNN(nn.Module):
 
         self.hidden = nn.Linear(out_put_channel_numebr, num_classes)
 
-    def forward(self, X):
+    def logits(self, X):
 
         X = self.net(X.transpose(1,2))
 
@@ -86,6 +86,10 @@ class OmniScaleCNN(nn.Module):
         if not self.few_shot:
             X = self.hidden(X)
         return X
+
+    def forward(self, X):
+        logits = self.logits(X)
+        return torch.nn.functional.log_softmax(logits, dim=-1)
 
 def get_Prime_number_in_a_range(start, end):
     Prime_list = []

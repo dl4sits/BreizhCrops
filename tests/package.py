@@ -3,10 +3,12 @@ import os
 this_folder = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(this_folder,".."))
 from breizhcrops import BreizhCrops
-from examples.train import get_model
 import breizhcrops
 import torch
 import os
+from examples.train import get_model
+import pytest
+from itertools import product
 
 TESTS_DATA_ROOT = os.environ.get('TESTS_DATA_ROOT', '/tmp')
 
@@ -113,5 +115,22 @@ def test_belle_ile():
 def test_get_codes_breizhcrops():
     BreizhCrops(region="frh04", root=TESTS_DATA_ROOT, load_timeseries=False).get_codes()
 
+@pytest.mark.parametrize("model,ndims,num_classes,sequencelength",
+                         product(["omniscalecnn", "lstm", "tempcnn", "msresnet", "starrnn",
+                                   "transformer", "inceptiontime"],
+                                 [12,13,20], # ndims
+                                 [10,20], # num classes
+                                 [20,45]) # sequencelength
+                        )
+def test_models_dummy_data(model, ndims, num_classes, sequencelength):
+    device = "cpu"
 
+    batch_size = 16
+    X = torch.zeros(batch_size, sequencelength, ndims).to(device)
+
+    torchmodel = get_model(model, ndims, num_classes, sequencelength, device)
+    y_logprobabilities = torchmodel(X)
+    assert y_logprobabilities.shape == (batch_size, num_classes), "model prediction shape inconsistent with num classes"
+    y_scores = y_logprobabilities.exp()
+    assert torch.isclose(y_scores.sum(1), torch.ones(batch_size).to(device)).all(), "class probabilities do not sum to one"
 

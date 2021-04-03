@@ -97,12 +97,13 @@ def get_dataloader(datapath, mode, batchsize, workers, preload_ram=False, level=
     return traindataloader, testdataloader, meta
 
 
-def get_model(model, ndims, num_classes, sequencelength, device, **hyperparameter):
-    if model == "OmniScaleCNN":
+def get_model(modelname, ndims, num_classes, sequencelength, device, **hyperparameter):
+    modelname = modelname.lower() #make case invariant
+    if modelname == "omniscalecnn":
         model = OmniScaleCNN(input_dim=ndims, num_classes=num_classes, sequencelength=sequencelength, **hyperparameter).to(device)
-    elif model == "LSTM":
+    elif modelname == "lstm":
         model = LSTM(input_dim=ndims, num_classes=num_classes, **hyperparameter).to(device)
-    elif model == "StarRNN":
+    elif modelname == "starrnn":
         model = StarRNN(input_dim=ndims,
                         num_classes=num_classes,
                         bidirectional=False,
@@ -110,16 +111,16 @@ def get_model(model, ndims, num_classes, sequencelength, device, **hyperparamete
                         use_layernorm=True,
                         device=device,
                         **hyperparameter).to(device)
-    elif model == "InceptionTime":
+    elif modelname == "inceptiontime":
         model = InceptionTime(input_dim=ndims, num_classes=num_classes, device=device,
                               **hyperparameter).to(device)
-    elif model == "MSResNet":
+    elif modelname == "msresnet":
         model = MSResNet(input_dim=ndims, num_classes=num_classes, **hyperparameter).to(device)
-    elif model == "TransformerEncoder":
+    elif modelname in ["transformerencoder","transformer"]:
         model = TransformerModel(input_dim=ndims, num_classes=num_classes,
                             activation="relu",
                             **hyperparameter).to(device)
-    elif model == "TempCNN":
+    elif modelname == "tempcnn":
         model = TempCNN(input_dim=ndims, num_classes=num_classes, sequencelength=sequencelength, **hyperparameter).to(
             device)
     else:

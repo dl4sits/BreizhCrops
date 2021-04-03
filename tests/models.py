@@ -64,7 +64,7 @@ def test_evaluate_models_fast(model):
         "transformer": 0.69,
         "inceptiontime": 0.8
     }
-    tolerance = 0.02
+    tolerance = 0.04
 
     evaluate_models(model, "belle-ile", expected_accuracies, tolerance)
 

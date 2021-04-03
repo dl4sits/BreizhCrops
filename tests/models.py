@@ -15,7 +15,7 @@ TESTS_BATCH_SIZE = int(os.environ.get('TESTS_BATCH_SIZE', '256'))
 
 def evaluate_models(model, region, expected_accuracies, tolerance):
 
-    bzh = BreizhCrops(region="belle-ile", root=TESTS_DATA_ROOT, load_timeseries=True)
+    bzh = BreizhCrops(region=region, root=TESTS_DATA_ROOT, load_timeseries=True)
 
     dataloader = torch.utils.data.DataLoader(bzh, batch_size=TESTS_BATCH_SIZE)
     device = "cuda" if torch.cuda.is_available() else "cpu"

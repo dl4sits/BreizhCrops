@@ -6,6 +6,7 @@ sys.path.append(os.path.join(this_folder,".."))
 from breizhcrops import BreizhCrops
 import pytest
 from itertools import product
+from breizhcrops.datasets.breizhcrops import SELECTED_BANDS
 
 TESTS_DATA_ROOT = os.environ.get('TESTS_DATA_ROOT', '/tmp')
 
@@ -43,6 +44,20 @@ def test_download_h5dataset(region, year, level):
 
     # run __getitem__
     sample = ds[0]
+    X, y, fid = sample
+
+    assert int(y) in list(ds.classes)
+
+    assert X.numpy().min() >= 0, "min reflectances should be greater than 0"
+    assert X.numpy().max() <= 1, "max reflectances should be smaller than 1"
+
+    red = X[:, SELECTED_BANDS[level].index("B4")]
+    nir = X[:, SELECTED_BANDS[level].index("B8")]
+
+    ndvi = (nir - red) / (nir + red)
+
+    assert ndvi.min() > 0
+    assert ndvi.max() < 1
 
     # run __len__
     len(ds)

@@ -10,6 +10,8 @@ from examples.train import get_model
 import pytest
 from itertools import product
 
+from breizhcrops.datasets.breizhcrops import SELECTED_BANDS
+
 TESTS_DATA_ROOT = os.environ.get('TESTS_DATA_ROOT', '/tmp')
 
 def test_get_model():
@@ -25,6 +27,23 @@ def test_get_model():
         pred = model(data)
         assert pred.shape == (batchsize, num_classes)
 
+def test_data_value_range():
+    ds = BreizhCrops(region="belle-ile", root=TESTS_DATA_ROOT, load_timeseries=True)
+
+    X, y, fids = ds[0]
+
+    assert int(y) in list(ds.classes)
+
+    assert X.numpy().min() >= 0, "min reflectances should be greater than 0"
+    assert X.numpy().max() <= 1, "max reflectances should be smaller than 1"
+
+    red = X[:, SELECTED_BANDS["L1C"].index("B4")]
+    nir = X[:, SELECTED_BANDS["L1C"].index("B8")]
+
+    ndvi = (nir - red) / (nir + red)
+
+    assert ndvi.min() > 0, "ndvi value range should be [0, 1]"
+    assert ndvi.max() < 1, "ndvi value range should be [0, 1]"
 
 def test_init_breizhcrops():
 

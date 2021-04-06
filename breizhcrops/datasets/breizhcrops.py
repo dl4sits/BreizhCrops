@@ -341,7 +341,7 @@ def get_default_transform(level):
     #padded_value = PADDING_VALUE
     sequencelength = 45
 
-    bands = BANDS[level]
+    bands = SELECTED_BANDS[level]
     if level == "L1C":
         selected_bands = ['B1', 'B10', 'B11', 'B12', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B8', 'B8A', 'B9']
     elif level == "L2A":

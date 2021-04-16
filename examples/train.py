@@ -57,12 +57,16 @@ def get_dataloader(datapath, mode, batchsize, workers, preload_ram=False, level=
     print(f"Setting up datasets in {os.path.abspath(datapath)}, level {level}")
     datapath = os.path.abspath(datapath)
 
-    frh01 = breizhcrops.BreizhCrops(region="frh01", root=datapath,
-                                    preload_ram=preload_ram, level=level)
-    frh02 = breizhcrops.BreizhCrops(region="frh02", root=datapath,
-                                    preload_ram=preload_ram, level=level)
-    frh03 = breizhcrops.BreizhCrops(region="frh03", root=datapath,
-                                    preload_ram=preload_ram, level=level)
+    if mode == "unittest":
+        belle_ile = breizhcrops.BreizhCrops(region="belle-ile", root=datapath)
+    else:
+        frh01 = breizhcrops.BreizhCrops(region="frh01", root=datapath,
+                                        preload_ram=preload_ram, level=level)
+        frh02 = breizhcrops.BreizhCrops(region="frh02", root=datapath,
+                                        preload_ram=preload_ram, level=level)
+        frh03 = breizhcrops.BreizhCrops(region="frh03", root=datapath,
+                                        preload_ram=preload_ram, level=level)
+
     if "evaluation" in mode:
             frh04 = breizhcrops.BreizhCrops(region="frh04", root=datapath,
                                             preload_ram=preload_ram, level=level)
@@ -82,6 +86,9 @@ def get_dataloader(datapath, mode, batchsize, workers, preload_ram=False, level=
     elif mode == "validation":
         traindatasets = torch.utils.data.ConcatDataset([frh01, frh02])
         testdataset = frh03
+    elif mode == "unittest":
+        traindatasets = belle_ile
+        testdataset = belle_ile
     else:
         raise ValueError("only --mode 'validation' or 'evaluation' allowed")
 
@@ -89,8 +96,8 @@ def get_dataloader(datapath, mode, batchsize, workers, preload_ram=False, level=
     testdataloader = DataLoader(testdataset, batch_size=batchsize, shuffle=False, num_workers=workers)
 
     meta = dict(
-        ndims=13 if level=="L1C" else 10,
-        num_classes=len(frh01.classes),
+        ndims=13 if level == "L1C" else 10,
+        num_classes=len(belle_ile.classes) if mode == "unittest" else len(frh01.classes),
         sequencelength=45
     )
 

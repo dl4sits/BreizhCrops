@@ -3,6 +3,8 @@
 
 ![](https://github.com/tum-lmf/breizhcrops/workflows/build-package/badge.svg)
 
+Check our [Breizhcrops Tutorial Colab Notebook](https://colab.research.google.com/drive/1i0M_X5-ytFhF0NO-FjhKiqnraclSEIb0?usp=sharing) for quick hands-on examples.
+
 ### Installation
 #### Linux and macOS
 

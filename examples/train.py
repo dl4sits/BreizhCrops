@@ -6,7 +6,7 @@ sys.path.append("..")
 import argparse
 
 import breizhcrops
-from breizhcrops.models import LSTM, TempCNN, MSResNet, TransformerModel, InceptionTime, StarRNN, OmniScaleCNN
+from breizhcrops.models import LSTM, TempCNN, MSResNet, TransformerModel, InceptionTime, StarRNN, OmniScaleCNN, PETransformerModel
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from torch.optim import Adam
@@ -127,6 +127,10 @@ def get_model(modelname, ndims, num_classes, sequencelength, device, **hyperpara
         model = TransformerModel(input_dim=ndims, num_classes=num_classes,
                             activation="relu",
                             **hyperparameter).to(device)
+    elif modelname in ["petransformer"]:
+        model = PETransformerModel(input_dim=ndims, num_classes=num_classes,
+                                 activation="relu",
+                                 **hyperparameter).to(device)
     elif modelname == "tempcnn":
         model = TempCNN(input_dim=ndims, num_classes=num_classes, sequencelength=sequencelength, **hyperparameter).to(
             device)

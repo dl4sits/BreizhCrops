@@ -58,7 +58,7 @@ class BreizhCrops(Dataset):
         """
         assert year in [2017, 2018]
         assert level in ["L1C", "L2A"]
-        assert region in ["frh01", "frh02", "frh03", "frh04", "belle-ile"]
+        assert region in ["frh01", "frh02", "frh03", "frh04", "belle-ile", "kermaux"]
 
         if transform is None:
             transform = get_default_transform(level)

@@ -31,7 +31,8 @@ INDEX_FILE_URLs = {
             "frh02": "https://breizhcrops.s3.eu-central-1.amazonaws.com/2017/L1C/frh02.csv",
             "frh03": "https://breizhcrops.s3.eu-central-1.amazonaws.com/2017/L1C/frh03.csv",
             "frh04": "https://breizhcrops.s3.eu-central-1.amazonaws.com/2017/L1C/frh04.csv",
-            "belle-ile": "https://breizhcrops.s3.eu-central-1.amazonaws.com/2017/L1C/belle-ile.csv"
+            "belle-ile": "https://breizhcrops.s3.eu-central-1.amazonaws.com/2017/L1C/belle-ile.csv",
+            "kermaux": "https://breizhcrops.s3.eu-central-1.amazonaws.com/2017/L1C/kermaux.csv"
         },
         "L2A": {
             "frh01": "https://breizhcrops.s3.eu-central-1.amazonaws.com/2017/L2A/frh01.csv",
@@ -57,7 +58,8 @@ SHP_URLs = {
         "frh02": "https://breizhcrops.s3.eu-central-1.amazonaws.com/2017/shp/frh02.tar.gz",
         "frh03": "https://breizhcrops.s3.eu-central-1.amazonaws.com/2017/shp/frh03.tar.gz",
         "frh04": "https://breizhcrops.s3.eu-central-1.amazonaws.com/2017/shp/frh04.tar.gz",
-        "belle-ile": "https://breizhcrops.s3.eu-central-1.amazonaws.com/2017/shp/belle-ile.tar.gz"
+        "belle-ile": "https://breizhcrops.s3.eu-central-1.amazonaws.com/2017/shp/belle-ile.tar.gz",
+        "kermaux": "https://breizhcrops.s3.eu-central-1.amazonaws.com/2017/shp/kermaux.tar.gz"
     },
     2018: {
         "frh01": "https://breizhcrops.s3.eu-central-1.amazonaws.com/2018/shp/frh01.tar.gz",
@@ -74,7 +76,8 @@ FILESIZES = {
             "frh02": 2253658856,
             "frh03": 2493572704,
             "frh04": 1555075632,
-            "belle-ile": 17038944
+            "belle-ile": 17038944,
+            "kermaux": 1259784,
         },
         "L2A": {
             "frh01": 987259904,
@@ -101,7 +104,8 @@ H5_URLs = {
             "frh02": "https://breizhcrops.s3.eu-central-1.amazonaws.com/2017/L1C/frh02.h5.tar.gz",
             "frh03": "https://breizhcrops.s3.eu-central-1.amazonaws.com/2017/L1C/frh03.h5.tar.gz",
             "frh04": "https://breizhcrops.s3.eu-central-1.amazonaws.com/2017/L1C/frh04.h5.tar.gz",
-            "belle-ile": "https://breizhcrops.s3.eu-central-1.amazonaws.com/2017/L1C/belle-ile.h5.tar.gz"
+            "belle-ile": "https://breizhcrops.s3.eu-central-1.amazonaws.com/2017/L1C/belle-ile.h5.tar.gz",
+            "kermaux": "https://breizhcrops.s3.eu-central-1.amazonaws.com/2017/L1C/kermaux.h5.tar.gz",
         },
         "L2A": {
             "frh01": "https://breizhcrops.s3.eu-central-1.amazonaws.com/2017/L2A/frh01.h5.tar.gz",

@@ -13,12 +13,12 @@ class InceptionTime(nn.Module):
                          f"hidden-dims={hidden_dims}_num-layers={num_layers}"
         self.num_layers = num_layers
         self.use_residual = use_residual
-        self.inception_modules_list = [InceptionModule(input_dim = input_dim, kernel_size=40, num_filters=hidden_dims//4,
-                                                       use_bias=use_bias, device=device)]
+        self.inception_modules_list = nn.ModuleList([InceptionModule(input_dim = input_dim, kernel_size=40, num_filters=hidden_dims//4,
+                                                       use_bias=use_bias, device=device)])
         for i in range(num_layers-1):
           self.inception_modules_list.append(InceptionModule(input_dim = hidden_dims, kernel_size=40, num_filters=hidden_dims//4,
                                                        use_bias=use_bias, device=device))
-        self.shortcut_layer_list = [ShortcutLayer(input_dim,hidden_dims,stride = 1, bias = False)]
+        self.shortcut_layer_list = nn.ModuleList([ShortcutLayer(input_dim,hidden_dims,stride = 1, bias = False)])
         for i in range(num_layers//3):
           self.shortcut_layer_list.append(ShortcutLayer(hidden_dims,hidden_dims,stride = 1, bias = False))
         self.avgpool = nn.AdaptiveAvgPool1d(1)
@@ -52,7 +52,7 @@ class InceptionModule(nn.Module):
         
         # the for loop gives 40, 20, and 10 convolutions
         kernel_size_s = [kernel_size // (2 ** i) for i in range(3)]
-        self.convolutions = [nn.Conv1d(num_filters, num_filters, kernel_size=kernel_size+1, stride=1, bias= False, padding=kernel_size//2).to(device) for kernel_size in kernel_size_s] #padding is 1 instead of kernel_size//2
+        self.convolutions = nn.ModuleList([nn.Conv1d(num_filters, num_filters, kernel_size=kernel_size+1, stride=1, bias= False, padding=kernel_size//2).to(device) for kernel_size in kernel_size_s]) #padding is 1 instead of kernel_size//2
         
         self.pool_conv = nn.Sequential(
             nn.MaxPool1d(kernel_size=3, stride=1, padding=1),
